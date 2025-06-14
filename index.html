@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Isekai Express - Virtual Trucking Company</title>
+    <!-- GSAP was removed in the version the user indicated was "previously working" and had issues. -->
+    <!-- If GSAP is desired later, the CDN links and JS code need to be re-added. -->
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap');
         
@@ -18,52 +20,18 @@
         }
 
         /* Custom Cursor */
-        .cursor { 
-            width: 20px; height: 20px; border: 2px solid #ff69b4; border-radius: 50%; 
-            position: fixed; pointer-events: none; z-index: 9999; 
-            transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease; 
-            transform: translate(-50%, -50%); 
-            background: rgba(255, 105, 180, 0.1); 
-            backdrop-filter: blur(5px); 
-            box-shadow: 0 0 20px #ff69b4; 
-            opacity: 0; 
-        }
-        .cursor-trail { 
-            width: 30px; height: 30px; border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 50%; 
-            position: fixed; pointer-events: none; z-index: 9998; 
-            transition: transform 0.2s ease-out, opacity 0.3s ease; 
-            transform: translate(-50%, -50%); 
-            opacity: 0; 
-        }
+        .cursor { width: 20px; height: 20px; border: 2px solid #ff69b4; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease; transform: translate(-50%, -50%); background: rgba(255, 105, 180, 0.1); backdrop-filter: blur(5px); box-shadow: 0 0 20px #ff69b4; opacity: 0; }
+        .cursor-trail { width: 30px; height: 30px; border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.2s ease-out, opacity 0.3s ease; transform: translate(-50%, -50%); opacity: 0; }
         body:hover .cursor, body:hover .cursor-trail { opacity: 1; }
-        .cursor.clicking { 
-            transform: translate(-50%, -50%) scale(0.5); 
-            background: #ff69b4; 
-            box-shadow: 0 0 30px #ff69b4, 0 0 50px #ff1493; 
-        }
+        .cursor.clicking { transform: translate(-50%, -50%) scale(0.5); background: #ff69b4; box-shadow: 0 0 30px #ff69b4, 0 0 50px #ff1493; }
 
         /* Background and animations */
-        .parallax-bg { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
-            background: linear-gradient(135deg, #0f0f23 0%, #1a0033 15%, #330066 30%, #ff0066 50%, #ff6699 70%, #ffb3d9 85%, #ffffff 100%); 
-            background-size: 400% 400%; 
-            animation: sakuraGradient 20s ease infinite; 
-            z-index: -2; 
-        }
-        .parallax-bg::before { 
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
-            background-image: 
-                radial-gradient(circle at 20% 20%, rgba(255, 105, 180, 0.2) 0%, transparent 50%), 
-                radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.2) 0%, transparent 50%), 
-                radial-gradient(circle at 50% 50%, rgba(255, 20, 147, 0.15) 0%, transparent 50%); 
-            animation: floatingLights 15s ease-in-out infinite; 
-        }
-
+        .parallax-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0f0f23 0%, #1a0033 15%, #330066 30%, #ff0066 50%, #ff6699 70%, #ffb3d9 85%, #ffffff 100%); background-size: 400% 400%; animation: sakuraGradient 20s ease infinite; z-index: -2; }
+        .parallax-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 20% 20%, rgba(255, 105, 180, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.2) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(255, 20, 147, 0.15) 0%, transparent 50%); animation: floatingLights 15s ease-in-out infinite; }
         .sakura-petals { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
         .petal { position: absolute; background-color: #ffb3d9; border-radius: 50% 0; opacity: 0.7; animation: fallAndSway 10s linear infinite; box-shadow: 0 0 5px rgba(255, 182, 193, 0.5); }
         .petal::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #ffc0cb; border-radius: 0 50%; transform: rotate(10deg); }
         .modal-petal { position: absolute; background-color: #ff99cc; border-radius: 40% 0 40% 0; opacity: 0.6; animation: modalFallAndSway 8s linear infinite; box-shadow: 0 0 4px rgba(255, 153, 204, 0.4); }
-
         @keyframes sakuraGradient { 0%, 100% { background-position: 0% 50%; } 25% { background-position: 100% 50%; } 50% { background-position: 50% 100%; } 75% { background-position: 0% 0%; } }
         @keyframes floatingLights { 0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.4; } 33% { transform: translateY(-20px) rotate(120deg) scale(1.1); opacity: 0.7; } 66% { transform: translateY(-10px) rotate(240deg) scale(0.9); opacity: 0.5; } }
         @keyframes fallAndSway { 0% { transform: translateY(-10vh) translateX(0vw) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(110vh) translateX(calc(10vw * var(--sway-factor, 1))) rotate(720deg); opacity: 0; } }
@@ -86,39 +54,21 @@
 
         /* Hero Section & Button Base Style */
         .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; position: relative; z-index: 1; padding: 0 1rem; }
-        .hero-content { max-width: 800px; padding: 0 2rem; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; position: relative; } /* Retaining fadeInUp for hero as it's on page load */
+        .hero-content { max-width: 800px; padding: 0 2rem; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; position: relative; }
         .hero-content::before { content: "異世界エクスプレス"; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); font-size: 1.2rem; color: rgba(255, 105, 180, 0.7); font-weight: 300; text-shadow: 0 0 5px rgba(255, 105, 180, 0.5); }
         .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.3); background: linear-gradient(45deg, #fff, #ffaeef, #ff69b4, #ff1493, #f5aaff, #fff); background-size: 300% 300%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: animeTextShine 4s ease-in-out infinite; font-weight: 900; }
         .hero p { font-size: clamp(1rem, 2.5vw, 1.3rem); margin-bottom: 2rem; text-shadow: 0 0 8px rgba(255, 105, 180, 0.3); color: rgba(255, 255, 255, 0.9); }
         
-        .button-base { display: inline-flex; align-items: center; justify-content: center; padding: 0.9rem 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; text-decoration: none; color: #fff; background: linear-gradient(45deg, #2a004b, #4b0082); border: 2px solid #ff69b4; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1; cursor: pointer; min-width: 200px; text-align: center; }
+        .button-base { display: inline-flex; align-items: center; justify-content: center; padding: 0.9rem 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; text-decoration: none; color: #fff; background: linear-gradient(45deg, #2a004b, #4b0082); border: 2px solid #ff69b4; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1; cursor: pointer; min-width: 200px; /* Adjust as needed for base width */ text-align: center; }
         .button-base::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(60deg, #ff69b4, #ff1493, #a246ff); transition: left 0.4s ease; z-index: -1; }
         .button-base:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 25px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.2); border-color: #ff1493; color: #fff; }
         .button-base:hover::before { left: 0; }
         .button-base:active { transform: translateY(-1px) scale(0.99); box-shadow: 0 3px 10px rgba(255, 105, 180, 0.6); }
-        /* .cta-button { /* Inherits from .button-base - this class isn't strictly needed if .button-base is used everywhere */ } */
         .join-buttons-container { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
 
-        /* Sections - Reverting to Intersection Observer Reveal */
-        .section { 
-            padding: 5rem 2rem; 
-            background: linear-gradient(145deg, rgba(20, 20, 45, 0.96), rgba(30, 0, 55, 0.92), rgba(55, 0, 105, 0.88), rgba(255, 105, 180, 0.05)); 
-            margin: 5rem auto; 
-            border-radius: 25px; 
-            box-shadow: 0 15px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 105, 180, 0.15); 
-            backdrop-filter: blur(10px); 
-            -webkit-backdrop-filter: blur(10px); 
-            border: 1px solid rgba(255, 105, 180, 0.2); 
-            position: relative; 
-            max-width: 1200px;
-            opacity: 0; /* Initial state for Intersection Observer */
-            transform: translateY(30px); /* Initial state for Intersection Observer */
-            transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        .section.visible { /* Class added by Intersection Observer JS */
-            transform: translateY(0); 
-            opacity: 1; 
-        }
+        /* Sections - Intersection Observer Reveal */
+        .section { padding: 5rem 2rem; background: linear-gradient(145deg, rgba(20, 20, 45, 0.96), rgba(30, 0, 55, 0.92), rgba(55, 0, 105, 0.88), rgba(255, 105, 180, 0.05)); margin: 5rem auto; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 105, 180, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 105, 180, 0.2); position: relative; max-width: 1200px; opacity: 0; transform: translateY(30px); transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .section.visible { transform: translateY(0); opacity: 1; }
         .section .container { max-width: 1100px; margin: 0 auto; }
         .section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 10% 20%, rgba(255, 105, 180, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.08) 0%, transparent 40%); border-radius: inherit; pointer-events: none; opacity: 0.7; animation: subtlePulse 8s ease-in-out infinite; }
         @keyframes subtlePulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } }
@@ -131,10 +81,10 @@
         #contact-section-display { background: linear-gradient(145deg, rgba(10, 10, 30, 0.98), rgba(20, 0, 40, 0.96), rgba(40, 0, 80, 0.92)); border: 2px solid rgba(255, 105, 180, 0.3); }
         #contact-section-display h2::before { content: "繋がる"; position: absolute; top: -45px; left: 50%; transform: translateX(-50%); font-size: 1rem; color: rgba(255, 105, 180, 0.7); font-weight: 300; }
         .social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 3rem; max-width: 900px; margin-left: auto; margin-right: auto; }
-        .social-link { /* This inherits from .button-base. Override for different look */
+        .social-link { /* This inherits from .button-base. */
             background: linear-gradient(135deg, rgba(255, 105, 180, 0.08), rgba(138, 43, 226, 0.08)); 
             border: 1px solid rgba(255, 105, 180, 0.25);
-            font-size: 0.85rem; 
+            /* font-size: 0.85rem; /* REMOVED to inherit from .button-base or body for uniformity */
         }
         .social-link:hover { border-color: #ff3399; text-shadow: 0 0 8px rgba(255, 105, 180, 0.7); }
         .social-link.button-base::before { background: linear-gradient(60deg, rgba(255,105,180,0.3), rgba(255,20,147,0.3)); }
@@ -200,7 +150,7 @@
             .nav-toggle { display: flex; }
             .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); } .nav-toggle.active span:nth-child(2) { opacity: 0; } .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
             .hero h1 { font-size: clamp(2rem, 8vw, 3rem); } .hero p { font-size: clamp(0.9rem, 4vw, 1.1rem); }
-            .button-base, .cta-button { padding: 0.8rem 1.8rem; font-size: 0.9rem; min-width: 160px; } /* .cta-button was already here */
+            .button-base { padding: 0.8rem 1.8rem; font-size: 0.9rem; min-width: 160px; } /* Updated button-base from .cta-button for consistency */
             .section { padding: 4rem 1.5rem; margin: 3rem auto; } .section h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); } .section p, .section li { font-size: 1rem; }
             .social-links { gap: 1rem; }
             .features-grid { grid-template-columns: 1fr; gap: 1.5rem; } .feature-card { padding: 1.5rem; } .feature-card h3 { font-size: 1.2rem; } .feature-card p { font-size: 0.9rem; }
@@ -241,7 +191,6 @@
             <p>Your Journey to Another World of Trucking Excellence</p> 
             <p>Professional Virtual Trucking Company for Euro Truck Simulator 2 & American Truck Simulator</p> 
             <a href="#join" class="button-base scroll-link">Start Your Adventure</a> 
-            <!-- Ensured button-base class, cta-button not strictly needed if button-base used -->
         </div> 
     </section>
     
@@ -274,7 +223,6 @@
             <div class="join-buttons-container"> 
                 <a href="https://discord.gg/uE96rbK95j" target="_blank" class="button-base">Apply on Discord</a> 
                 <a href="#" class="button-base modal-trigger-btn" data-modal-target="guidelinesModal">View Guidelines</a> 
-                <!-- Changed to <a> and ensured button-base class -->
             </div> 
         </div> 
     </section>
@@ -285,7 +233,7 @@
             <p class="centered-text" style="margin-bottom: 2.5rem;"> Have questions or just want to chat? Reach out! We're always happy to connect with fellow trucking enthusiasts and potential recruits. </p> 
             <div class="social-links"> 
                 <a href="https://discord.gg/uE96rbK95j" target="_blank" class="social-link button-base"> Discord Server</a> 
-                <button class="social-link modal-trigger-btn button-base" data-modal-target="contactModal"> Email Us</button> 
+                <a href="#" class="social-link modal-trigger-btn button-base" data-modal-target="contactModal"> Email Us</a> 
                 <a href="#" class="social-link button-base" style="opacity: 0.6; pointer-events: none;"> Steam Group <small style="opacity:0.7; font-size:0.8em; display:block;">(Soon!)</small></a> 
             </div> 
         </div> 
@@ -338,7 +286,6 @@
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         // --- CURSOR, PETALS, PARTICLES, NAVBAR SCROLL, SMOOTH SCROLL ---
-        // These are the existing, non-GSAP JavaScript functionalities.
         const cursor = document.querySelector('.cursor'); const cursorTrail = document.querySelector('.cursor-trail');
         let mouseX = 0, mouseY = 0; let trailX = 0, trailY = 0; const trailSmoothness = 0.15;
         function updateCursorPosition(e) { mouseX = e.clientX; mouseY = e.clientY; }
@@ -365,7 +312,7 @@
                 if (entry.isIntersecting) {
                     entry.target.classList.add('visible');
                 } else {
-                    // Optionally remove 'visible' if you want animation to replay when scrolling back up
+                    // To make animation replay when scrolling back up AND then down again:
                     // entry.target.classList.remove('visible'); 
                 }
             });
@@ -375,7 +322,7 @@
         // --- Smooth Scrolling & Active Link Highlighting ---
         const scrollLinks = document.querySelectorAll('.scroll-link'); const navMenuLinks = document.querySelectorAll('#navMenu a.scroll-link');
         scrollLinks.forEach(link => { link.addEventListener('click', function(e) { const targetId = this.getAttribute('href'); if (targetId && targetId.startsWith('#')) { e.preventDefault(); const targetElement = document.querySelector(targetId); if (targetElement) { const navbarHeight = navbar.offsetHeight; const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight; window.scrollTo({ top: targetPosition, behavior: 'smooth' }); if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active');} } } }); });
-        function updateActiveLink() { let currentSectionId = ''; const pageSections = document.querySelectorAll('section[id]'); if (pageSections.length > 0) { pageSections.forEach(section => { const sectionTop = section.offsetTop - navbar.offsetHeight - 50; if (pageYOffset >= sectionTop && pageYOffset < sectionTop + section.offsetHeight) { currentSectionId = section.getAttribute('id'); } }); if (!currentSectionId && pageYOffset < (pageSections[0].offsetTop - navbar.offsetHeight - 50)) { currentSectionId = 'home'; } } else { currentSectionId = 'home'; } navMenuLinks.forEach(link => { link.classList.toggle('active-link', link.getAttribute('href') === `#${currentSectionId}`); }); }
+        function updateActiveLink() { let currentSectionId = ''; const pageSections = document.querySelectorAll('section[id]'); if (pageSections.length > 0) { pageSections.forEach(section => { const sectionTop = section.offsetTop - navbar.offsetHeight - 50; if (pageYOffset >= sectionTop && pageYOffset < sectionTop + section.offsetHeight) { currentSectionId = section.getAttribute('id'); } }); if (!currentSectionId && pageSections[0] && pageYOffset < (pageSections[0].offsetTop - navbar.offsetHeight - 50)) { currentSectionId = 'home'; } } else { currentSectionId = 'home'; } navMenuLinks.forEach(link => { link.classList.toggle('active-link', link.getAttribute('href') === `#${currentSectionId}`); }); }
         window.addEventListener('scroll', updateActiveLink); updateActiveLink();
         const currentYearSpan = document.getElementById('currentYear'); if(currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
