@@ -43,47 +43,20 @@
         .nav-toggle { display: none; flex-direction: column; justify-content: space-around; width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 1001; }
         .nav-toggle span { width: 30px; height: 3px; background: #fff; border-radius: 2px; transition: all 0.3s linear; }
 
-        /* Hero Section & CTA Button Base Style */
+        /* Hero Section & Button Base Style */
         .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; position: relative; z-index: 1; padding: 0 1rem; }
         .hero-content { max-width: 800px; padding: 0 2rem; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; position: relative; }
         .hero-content::before { content: "異世界エクスプレス"; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); font-size: 1.2rem; color: rgba(255, 105, 180, 0.7); font-weight: 300; text-shadow: 0 0 5px rgba(255, 105, 180, 0.5); }
         .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.3); background: linear-gradient(45deg, #fff, #ffaeef, #ff69b4, #ff1493, #f5aaff, #fff); background-size: 300% 300%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: animeTextShine 4s ease-in-out infinite; font-weight: 900; }
         .hero p { font-size: clamp(1rem, 2.5vw, 1.3rem); margin-bottom: 2rem; text-shadow: 0 0 8px rgba(255, 105, 180, 0.3); color: rgba(255, 255, 255, 0.9); }
         
-        .button-base { /* NEW BASE CLASS FOR UNIFORMITY */
-            display: inline-flex; /* Use flex for icon alignment if any */
-            align-items: center;
-            justify-content: center;
-            padding: 0.9rem 2.2rem; /* Consistent padding */
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-radius: 50px; /* Consistent radius */
-            text-decoration: none;
-            color: #fff;
-            background: linear-gradient(45deg, #2a004b, #4b0082); /* Default BG */
-            border: 2px solid #ff69b4; /* Default border */
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            z-index: 1;
-            cursor: pointer;
-            min-width: 200px; /* Minimum width for uniformity */
-            text-align: center;
-        }
+        .button-base { display: inline-flex; align-items: center; justify-content: center; padding: 0.9rem 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; text-decoration: none; color: #fff; background: linear-gradient(45deg, #2a004b, #4b0082); border: 2px solid #ff69b4; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1; cursor: pointer; min-width: 200px; text-align: center; }
         .button-base::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(60deg, #ff69b4, #ff1493, #a246ff); transition: left 0.4s ease; z-index: -1; }
         .button-base:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 25px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.2); border-color: #ff1493; color: #fff; }
         .button-base:hover::before { left: 0; }
         .button-base:active { transform: translateY(-1px) scale(0.99); box-shadow: 0 3px 10px rgba(255, 105, 180, 0.6); }
-
-        .cta-button { /* Now inherits from button-base, can add specific overrides if needed */
-           /* Inherits all from .button-base */
-        }
-        
-        /* Join Section buttons */
+        .cta-button { /* Inherits from .button-base */ }
         .join-buttons-container { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
-
 
         /* Sections & General Styles */
         .section { padding: 5rem 2rem; background: linear-gradient(145deg, rgba(20, 20, 45, 0.96), rgba(30, 0, 55, 0.92), rgba(55, 0, 105, 0.88), rgba(255, 105, 180, 0.05)); margin: 5rem auto; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 105, 180, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 105, 180, 0.2); transform: translateY(30px); opacity: 0; transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); position: relative; max-width: 1200px; }
@@ -100,21 +73,13 @@
         #contact-section-display { background: linear-gradient(145deg, rgba(10, 10, 30, 0.98), rgba(20, 0, 40, 0.96), rgba(40, 0, 80, 0.92)); border: 2px solid rgba(255, 105, 180, 0.3); }
         #contact-section-display h2::before { content: "繋がる"; position: absolute; top: -45px; left: 50%; transform: translateX(-50%); font-size: 1rem; color: rgba(255, 105, 180, 0.7); font-weight: 300; }
         .social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 3rem; max-width: 900px; margin-left: auto; margin-right: auto; }
-        .social-link { /* This now inherits from .button-base. These are additional specific styles */
-            /* padding: 0.9rem 1.8rem; Reduced padding slightly compared to default .button-base */
-            font-size: 0.85rem; /* Slightly smaller font */
-            background: linear-gradient(135deg, rgba(255, 105, 180, 0.08), rgba(138, 43, 226, 0.08)); /* Different base background from cta */
+        .social-link { /* This inherits from .button-base. Override for different look */
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.08), rgba(138, 43, 226, 0.08)); 
             border: 1px solid rgba(255, 105, 180, 0.25);
-            /* min-width will be from .button-base */
+            font-size: 0.85rem; 
         }
-        .social-link:hover { /* Override or add to .button-base:hover */
-            border-color: #ff3399;
-            text-shadow: 0 0 8px rgba(255, 105, 180, 0.7);
-        }
-         .social-link.button-base::before { /* Adjust hover fill for social links */
-             background: linear-gradient(60deg, rgba(255,105,180,0.3), rgba(255,20,147,0.3));
-         }
-
+        .social-link:hover { border-color: #ff3399; text-shadow: 0 0 8px rgba(255, 105, 180, 0.7); }
+        .social-link.button-base::before { background: linear-gradient(60deg, rgba(255,105,180,0.3), rgba(255,20,147,0.3)); }
 
         /* Features grid & Cards (no change) */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
@@ -139,10 +104,10 @@
         footer p { margin-bottom: 0.5rem; line-height: 1.5; }
         footer .japanese-phrase { color: rgba(255, 105, 180, 0.9); margin-top: 0.5rem; font-weight: 500; }
 
-        /* Modal Styles (no change, but form content updated) */
+        /* Modal Styles (form content updated) */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 5, 20, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1001; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
-        .modal { background: linear-gradient(145deg, rgba(30, 20, 55, 0.97), rgba(40, 10, 70, 0.95)); border: 1px solid rgba(255, 105, 180, 0.4); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255, 105, 180, 0.1); padding: 2.5rem; max-width: 90%; width: 600px; /* Reduced width slightly */ max-height: 90vh; /* Allow more height */ overflow-y: auto; position: relative; text-align: left; color: #e0e0e0; transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .modal { background: linear-gradient(145deg, rgba(30, 20, 55, 0.97), rgba(40, 10, 70, 0.95)); border: 1px solid rgba(255, 105, 180, 0.4); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255, 105, 180, 0.1); padding: 2.5rem; max-width: 90%; width: 600px; max-height: 90vh; overflow-y: auto; position: relative; text-align: left; color: #e0e0e0; transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .modal-overlay.active .modal { transform: scale(1) translateY(0); }
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255, 105, 180, 0.2); padding-bottom: 1rem; }
         .modal-header h3 { font-size: 1.8rem; font-weight: 700; color: #fff; text-shadow: 0 0 10px #ff69b4; }
@@ -161,26 +126,9 @@
 
         /* Form styling within modal */
         .modal-form label { display: block; margin-bottom: 0.5rem; color: #e0e0e0; font-weight: 500; }
-        .modal-form input[type="text"],
-        .modal-form input[type="email"],
-        .modal-form textarea {
-            width: 100%; padding: 0.85rem; border-radius: 8px; 
-            border: 1px solid rgba(255,105,180,0.3); 
-            background: rgba(0,0,0,0.3); color: #fff; 
-            font-family: 'Noto Sans JP', sans-serif; font-size: 1rem;
-            margin-bottom: 1rem;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-        .modal-form input[type="text"]:focus,
-        .modal-form input[type="email"]:focus,
-        .modal-form textarea:focus {
-            outline: none;
-            border-color: #ff69b4;
-            box-shadow: 0 0 15px rgba(255,105,180,0.3);
-        }
-        .modal-form .form-submit-button { /* Use .button-base for styling */
-            align-self: center; margin-top:1rem; 
-        }
+        .modal-form input[type="text"], .modal-form input[type="email"], .modal-form textarea { width: 100%; padding: 0.85rem; border-radius: 8px; border: 1px solid rgba(255,105,180,0.3); background: rgba(0,0,0,0.3); color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; margin-bottom: 1rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
+        .modal-form input[type="text"]:focus, .modal-form input[type="email"]:focus, .modal-form textarea:focus { outline: none; border-color: #ff69b4; box-shadow: 0 0 15px rgba(255,105,180,0.3); }
+        .modal-form .form-submit-button { /* .button-base provides most styling */ margin-top:1rem; /* Removed align-self */ width: 100%; /* Make submit button full width of modal form */ }
         .form-message { text-align: center; margin-top: 1rem; padding: 0.8rem; border-radius: 8px; display: none; }
         .form-message.success { background-color: rgba(100, 255, 150, 0.2); border: 1px solid #64ff96; color: #ccffee; }
         .form-message.error { background-color: rgba(255, 100, 100, 0.2); border: 1px solid #ff6464; color: #ffcccc; }
@@ -196,9 +144,9 @@
             .hero h1 { font-size: clamp(2rem, 8vw, 3rem); } .hero p { font-size: clamp(0.9rem, 4vw, 1.1rem); }
             .button-base, .cta-button { padding: 0.8rem 1.8rem; font-size: 0.9rem; min-width: 160px; }
             .section { padding: 4rem 1.5rem; margin: 3rem auto; } .section h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); } .section p, .section li { font-size: 1rem; }
-            .social-links { gap: 1rem; } .social-link { /* min-width might be inherited from button-base or can be set here */ }
+            .social-links { gap: 1rem; }
             .features-grid { grid-template-columns: 1fr; gap: 1.5rem; } .feature-card { padding: 1.5rem; } .feature-card h3 { font-size: 1.2rem; } .feature-card p { font-size: 0.9rem; }
-            #contact-section-display .centered-text { max-width: 90%; }
+            #contact-section-display .centered-text { max-width: 90%; } /* Changed to ID instead of general #contact */
             .modal { width: 95%; padding: 1.5rem; } .modal-header h3 { font-size: 1.5rem; }
         }
 
@@ -229,11 +177,12 @@
     <section id="join" class="section"> <div class="container"> <h2>Ready for a New Beginning?</h2> <p class="centered-text" style="margin-bottom: 3rem;"> Your next great adventure awaits! If you're passionate about trucking and looking for a welcoming community with an exciting twist, Isekai Express is your destination. </p> 
         <div class="join-buttons-container"> 
             <a href="https://discord.gg/uE96rbK95j" target="_blank" class="cta-button button-base">Apply on Discord</a> 
-            <button class="cta-button modal-trigger-btn button-base" data-modal-target="guidelinesModal" style="background: linear-gradient(45deg, #5c2c7b, #7b1fa2); border-color:#c386f1;">View Guidelines</button> 
+            <button class="cta-button modal-trigger-btn button-base" data-modal-target="guidelinesModal">View Guidelines</button> 
+            <!-- REMOVED inline style from View Guidelines button -->
         </div> 
     </div> </section>
     
-    <!-- Original Contact Section -->
+    <!-- Original Contact Section (Now called Contact Section Display) -->
     <section id="contact-section-display" class="section"> <div class="container"> <h2>Connect With Us</h2> <p class="centered-text" style="margin-bottom: 2.5rem;"> Have questions or just want to chat? Reach out! We're always happy to connect with fellow trucking enthusiasts and potential recruits. </p> 
         <div class="social-links"> 
             <a href="https://discord.gg/uE96rbK95j" target="_blank" class="social-link button-base"> Discord Server</a> 
@@ -245,32 +194,14 @@
     <!-- Footer -->
     <footer style="background: linear-gradient(135deg, rgba(10, 10, 25, 0.98), rgba(26, 0, 51, 0.95)); color: #fff; text-align: center; padding: 3rem; margin-top: 2rem; border-top: 2px solid rgba(255, 105, 180, 0.3);"> <p>© <span id="currentYear"></span> Isekai Express VTC. All rights reserved. | For Euro Truck Simulator 2 & American Truck Simulator.</p> <p class="japanese-phrase" style="color: rgba(255, 105, 180, 0.9); margin-top: 0.5rem;">異世界への旅路を始めよう - Embark on your journey to another world!</p> </footer>
     
-    <!-- Contact Email Modal -->
-    <div class="modal-overlay" id="contactModalOverlay"> 
-        <div class="modal" id="contactModal"> 
-            <div class="modal-header"> <h3>Contact Us via Email</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> 
-            <div class="modal-content" id="contactModalContent"> 
-                <p>You can also send us a direct message using the form below, or email us at:</p> 
-                <a href="mailto:expressisekai@gmail.com" class="email-address">expressisekai@gmail.com</a>
-                <h4 style="margin-top: 2rem; margin-bottom: 1rem; color: #ffaeef; text-align:center;">Send a Quick Message</h4>
-                <form name="contact-form" class="modal-form" netlify data-netlify-honeypot="bot-field-contact">
-                    <p style="display:none;"><label>Don’t fill this out if you’re human: <input name="bot-field-contact" /></label></p>
-                    <div> <label for="contactName">Your Name:</label> <input type="text" id="contactName" name="name" required> </div>
-                    <div> <label for="contactEmailField">Your Email:</label> <input type="email" id="contactEmailField" name="email" required> </div>
-                    <div> <label for="contactMessage">Message:</label> <textarea id="contactMessage" name="message" rows="5" required></textarea> </div>
-                    <button type="submit" class="button-base form-submit-button">Send Message</button>
-                </form>
-                <div class="form-message" id="contactFormMessage"></div>
-            </div> 
-        </div> 
-    </div>
-
+    <!-- Contact Email Modal (structure is the same, form details for Netlify) -->
+    <div class="modal-overlay" id="contactModalOverlay"> <div class="modal" id="contactModal"> <div class="modal-header"> <h3>Contact Us via Email</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> <div class="modal-content" id="contactModalContent"> <p>You can also send us a direct message using the form below, or email us at:</p> <a href="mailto:expressisekai@gmail.com" class="email-address">expressisekai@gmail.com</a><h4 style="margin-top: 2rem; margin-bottom: 1rem; color: #ffaeef; text-align:center;">Send a Quick Message</h4><form name="contact-form" class="modal-form" netlify data-netlify-honeypot="bot-field-contact"><p style="display:none;"><label>Don’t fill this out if you’re human: <input name="bot-field-contact" /></label></p><div> <label for="contactName">Your Name:</label> <input type="text" id="contactName" name="name" required> </div><div> <label for="contactEmailField">Your Email:</label> <input type="email" id="contactEmailField" name="email" required> </div><div> <label for="contactMessage">Message:</label> <textarea id="contactMessage" name="message" rows="5" required></textarea> </div><button type="submit" class="button-base form-submit-button">Send Message</button></form><div class="form-message" id="contactFormMessage"></div> </div> </div> </div>
     <!-- Guidelines Modal (Content unchanged, only structure) -->
     <div class="modal-overlay" id="guidelinesModalOverlay"> <div class="modal" id="guidelinesModal"> <div class="modal-header"> <h3>VTC Guidelines</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> <div class="modal-content" id="guidelinesModalContent"> <p>Welcome to Isekai Express! To ensure a fantastic experience for all our drivers, please adhere to the following guidelines:</p> <ul> <li><strong>Respect & Professionalism:</strong> Treat all members, staff, and other road users (in-game) with respect and maintain a professional attitude. No harassment, discrimination, or offensive behavior will be tolerated.</li> <li><strong>Discord Activity:</strong> Our Discord server (<a href="https://discord.gg/uE96rbK95j" target="_blank">https://discord.gg/uE96rbK95j</a>) is our main hub. Please check for announcements and participate actively.</li> <li><strong>In-Game Representation:</strong> Wear the official VTC paint job and in-game tag (`[IKAI]` or `[ISEX]`) when representing Isekai Express, especially during official convoys or public events.</li> <li><strong>Job Logging:</strong> (If applicable, e.g., using TrucksBook) Ensure all jobs completed for the VTC are logged accurately and in a timely manner. Adhere to any specified speed limits for logged jobs if required by the VTC.</li> <li><strong>Convoy Etiquette:</strong> <ul> <li>Follow instructions from convoy leaders.</li> <li>Maintain a safe distance from other trucks.</li> <li>No reckless driving, ramming, or blocking.</li> <li>Use appropriate voice/text channels for communication.</li> <li>Be on time for convoy departures.</li> </ul> </li> <li><strong>Activity Requirements:</strong> (Example - You can adjust this) We encourage regular participation. Members may be required to log a minimum number of jobs/miles per month or attend a certain number of convoys to maintain active status. Specifics will be detailed on Discord.</li> <li><strong>Game Modifications:</strong> Only use mods approved by VTC management during official events to prevent conflicts. ProMods usage may be required for certain routes/events.</li> <li><strong>Have Fun!:</strong> While we aim for professionalism, remember that we're here to enjoy the trucking simulation experience together!</li> </ul> <p style="margin-top:1.5rem;">Detailed rules and updates will always be available on our Discord server. Happy trucking!</p> </div> </div> </div>
     
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- CURSOR, PETALS, PARTICLES, NAVBAR, SECTION OBSERVER, SMOOTH SCROLL (Mostly Unchanged) ---
+        // --- CURSOR, PETALS, PARTICLES, NAVBAR, SECTION OBSERVER, SMOOTH SCROLL ---
         const cursor = document.querySelector('.cursor'); const cursorTrail = document.querySelector('.cursor-trail');
         let mouseX = 0, mouseY = 0; let trailX = 0, trailY = 0; const trailSmoothness = 0.15;
         function updateCursorPosition(e) { mouseX = e.clientX; mouseY = e.clientY; }
@@ -295,7 +226,7 @@
         window.addEventListener('scroll', updateActiveLink); updateActiveLink();
         const currentYearSpan = document.getElementById('currentYear'); if(currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
-        // --- MODAL FUNCTIONALITY (Petals and basic open/close) ---
+        // --- MODAL FUNCTIONALITY ---
         const modalTriggerButtons = document.querySelectorAll('.modal-trigger-btn'); const modalCloseButtons = document.querySelectorAll('[data-modal-close]'); const overlays = document.querySelectorAll('.modal-overlay'); const numModalPetals = 15;
         function createModalPetal(modalContentElement) { const petal = document.createElement('div'); petal.classList.add('modal-petal'); const size = Math.random() * 8 + 8; petal.style.width = size + 'px'; petal.style.height = size * 0.6 + 'px'; petal.style.left = Math.random() * 90 + 5 + '%'; petal.style.animationDelay = Math.random() * 7 + 's'; petal.style.animationDuration = Math.random() * 4 + 6 + 's'; petal.style.setProperty('--sway-factor', (Math.random() - 0.5) * 3); modalContentElement.appendChild(petal); }
         function openModal(modalId) { const modalOverlay = document.getElementById(modalId + "Overlay"); if (modalOverlay) { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; const modalContent = modalOverlay.querySelector('.modal-content'); if (modalContent) { modalContent.querySelectorAll('.modal-petal').forEach(p => p.remove()); for (let i = 0; i < numModalPetals; i++) { createModalPetal(modalContent); } } } }
@@ -312,50 +243,33 @@
         if (contactForm && formMessageContainer) {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                formMessageContainer.style.display = 'none'; // Hide previous message
-                formMessageContainer.className = 'form-message'; // Reset classes
-                
+                formMessageContainer.style.display = 'none'; formMessageContainer.className = 'form-message'; 
                 const formData = new FormData(contactForm);
                 const submitButton = contactForm.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.textContent;
-                submitButton.textContent = 'Sending...';
-                submitButton.disabled = true;
+                submitButton.textContent = 'Sending...'; submitButton.disabled = true;
 
-                fetch("/", { // Netlify handles submissions to the current page path if the form has 'netlify' attribute
-                    method: "POST",
-                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                    body: new URLSearchParams(formData).toString() 
-                })
+                fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(formData).toString() })
                 .then(response => {
                     if (response.ok) {
                         formMessageContainer.textContent = "Thanks for your message! We'll be in touch soon.";
-                        formMessageContainer.classList.add('success');
-                        contactForm.reset();
-                        // Optional: auto-close modal after a delay
-                        // setTimeout(() => closeModal(document.getElementById('contactModalOverlay')), 3000);
+                        formMessageContainer.classList.add('success'); contactForm.reset();
                     } else {
-                        // Attempt to parse error if Netlify sends one back as JSON (might not always be the case)
-                        response.json().then(data => {
-                            formMessageContainer.textContent = data.error || "Oops! There was a problem submitting your form. Please try again or use the email address directly.";
-                        }).catch(() => {
-                             formMessageContainer.textContent = "Oops! There was a problem submitting your form (error status: " + response.status + "). Please try again or use the email address directly.";
-                        });
+                        response.json().then(data => { formMessageContainer.textContent = data.error || "Oops! There was a problem submitting your form.";
+                        }).catch(() => { formMessageContainer.textContent = "Oops! There was a problem (status: " + response.status + ")."; });
                         formMessageContainer.classList.add('error');
                     }
                 })
                 .catch(error => {
-                    formMessageContainer.textContent = "Oops! Something went wrong. Please check your internet connection or use the email address directly.";
-                    formMessageContainer.classList.add('error');
-                    console.error('Form submission error:', error);
+                    formMessageContainer.textContent = "Oops! Something went wrong. Check connection or email directly.";
+                    formMessageContainer.classList.add('error'); console.error('Form submission error:', error);
                 })
                 .finally(() => {
                     formMessageContainer.style.display = 'block';
-                    submitButton.textContent = originalButtonText;
-                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText; submitButton.disabled = false;
                 });
             });
         }
-
     }); // End DOMContentLoaded
     </script>
 </body>
