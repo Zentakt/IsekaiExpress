@@ -4,28 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Isekai Express - Virtual Trucking Company</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Noto Sans JP', sans-serif; 
-            line-height: 1.6; 
-            color: #fff; /* Default text color to white for dark theme */
-            overflow-x: hidden; 
-            background: #0f0f23; 
-            cursor: none; 
-        }
+        body { font-family: 'Noto Sans JP', sans-serif; line-height: 1.6; color: #333; overflow-x: hidden; background: #0f0f23; cursor: none; }
 
-        /* --- CURSOR, BACKGROUNDS, PETALS, MODAL STYLES --- */
+        /* Custom Cursor */
         .cursor { width: 20px; height: 20px; border: 2px solid #ff69b4; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease, background-color 0.1s ease, box-shadow 0.1s ease, opacity 0.2s ease; transform: translate(-50%, -50%); background: rgba(255, 105, 180, 0.1); backdrop-filter: blur(5px); box-shadow: 0 0 20px #ff69b4; opacity: 0; }
         .cursor-trail { width: 30px; height: 30px; border: 1px solid rgba(255, 105, 180, 0.3); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.2s ease-out, opacity 0.3s ease; transform: translate(-50%, -50%); opacity: 0; }
-        body.modal-active { overflow: hidden; }
         body:hover .cursor, body:hover .cursor-trail { opacity: 1; }
         .cursor.clicking { transform: translate(-50%, -50%) scale(0.5); background: #ff69b4; box-shadow: 0 0 30px #ff69b4, 0 0 50px #ff1493; }
 
+        /* Backgrounds & Global Petals */
         .parallax-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(135deg, #0f0f23 0%, #1a0033 15%, #330066 30%, #ff0066 50%, #ff6699 70%, #ffb3d9 85%, #ffffff 100%); background-size: 400% 400%; animation: sakuraGradient 20s ease infinite; z-index: -2; }
         .parallax-bg::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 20% 20%, rgba(255, 105, 180, 0.2) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(138, 43, 226, 0.2) 0%, transparent 50%), radial-gradient(circle at 50% 50%, rgba(255, 20, 147, 0.15) 0%, transparent 50%); animation: floatingLights 15s ease-in-out infinite; }
         .sakura-petals { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; overflow: hidden; }
@@ -34,9 +25,10 @@
         .modal-petal { position: absolute; background-color: #ff99cc; border-radius: 40% 0 40% 0; opacity: 0.6; animation: modalFallAndSway 8s linear infinite; box-shadow: 0 0 4px rgba(255, 153, 204, 0.4); }
         @keyframes sakuraGradient { 0%, 100% { background-position: 0% 50%; } 25% { background-position: 100% 50%; } 50% { background-position: 50% 100%; } 75% { background-position: 0% 0%; } }
         @keyframes floatingLights { 0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); opacity: 0.4; } 33% { transform: translateY(-20px) rotate(120deg) scale(1.1); opacity: 0.7; } 66% { transform: translateY(-10px) rotate(240deg) scale(0.9); opacity: 0.5; } }
-        @keyframes fallAndSway { 0% { transform: translateY(-10vh) translateX(0vw) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(110vh) translateX(calc(10vw * var(--sway-factor, 1))) rotate(720deg); opacity: 0; } }
-        @keyframes modalFallAndSway { 0% { transform: translateY(-10%) translateX(0px) rotate(0deg); opacity: 0.7; } 100% { transform: translateY(110%) translateX(calc(15% * var(--sway-factor, 1))) rotate(480deg); opacity: 0; } }
+        @keyframes fallAndSway { 0% { transform: translateY(-10vh) translateX(0vw) rotate(0deg); opacity: 0.8; } 100% { transform: translateY(110vh) translateX(calc(10vw * var(--sway-factor))) rotate(720deg); opacity: 0; } }
+        @keyframes modalFallAndSway { 0% { transform: translateY(-10%) translateX(0px) rotate(0deg); opacity: 0.7; } 100% { transform: translateY(110%) translateX(calc(15% * var(--sway-factor))) rotate(480deg); opacity: 0; } }
 
+        /* Navigation */
         nav { position: fixed; top: 0; width: 100%; background: rgba(15, 15, 35, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index: 1000; padding: 1rem 0; transition: background 0.3s ease, box-shadow 0.3s ease, padding 0.3s ease; border-bottom: 1px solid rgba(255, 105, 180, 0.2); }
         nav.scrolled { background: rgba(10, 10, 25, 0.85); box-shadow: 0 5px 30px rgba(255, 105, 180, 0.2); padding: 0.75rem 0; border-bottom: 1px solid rgba(255, 105, 180, 0.4); }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 2rem; }
@@ -49,42 +41,49 @@
         .nav-menu a:hover, .nav-menu a.active-link, .nav-menu .modal-trigger-btn:hover { color: #fff; text-shadow: 0 0 10px #ff69b4, 0 0 15px #ff69b4; }
         .nav-menu a:hover::before, .nav-menu a.active-link::before, .nav-menu .modal-trigger-btn:hover::before { width: 100%; }
         .nav-toggle { display: none; flex-direction: column; justify-content: space-around; width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 1001; }
-        .nav-toggle span { width: 30px; height: 3px; background: #fff; border-radius: 2px; transition: all 0.3s linear; transform-origin: 1px; }
+        .nav-toggle span { width: 30px; height: 3px; background: #fff; border-radius: 2px; transition: all 0.3s linear; }
 
-        /* Hero Section */
-        .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; position: relative; z-index: 1; padding: 0 1rem; overflow: hidden; }
-        .hero-content { max-width: 800px; padding: 0 2rem; position: relative; }
+        /* Hero Section & Button Base Style */
+        .hero { height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; position: relative; z-index: 1; padding: 0 1rem; }
+        .hero-content { max-width: 800px; padding: 0 2rem; animation: fadeInUp 1s ease-out 0.5s forwards; opacity: 0; position: relative; }
         .hero-content::before { content: "異世界エクスプレス"; position: absolute; top: -60px; left: 50%; transform: translateX(-50%); font-size: 1.2rem; color: rgba(255, 105, 180, 0.7); font-weight: 300; text-shadow: 0 0 5px rgba(255, 105, 180, 0.5); }
-        .hero-title-gsap { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.3); background: linear-gradient(45deg, #fff, #ffaeef, #ff69b4, #ff1493, #f5aaff, #fff); background-size: 300% 300%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: animeTextShine 4s ease-in-out infinite; font-weight: 900; }
-        .hero-subtitle-gsap, .hero-desc-gsap { font-size: clamp(1rem, 2.5vw, 1.3rem); margin-bottom: 2rem; text-shadow: 0 0 8px rgba(255, 105, 180, 0.3); color: rgba(255, 255, 255, 0.9); }
+        .hero h1 { font-size: clamp(2.5rem, 6vw, 4rem); margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.3); background: linear-gradient(45deg, #fff, #ffaeef, #ff69b4, #ff1493, #f5aaff, #fff); background-size: 300% 300%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: animeTextShine 4s ease-in-out infinite; font-weight: 900; }
+        .hero p { font-size: clamp(1rem, 2.5vw, 1.3rem); margin-bottom: 2rem; text-shadow: 0 0 8px rgba(255, 105, 180, 0.3); color: rgba(255, 255, 255, 0.9); }
         
         .button-base { display: inline-flex; align-items: center; justify-content: center; padding: 0.9rem 2.2rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 50px; text-decoration: none; color: #fff; background: linear-gradient(45deg, #2a004b, #4b0082); border: 2px solid #ff69b4; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); position: relative; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1; cursor: pointer; min-width: 200px; text-align: center; }
         .button-base::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(60deg, #ff69b4, #ff1493, #a246ff); transition: left 0.4s ease; z-index: -1; }
         .button-base:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 25px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.2); border-color: #ff1493; color: #fff; }
         .button-base:hover::before { left: 0; }
         .button-base:active { transform: translateY(-1px) scale(0.99); box-shadow: 0 3px 10px rgba(255, 105, 180, 0.6); }
+        .cta-button { /* Inherits from .button-base */ }
         .join-buttons-container { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 1.5rem; }
 
-        /* Sections */
-        .section { padding: 5rem 2rem; background: linear-gradient(145deg, rgba(20, 20, 45, 0.96), rgba(30, 0, 55, 0.92), rgba(55, 0, 105, 0.88), rgba(255, 105, 180, 0.05)); margin: 8rem auto; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 105, 180, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 105, 180, 0.2); position: relative; max-width: 1200px; overflow: hidden; }
-        .section .container { max-width: 1100px; margin: 0 auto; position: relative; z-index: 1; }
+        /* Sections & General Styles */
+        .section { padding: 5rem 2rem; background: linear-gradient(145deg, rgba(20, 20, 45, 0.96), rgba(30, 0, 55, 0.92), rgba(55, 0, 105, 0.88), rgba(255, 105, 180, 0.05)); margin: 5rem auto; border-radius: 25px; box-shadow: 0 15px 50px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(255, 105, 180, 0.15); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 1px solid rgba(255, 105, 180, 0.2); transform: translateY(30px); opacity: 0; transition: transform 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1); position: relative; max-width: 1200px; }
+        .section .container { max-width: 1100px; margin: 0 auto; }
         .section::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at 10% 20%, rgba(255, 105, 180, 0.08) 0%, transparent 40%), radial-gradient(circle at 90% 80%, rgba(138, 43, 226, 0.08) 0%, transparent 40%); border-radius: inherit; pointer-events: none; opacity: 0.7; animation: subtlePulse 8s ease-in-out infinite; }
         @keyframes subtlePulse { 0%, 100% { opacity: 0.5; transform: scale(1); } 50% { opacity: 0.8; transform: scale(1.02); } }
-        
+        .section.visible { transform: translateY(0); opacity: 1; }
         .section h2 { font-size: clamp(2rem, 5vw, 3rem); text-align: center; margin-bottom: 3rem; color: #fff; text-shadow: 0 0 15px rgba(255, 105, 180, 0.4), 0 0 30px rgba(255, 20, 147, 0.3); background: linear-gradient(60deg, #fff, #ffaeef, #ff69b4, #ff1493, #f5aaff); background-size: 250% 250%; background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: animeTextShine 5s ease-in-out infinite; font-weight: 900; position: relative; }
         .section h2::after { content: ''; position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); width: 80px; height: 4px; background: linear-gradient(90deg, transparent, #ff69b4, #ff1493, transparent); border-radius: 2px; box-shadow: 0 0 10px #ff69b4; }
         .section p, .section li { color: rgba(230, 230, 250, 0.85); font-size: 1.1rem; line-height: 1.7; text-shadow: 0 0 5px rgba(0,0,0,0.5); }
         .section .centered-text { font-size: 1.2rem; text-align: center; max-width: 800px; margin-left: auto; margin-right: auto; color: rgba(255, 255, 255, 0.9); text-shadow: 0 0 10px rgba(255, 105, 180, 0.3); }
 
+        /* Social Links Section ("Connect With Us" Buttons) */
         #contact-section-display { background: linear-gradient(145deg, rgba(10, 10, 30, 0.98), rgba(20, 0, 40, 0.96), rgba(40, 0, 80, 0.92)); border: 2px solid rgba(255, 105, 180, 0.3); }
         #contact-section-display h2::before { content: "繋がる"; position: absolute; top: -45px; left: 50%; transform: translateX(-50%); font-size: 1rem; color: rgba(255, 105, 180, 0.7); font-weight: 300; }
         .social-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1.5rem; margin-top: 3rem; max-width: 900px; margin-left: auto; margin-right: auto; }
-        .social-link { background: linear-gradient(135deg, rgba(255, 105, 180, 0.08), rgba(138, 43, 226, 0.08)); border: 1px solid rgba(255, 105, 180, 0.25); }
+        .social-link { /* This inherits from .button-base. Override for different look */
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.08), rgba(138, 43, 226, 0.08)); 
+            border: 1px solid rgba(255, 105, 180, 0.25);
+            font-size: 0.85rem; 
+        }
         .social-link:hover { border-color: #ff3399; text-shadow: 0 0 8px rgba(255, 105, 180, 0.7); }
         .social-link.button-base::before { background: linear-gradient(60deg, rgba(255,105,180,0.3), rgba(255,20,147,0.3)); }
 
+        /* Features grid & Cards */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; margin-top: 3rem; }
-        .feature-card { background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.06)); padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 105, 180, 0.05), inset 0 0 20px rgba(255,105,180,0.03); text-align: center; transition: transform 0.3s ease, box-shadow 0.3s ease; border: 1px solid rgba(255, 105, 180, 0.15); position: relative; overflow: hidden; color: rgba(230, 230, 250, 0.9); backdrop-filter: blur(5px); }
+        .feature-card { background: linear-gradient(145deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.06)); padding: 2rem; border-radius: 15px; box-shadow: 0 8px 25px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255, 105, 180, 0.05), inset 0 0 20px rgba(255,105,180,0.03); text-align: center; transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); border: 1px solid rgba(255, 105, 180, 0.15); position: relative; overflow: hidden; color: rgba(230, 230, 250, 0.9); backdrop-filter: blur(5px); }
         .feature-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 5px; background: linear-gradient(90deg, #ff69b4, #ff1493, #8a2be2); opacity: 0.8; transition: opacity 0.3s ease, height 0.3s ease; }
         .feature-card:hover { transform: translateY(-8px); box-shadow: 0 15px 40px rgba(0,0,0,0.4), 0 0 30px rgba(255, 105, 180, 0.15), inset 0 0 0 1px rgba(255, 105, 180, 0.3); }
         .feature-card:hover::before { opacity: 1; height: 6px; }
@@ -93,15 +92,19 @@
         .feature-card h3 { color: #fff; margin-bottom: 0.75rem; font-weight: 700; font-size: 1.3rem; }
         .feature-card p { font-size: 0.95rem; line-height: 1.6; color: rgba(230, 230, 250, 0.8); }
 
+        /* Particle effects & Other Animations */
         .particle-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
         .particle { position: absolute; background: #ff69b4; border-radius: 50%; pointer-events: none; animation: particleFloat 4s ease-in-out infinite alternate; opacity: 0; box-shadow: 0 0 10px #ff69b4, 0 0 15px #ff1493; }
         @keyframes particleFloat { 0% { transform: translateY(0px) rotate(0deg) scale(0.8); opacity: 0.5; } 50% { transform: translateY(-25px) rotate(180deg) scale(1); opacity: 0.9; } 100% { transform: translateY(0px) rotate(360deg) scale(0.8); opacity: 0.5; } }
         @keyframes animeTextShine { 0% { background-position: -200% center; } 50% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* Footer */
         footer { background: linear-gradient(135deg, rgba(10, 10, 25, 0.9), rgba(15, 0, 35, 0.85)); color: rgba(255, 255, 255, 0.7); text-align: center; padding: 2.5rem 1rem; margin-top: 4rem; border-top: 1px solid rgba(255, 105, 180, 0.2); font-size: 0.9rem; }
         footer p { margin-bottom: 0.5rem; line-height: 1.5; }
         footer .japanese-phrase { color: rgba(255, 105, 180, 0.9); margin-top: 0.5rem; font-weight: 500; }
 
+        /* Modal Styles */
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(10, 5, 20, 0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 1001; display: none; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.4s ease; }
         .modal-overlay.active { display: flex; opacity: 1; }
         .modal { background: linear-gradient(145deg, rgba(30, 20, 55, 0.97), rgba(40, 10, 70, 0.95)); border: 1px solid rgba(255, 105, 180, 0.4); border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 2px rgba(255, 105, 180, 0.1); padding: 2.5rem; max-width: 90%; width: 600px; max-height: 90vh; overflow-y: auto; position: relative; text-align: left; color: #e0e0e0; transform: scale(0.9) translateY(20px); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -121,6 +124,7 @@
         .modal::-webkit-scrollbar-thumb { background: linear-gradient(#ff69b4, #8a2be2); border-radius: 4px; }
         .modal::-webkit-scrollbar-thumb:hover { background: linear-gradient(#ff1493, #4b0082); }
 
+        /* Form styling within modal */
         .modal-form label { display: block; margin-bottom: 0.5rem; color: #e0e0e0; font-weight: 500; }
         .modal-form input[type="text"], .modal-form input[type="email"], .modal-form textarea { width: 100%; padding: 0.85rem; border-radius: 8px; border: 1px solid rgba(255,105,180,0.3); background: rgba(0,0,0,0.3); color: #fff; font-family: 'Noto Sans JP', sans-serif; font-size: 1rem; margin-bottom: 1rem; transition: border-color 0.3s ease, box-shadow 0.3s ease; }
         .modal-form input[type="text"]:focus, .modal-form input[type="email"]:focus, .modal-form textarea:focus { outline: none; border-color: #ff69b4; box-shadow: 0 0 15px rgba(255,105,180,0.3); }
@@ -129,215 +133,150 @@
         .form-message.success { background-color: rgba(100, 255, 150, 0.2); border: 1px solid #64ff96; color: #ccffee; }
         .form-message.error { background-color: rgba(255, 100, 100, 0.2); border: 1px solid #ff6464; color: #ffcccc; }
 
+
+        /* Mobile Responsive */
         @media (max-width: 768px) {
             .nav-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(15, 15, 35, 0.98); backdrop-filter: blur(10px); flex-direction: column; align-items: center; padding: 1rem 0; border-top: 1px solid rgba(255, 105, 180, 0.3); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-            .nav-menu.active { display: flex; } 
-            .nav-menu li { margin: 0.8rem 0; width: 100%; text-align: center; } 
-            .nav-menu li:first-child { margin-left: 0; }
+            .nav-menu.active { display: flex; } .nav-menu li { margin: 0.8rem 0; width: 100%; text-align: center; } .nav-menu li:first-child { margin-left: 0; }
             .nav-menu a, .nav-menu .modal-trigger-btn { padding: 0.8rem 1rem; display: block; width: 100%; }
             .nav-toggle { display: flex; }
-            .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-            .nav-toggle.active span:nth-child(2) { opacity: 0; }
-            .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
-            .hero-content { padding: 0 1rem; }
+            .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); } .nav-toggle.active span:nth-child(2) { opacity: 0; } .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+            .hero h1 { font-size: clamp(2rem, 8vw, 3rem); } .hero p { font-size: clamp(0.9rem, 4vw, 1.1rem); }
+            .button-base, .cta-button { padding: 0.8rem 1.8rem; font-size: 0.9rem; min-width: 160px; }
+            .section { padding: 4rem 1.5rem; margin: 3rem auto; } .section h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); } .section p, .section li { font-size: 1rem; }
+            .social-links { gap: 1rem; }
+            .features-grid { grid-template-columns: 1fr; gap: 1.5rem; } .feature-card { padding: 1.5rem; } .feature-card h3 { font-size: 1.2rem; } .feature-card p { font-size: 0.9rem; }
+            #contact-section-display .centered-text { max-width: 90%; }
+            .modal { width: 95%; padding: 1.5rem; } .modal-header h3 { font-size: 1.5rem; }
         }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 10px; } ::-webkit-scrollbar-track { background: #1a0033; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(#ff69b4, #8a2be2); border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(#ff1493, #4b0082); }
     </style>
 </head>
 <body>
-
-    <div class="cursor"></div>
-    <div class="cursor-trail"></div>
+    <!-- Custom Cursor, Backgrounds, Petals, Particles -->
+    <div class="cursor"></div> <div class="cursor-trail"></div>
     <div class="parallax-bg"></div>
-    <div class="sakura-petals"></div>
+    <div class="sakura-petals" id="sakuraPetalsContainer"></div>
+    <div class="particle-container" id="particleContainer"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar"> <div class="nav-container"> <a href="#home" class="logo scroll-link">Isekai Express</a> <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button> <ul class="nav-menu" id="navMenu"> <li><a href="#home" class="scroll-link active-link">Home</a></li> <li><a href="#about" class="scroll-link">About</a></li> <li><a href="#features" class="scroll-link">Features</a></li> <li><a href="#join" class="scroll-link">Join Us</a></li> <li><button class="modal-trigger-btn" data-modal-target="contactModal">Contact</button></li> </ul> </div> </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero"> <div class="hero-content"> <h1>Isekai Express</h1> <p>Your Journey to Another World of Trucking Excellence</p> <p>Professional Virtual Trucking Company for Euro Truck Simulator 2 & American Truck Simulator</p> <a href="#join" class="cta-button scroll-link button-base">Start Your Adventure</a> </div> </section>
+    <!-- About Section -->
+    <section id="about" class="section"> <div class="container"> <h2>About Isekai Express</h2> <p class="centered-text" style="margin-bottom: 2rem;"> Welcome, Driver! At Isekai Express (異世界エクスプレス), we're not just a VTC; we're a portal to an extraordinary trucking experience. Founded on passion for simulation and a love for captivating narratives, we blend professional logistics with the thrill of exploring new horizons in ETS2 and ATS. </p> <p class="centered-text"> Our mission is to deliver satisfaction, build a vibrant community, and help you forge your legend on the digital highways. Join us, and let's transport your cargo to another world! </p> </div> </section>
+    <!-- Features Section -->
+    <section id="features" class="section"> <div class="container"> <h2>Why Choose Isekai Express?</h2> <div class="features-grid"> <div class="feature-card"> <div class="icon">🎯</div> <h3>Pro Operations</h3> <p>Structured jobs, realistic schedules, and a commitment to VTC professionalism.</p> </div> <div class="feature-card"> <div class="icon">💖</div> <h3>Vibrant Community</h3> <p>Friendly, active drivers from across the globe. We're more than a team, we're Nakama!</p> </div> <div class="feature-card"> <div class="icon">📈</div> <h3>Career Progression</h3> <p>Climb the ranks, unlock special roles, and earn prestigious accolades within our VTC.</p> </div> <div class="feature-card"> <div class="icon">🚚💨</div> <h3>Epic Convoys</h3> <p>Participate in themed convoys, special events, and inter-VTC collaborations.</p> </div> <div class="feature-card"> <div class="icon">✨</div> <h3>Unique Themes</h3> <p>Immerse yourself in our Isekai-inspired world with custom assets and events.</p> </div> <div class="feature-card"> <div class="icon">🌐</div> <h3>Modern Tech</h3> <p>User-friendly dispatch system, real-time tracking, and active Discord support.</p> </div> </div> </div> </section>
     
-    <nav id="navbar">
-        <div class="nav-container">
-            <a href="#" class="logo">Isekai Express</a>
-            <div class="nav-toggle" id="nav-toggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-            <ul class="nav-menu" id="nav-menu">
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#features" class="nav-link">Features</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-                <li><button class="modal-trigger-btn" data-modal="rules-modal">Rules</button></li>
-            </ul>
-        </div>
-    </nav>
-
-    <header class="hero">
-        <div class="hero-content">
-             <h1 class="hero-title-gsap">Welcome to Isekai Express</h1>
-             <p class="hero-subtitle-gsap">Your Gateway to Otherworldly Trucking Adventures</p>
-             <p class="hero-desc-gsap">Join a community of drivers exploring breathtaking virtual landscapes. We deliver more than cargo; we deliver experiences.</p>
-             <div class="join-buttons-container">
-                <a href="#" class="button-base">Join Our Discord</a>
-                <a href="#" class="button-base">Apply Now</a>
-             </div>
-        </div>
-    </header>
+    <!-- Join Section -->
+    <section id="join" class="section"> 
+        <div class="container"> 
+            <h2>Ready for a New Beginning?</h2> 
+            <p class="centered-text" style="margin-bottom: 3rem;"> Your next great adventure awaits! If you're passionate about trucking and looking for a welcoming community with an exciting twist, Isekai Express is your destination. </p> 
+            <div class="join-buttons-container"> 
+                <a href="https://discord.gg/uE96rbK95j" target="_blank" class="cta-button button-base">Apply on Discord</a> 
+                <a href="#" class="cta-button modal-trigger-btn button-base" data-modal-target="guidelinesModal">View Guidelines</a> 
+            </div> 
+        </div> 
+    </section>
     
-    <section id="about" class="section">
-        <div class="container">
-            <h2>About Us</h2>
-            <p class="centered-text">Isekai Express is a virtual trucking company (VTC) for fans of anime, manga, and Japanese culture, driving through the worlds of American Truck Simulator and Euro Truck Simulator 2.</p>
-        </div>
-    </section>
-
-    <section id="features" class="section">
-         <div class="container">
-            <h2>Our Features</h2>
-             <div class="features-grid">
-                <div class="feature-card">
-                    <div class="icon">🎮</div>
-                    <h3>Multi-Game Support</h3>
-                    <p>We operate in both American Truck Simulator and Euro Truck Simulator 2.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="icon">🌸</div>
-                    <h3>Anime Themed</h3>
-                    <p>Enjoy a unique, anime-inspired theme for our community and events.</p>
-                </div>
-                 <div class="feature-card">
-                    <div class="icon">🚚</div>
-                    <h3>Custom Liveries</h3>
-                    <p>Drive with our exclusive, beautifully designed company paint jobs.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="section contact-section-display">
-        <div class="container">
-            <h2>Get In Touch</h2>
-            <p class="centered-text">Ready to join the convoy or have a question? Reach out to us through our social platforms. We're excited to hear from you!</p>
-            <div class="social-links">
-                <a href="#" class="button-base social-link">Discord</a>
-                <a href="#" class="button-base social-link">Twitter</a>
-                <a href="#" class="button-base social-link">Instagram</a>
-            </div>
-        </div>
-    </section>
-
-
-    <footer>
-        <p>&copy; 2025 Isekai Express VTC. All Rights Reserved.</p>
-        <p class="japanese-phrase">安全運転で、異世界を旅しよう！ (Drive safely and travel the other world!)</p>
-    </footer>
-
-    <div class="modal-overlay" id="rules-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3>VTC Rules</h3>
-                <button class="modal-close-btn">&times;</button>
-            </div>
-            <div class="modal-content">
-                <p>Welcome to Isekai Express! To ensure a fun and fair environment for everyone, please adhere to the following rules:</p>
-                <ul>
-                    <li>Respect all fellow drivers and staff. No harassment or hate speech will be tolerated.</li>
-                    <li>Drive safely and realistically during convoys. Follow convoy leader instructions.</li>
-                    <li>Minimum monthly mileage may be required to remain an active driver.</li>
-                    <li>Use the official company livery during all official events.</li>
-                    <li>All TruckersMP rules must be followed at all times.</li>
-                </ul>
-                <p>For a full list of regulations, please check our Discord server. Thank you for being part of our community!</p>
-            </div>
-        </div>
-    </div>
-
-
+    <!-- Contact Section Display -->
+    <section id="contact-section-display" class="section"> <div class="container"> <h2>Connect With Us</h2> <p class="centered-text" style="margin-bottom: 2.5rem;"> Have questions or just want to chat? Reach out! We're always happy to connect with fellow trucking enthusiasts and potential recruits. </p> 
+        <div class="social-links"> 
+            <a href="https://discord.gg/uE96rbK95j" target="_blank" class="social-link button-base"> Discord Server</a> 
+            <button class="social-link modal-trigger-btn button-base" data-modal-target="contactModal"> Email Us</button> 
+            <a href="#" class="social-link button-base" style="opacity: 0.6; pointer-events: none;"> Steam Group <small style="opacity:0.7; font-size:0.8em; display:block;">(Soon!)</small></a> 
+        </div> 
+    </div> </section>
+    
+    <!-- Footer -->
+    <footer style="background: linear-gradient(135deg, rgba(10, 10, 25, 0.98), rgba(26, 0, 51, 0.95)); color: #fff; text-align: center; padding: 3rem; margin-top: 2rem; border-top: 2px solid rgba(255, 105, 180, 0.3);"> <p>© <span id="currentYear"></span> Isekai Express VTC. All rights reserved. | For Euro Truck Simulator 2 & American Truck Simulator.</p> <p class="japanese-phrase" style="color: rgba(255, 105, 180, 0.9); margin-top: 0.5rem;">異世界への旅路を始めよう - Embark on your journey to another world!</p> </footer>
+    
+    <!-- Contact Email Modal -->
+    <div class="modal-overlay" id="contactModalOverlay"> <div class="modal" id="contactModal"> <div class="modal-header"> <h3>Contact Us via Email</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> <div class="modal-content" id="contactModalContent"> <p>You can also send us a direct message using the form below, or email us at:</p> <a href="mailto:expressisekai@gmail.com" class="email-address">expressisekai@gmail.com</a><h4 style="margin-top: 2rem; margin-bottom: 1rem; color: #ffaeef; text-align:center;">Send a Quick Message</h4><form name="contact-form" class="modal-form" netlify data-netlify-honeypot="bot-field-contact"><p style="display:none;"><label>Don’t fill this out if you’re human: <input name="bot-field-contact" /></label></p><div> <label for="contactName">Your Name:</label> <input type="text" id="contactName" name="name" required> </div><div> <label for="contactEmailField">Your Email:</label> <input type="email" id="contactEmailField" name="email" required> </div><div> <label for="contactMessage">Message:</label> <textarea id="contactMessage" name="message" rows="5" required></textarea> </div><button type="submit" class="button-base form-submit-button">Send Message</button></form><div class="form-message" id="contactFormMessage"></div> </div> </div> </div>
+    <!-- Guidelines Modal -->
+    <div class="modal-overlay" id="guidelinesModalOverlay"> <div class="modal" id="guidelinesModal"> <div class="modal-header"> <h3>VTC Guidelines</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> <div class="modal-content" id="guidelinesModalContent"> <p>Welcome to Isekai Express! To ensure a fantastic experience for all our drivers, please adhere to the following guidelines:</p> <ul> <li><strong>Respect & Professionalism:</strong> Treat all members, staff, and other road users (in-game) with respect and maintain a professional attitude. No harassment, discrimination, or offensive behavior will be tolerated.</li> <li><strong>Discord Activity:</strong> Our Discord server (<a href="https://discord.gg/uE96rbK95j" target="_blank">https://discord.gg/uE96rbK95j</a>) is our main hub. Please check for announcements and participate actively.</li> <li><strong>In-Game Representation:</strong> Wear the official VTC paint job and in-game tag (`[IKAI]` or `[ISEX]`) when representing Isekai Express, especially during official convoys or public events.</li> <li><strong>Job Logging:</strong> (If applicable, e.g., using TrucksBook) Ensure all jobs completed for the VTC are logged accurately and in a timely manner. Adhere to any specified speed limits for logged jobs if required by the VTC.</li> <li><strong>Convoy Etiquette:</strong> <ul> <li>Follow instructions from convoy leaders.</li> <li>Maintain a safe distance from other trucks.</li> <li>No reckless driving, ramming, or blocking.</li> <li>Use appropriate voice/text channels for communication.</li> <li>Be on time for convoy departures.</li> </ul> </li> <li><strong>Activity Requirements:</strong> (Example - You can adjust this) We encourage regular participation. Members may be required to log a minimum number of jobs/miles per month or attend a certain number of convoys to maintain active status. Specifics will be detailed on Discord.</li> <li><strong>Game Modifications:</strong> Only use mods approved by VTC management during official events to prevent conflicts. ProMods usage may be required for certain routes/events.</li> <li><strong>Have Fun!:</strong> While we aim for professionalism, remember that we're here to enjoy the trucking simulation experience together!</li> </ul> <p style="margin-top:1.5rem;">Detailed rules and updates will always be available on our Discord server. Happy trucking!</p> </div> </div> </div>
+    
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            
-            // ===================================================================
-            // MOBILE NAVIGATION MENU (Fixed Previously)
-            // ===================================================================
-            const navToggle = document.getElementById('nav-toggle');
-            const navMenu = document.getElementById('nav-menu');
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- CURSOR, PETALS, PARTICLES, NAVBAR, SECTION OBSERVER, SMOOTH SCROLL ---
+        const cursor = document.querySelector('.cursor'); const cursorTrail = document.querySelector('.cursor-trail');
+        let mouseX = 0, mouseY = 0; let trailX = 0, trailY = 0; const trailSmoothness = 0.15;
+        function updateCursorPosition(e) { mouseX = e.clientX; mouseY = e.clientY; }
+        document.addEventListener('mousemove', updateCursorPosition);
+        document.addEventListener('mouseenter', () => { if (cursor) cursor.style.opacity = '1'; if (cursorTrail) cursorTrail.style.opacity = '1'; });
+        document.addEventListener('mouseleave', () => { if (cursor) cursor.style.opacity = '0'; if (cursorTrail) cursorTrail.style.opacity = '0'; });
+        function animateTrail() { trailX += (mouseX - trailX) * trailSmoothness; trailY += (mouseY - trailY) * trailSmoothness; if (cursor) { cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px'; } if (cursorTrail) { cursorTrail.style.left = trailX + 'px'; cursorTrail.style.top = trailY + 'px'; } requestAnimationFrame(animateTrail); }
+        if (cursor && cursorTrail) { animateTrail(); }
+        document.addEventListener('mousedown', () => { if (cursor) cursor.classList.add('clicking'); createClickRipple(mouseX, mouseY); });
+        document.addEventListener('mouseup', () => { if (cursor) cursor.classList.remove('clicking'); });
+        function createClickRipple(x, y) { const ripple = document.createElement('div'); Object.assign(ripple.style, { position: 'fixed', left: x + 'px', top: y + 'px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255, 105, 180, 0.6)', pointerEvents: 'none', zIndex: '9997', transform: 'translate(-50%, -50%) scale(0)', transition: 'transform 0.5s cubic-bezier(0, 0, 0.2, 1), opacity 0.5s cubic-bezier(0, 0, 0.2, 1)' }); document.body.appendChild(ripple); requestAnimationFrame(() => { ripple.style.transform = 'translate(-50%, -50%) scale(10)'; ripple.style.opacity = '0'; }); setTimeout(() => ripple.remove(), 500); }
+        const petalsContainer = document.getElementById('sakuraPetalsContainer'); const numPagePetals = 30; function createPagePetal() { const petal = document.createElement('div'); petal.classList.add('petal'); const size = Math.random() * 10 + 10; petal.style.width = size + 'px'; petal.style.height = size * 0.7 + 'px'; petal.style.left = Math.random() * 100 + 'vw'; petal.style.animationDelay = Math.random() * 10 + 's'; petal.style.animationDuration = Math.random() * 5 + 8 + 's'; petal.style.setProperty('--sway-factor', (Math.random() - 0.5) * 5); if(petalsContainer) petalsContainer.appendChild(petal); }
+        if (petalsContainer) { for (let i = 0; i < numPagePetals; i++) createPagePetal(); }
+        const particleContainer = document.getElementById('particleContainer'); const numParticles = 25; function createParticle() { const particle = document.createElement('div'); particle.classList.add('particle'); const size = Math.random() * 4 + 2; particle.style.width = size + 'px'; particle.style.height = size + 'px'; particle.style.left = Math.random() * 100 + 'vw'; particle.style.top = Math.random() * 100 + 'vh'; particle.style.animationDelay = Math.random() * 5 + 's'; particle.style.animationDuration = Math.random() * 3 + 3 + 's'; particle.style.opacity = Math.random() * 0.4 + 0.2; if (particleContainer) particleContainer.appendChild(particle); }
+        if (particleContainer) { for (let i = 0; i < numParticles; i++) createParticle(); }
+        const navbar = document.getElementById('navbar'); window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
+        const navToggle = document.getElementById('navToggle'); const navMenu = document.getElementById('navMenu'); if (navToggle && navMenu) { navToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); navToggle.classList.toggle('active'); }); }
+        const sections = document.querySelectorAll('.section'); const sectionObserver = new IntersectionObserver((entries) => { entries.forEach(entry => { entry.target.classList.toggle('visible', entry.isIntersecting); }); }, { threshold: 0.15 }); sections.forEach(section => sectionObserver.observe(section));
+        const scrollLinks = document.querySelectorAll('.scroll-link'); const navMenuLinks = document.querySelectorAll('#navMenu a.scroll-link');
+        scrollLinks.forEach(link => { link.addEventListener('click', function(e) { const targetId = this.getAttribute('href'); if (targetId && targetId.startsWith('#')) { e.preventDefault(); const targetElement = document.querySelector(targetId); if (targetElement) { const navbarHeight = navbar.offsetHeight; const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight; window.scrollTo({ top: targetPosition, behavior: 'smooth' }); if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active');} } } }); });
+        function updateActiveLink() { let currentSectionId = ''; sections.forEach(section => { const sectionTop = section.offsetTop - navbar.offsetHeight - 50; if (pageYOffset >= sectionTop && pageYOffset < sectionTop + section.offsetHeight) { currentSectionId = section.getAttribute('id'); } }); if (!currentSectionId && pageYOffset < (sections[0] ? sections[0].offsetTop - navbar.offsetHeight - 50 : 0) ) currentSectionId = 'home'; navMenuLinks.forEach(link => { link.classList.toggle('active-link', link.getAttribute('href') === `#${currentSectionId}`); }); }
+        window.addEventListener('scroll', updateActiveLink); updateActiveLink();
+        const currentYearSpan = document.getElementById('currentYear'); if(currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
 
-            if (navToggle && navMenu) {
-                navToggle.addEventListener('click', () => {
-                    navToggle.classList.toggle('active');
-                    navMenu.classList.toggle('active');
-                });
+        // --- MODAL FUNCTIONALITY ---
+        const modalTriggerButtons = document.querySelectorAll('.modal-trigger-btn'); const modalCloseButtons = document.querySelectorAll('[data-modal-close]'); const overlays = document.querySelectorAll('.modal-overlay'); const numModalPetals = 15;
+        function createModalPetal(modalContentElement) { const petal = document.createElement('div'); petal.classList.add('modal-petal'); const size = Math.random() * 8 + 8; petal.style.width = size + 'px'; petal.style.height = size * 0.6 + 'px'; petal.style.left = Math.random() * 90 + 5 + '%'; petal.style.animationDelay = Math.random() * 7 + 's'; petal.style.animationDuration = Math.random() * 4 + 6 + 's'; petal.style.setProperty('--sway-factor', (Math.random() - 0.5) * 3); modalContentElement.appendChild(petal); }
+        function openModal(modalId) { const modalOverlay = document.getElementById(modalId + "Overlay"); if (modalOverlay) { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; const modalContent = modalOverlay.querySelector('.modal-content'); if (modalContent) { modalContent.querySelectorAll('.modal-petal').forEach(p => p.remove()); for (let i = 0; i < numModalPetals; i++) { createModalPetal(modalContent); } } } }
+        function closeModal(modalOverlay) { if (modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; const modalContent = modalOverlay.querySelector('.modal-content'); if (modalContent) { modalContent.querySelectorAll('.modal-petal').forEach(p => p.remove()); } const formMessage = modalOverlay.querySelector('.form-message'); if (formMessage) { formMessage.style.display = 'none'; formMessage.textContent = ''; } } }
+        modalTriggerButtons.forEach(button => { button.addEventListener('click', (e) => { // Added 'e'
+            if (button.tagName === 'A' && button.getAttribute('href') === '#') { e.preventDefault(); } // Prevent jump for <a>#
+            const modalTargetId = button.dataset.modalTarget; openModal(modalTargetId); 
+        }); });
+        modalCloseButtons.forEach(button => { button.addEventListener('click', () => { const modalOverlay = button.closest('.modal-overlay'); closeModal(modalOverlay); }); });
+        overlays.forEach(overlay => { overlay.addEventListener('click', (e) => { if (e.target === overlay) { closeModal(overlay); } }); });
+        document.addEventListener('keydown', (e) => { if (e.key === "Escape") { document.querySelectorAll('.modal-overlay.active').forEach(overlay => closeModal(overlay)); } });
+        
+        // --- NETLIFY FORM SUBMISSION for Contact Modal ---
+        const contactForm = document.querySelector('form[name="contact-form"]');
+        const formMessageContainer = document.getElementById('contactFormMessage');
 
-                const navLinks = navMenu.querySelectorAll('.nav-link');
-                navLinks.forEach(link => {
-                    link.addEventListener('click', () => {
-                        if (navMenu.classList.contains('active')) {
-                            navToggle.classList.remove('active');
-                            navMenu.classList.remove('active');
-                        }
-                    });
-                });
-            }
-            
-            // ===================================================================
-            // MODAL FUNCTIONALITY (Newly Added)
-            // ===================================================================
-            const modalTriggers = document.querySelectorAll('.modal-trigger-btn');
-            
-            modalTriggers.forEach(trigger => {
-                trigger.addEventListener('click', () => {
-                    const modalId = trigger.getAttribute('data-modal');
-                    const modalOverlay = document.getElementById(modalId);
-                    if (modalOverlay) {
-                        modalOverlay.classList.add('active');
-                        document.body.classList.add('modal-active'); // Prevents background scroll
+        if (contactForm && formMessageContainer) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                formMessageContainer.style.display = 'none'; formMessageContainer.className = 'form-message'; 
+                const formData = new FormData(contactForm);
+                const submitButton = contactForm.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.textContent;
+                submitButton.textContent = 'Sending...'; submitButton.disabled = true;
+
+                fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(formData).toString() })
+                .then(response => {
+                    if (response.ok) {
+                        formMessageContainer.textContent = "Thanks for your message! We'll be in touch soon.";
+                        formMessageContainer.classList.add('success'); contactForm.reset();
+                    } else {
+                        response.json().then(data => { formMessageContainer.textContent = data.error || "Oops! There was a problem submitting your form.";
+                        }).catch(() => { formMessageContainer.textContent = "Oops! There was a problem (status: " + response.status + ")."; });
+                        formMessageContainer.classList.add('error');
                     }
+                })
+                .catch(error => {
+                    formMessageContainer.textContent = "Oops! Something went wrong. Check connection or email directly.";
+                    formMessageContainer.classList.add('error'); console.error('Form submission error:', error);
+                })
+                .finally(() => {
+                    formMessageContainer.style.display = 'block';
+                    submitButton.textContent = originalButtonText; submitButton.disabled = false;
                 });
             });
-
-            const modalOverlays = document.querySelectorAll('.modal-overlay');
-            modalOverlays.forEach(overlay => {
-                const modalCloseBtn = overlay.querySelector('.modal-close-btn');
-                
-                // Close modal via the 'X' button
-                if (modalCloseBtn) {
-                    modalCloseBtn.addEventListener('click', () => {
-                        overlay.classList.remove('active');
-                        document.body.classList.remove('modal-active');
-                    });
-                }
-                
-                // Close modal by clicking on the background overlay
-                overlay.addEventListener('click', (event) => {
-                    if (event.target === overlay) {
-                        overlay.classList.remove('active');
-                        document.body.classList.remove('modal-active');
-                    }
-                });
-            });
-
-
-            // ===================================================================
-            // CURSOR AND SCROLL EFFECTS (Original)
-            // ===================================================================
-            const cursor = document.querySelector('.cursor');
-            const cursorTrail = document.querySelector('.cursor-trail');
-            if(cursor && cursorTrail) {
-                document.addEventListener('mousemove', e => {
-                    cursor.style.left = e.clientX + 'px';
-                    cursor.style.top = e.clientY + 'px';
-                    cursorTrail.style.left = e.clientX + 'px';
-                    cursorTrail.style.top = e.clientY + 'px';
-                });
-
-                document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
-                document.addEventListener('mouseup', () => cursor.classList.remove('clicking'));
-            }
-            
-            const nav = document.getElementById('navbar');
-            window.addEventListener('scroll', () => {
-                if (window.scrollY > 50) {
-                    nav.classList.add('scrolled');
-                } else {
-                    nav.classList.remove('scrolled');
-                }
-            });
-        });
+        }
+    }); // End DOMContentLoaded
     </script>
 </body>
 </html>
