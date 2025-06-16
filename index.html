@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Isekai Express - Virtual Trucking Company</title>
-    <!-- GSAP and ScrollTrigger CDN - ESSENTIAL FOR THESE EFFECTS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <style>
@@ -49,7 +48,7 @@
         .nav-menu a:hover, .nav-menu a.active-link, .nav-menu .modal-trigger-btn:hover { color: #fff; text-shadow: 0 0 10px #ff69b4, 0 0 15px #ff69b4; }
         .nav-menu a:hover::before, .nav-menu a.active-link::before, .nav-menu .modal-trigger-btn:hover::before { width: 100%; }
         .nav-toggle { display: none; flex-direction: column; justify-content: space-around; width: 30px; height: 25px; background: transparent; border: none; cursor: pointer; padding: 0; z-index: 1001; }
-        .nav-toggle span { width: 30px; height: 3px; background: #fff; border-radius: 2px; transition: all 0.3s linear; }
+        .nav-toggle span { width: 30px; height: 3px; background: #fff; border-radius: 2px; transition: all 0.3s linear; transform-origin: 1px; }
 
         /* Hero Section - Prepared for GSAP */
         .hero { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; color: #fff; position: relative; z-index: 1; padding: 0 1rem; overflow: hidden; /* Good for GSAP elements coming from outside */ }
@@ -141,247 +140,26 @@
         .form-message.error { background-color: rgba(255, 100, 100, 0.2); border: 1px solid #ff6464; color: #ffcccc; }
 
         @media (max-width: 768px) {
-            .nav-menu { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(15, 15, 35, 0.98); backdrop-filter: blur(10px); flex-direction: column; align-items: center; padding: 1rem 0; border-top: 1px solid rgba(255, 105, 180, 0.3); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
-            .nav-menu.active { display: flex; } .nav-menu li { margin: 0.8rem 0; width: 100%; text-align: center; } .nav-menu li:first-child { margin-left: 0; }
-            .nav-menu a, .nav-menu .modal-trigger-btn { padding: 0.8rem 1rem; display: block; width: 100%; }
-            .nav-toggle { display: flex; }
-            .nav-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); } .nav-toggle.active span:nth-child(2) { opacity: 0; } .nav-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
-            .hero h1 { font-size: clamp(2rem, 8vw, 3rem); } .hero p { font-size: clamp(0.9rem, 4vw, 1.1rem); }
-            .button-base { padding: 0.8rem 1.8rem; font-size: 0.9rem; min-width: 160px; }
-            .section { padding: 4rem 1.5rem; margin: 3rem auto; } .section h2 { font-size: clamp(1.8rem, 6vw, 2.5rem); } .section p, .section li { font-size: 1rem; }
-            .social-links { gap: 1rem; }
-            .features-grid { grid-template-columns: 1fr; gap: 1.5rem; } .feature-card { padding: 1.5rem; } .feature-card h3 { font-size: 1.2rem; } .feature-card p { font-size: 0.9rem; }
-            #contact-section-display .centered-text { max-width: 90%; }
-            .modal { width: 95%; padding: 1.5rem; } .modal-header h3 { font-size: 1.5rem; }
-        }
-
-        ::-webkit-scrollbar { width: 10px; } ::-webkit-scrollbar-track { background: #1a0033; }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(#ff69b4, #8a2be2); border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(#ff1493, #4b0082); }
-    </style>
-</head>
-<body>
-    <div class="cursor"></div> 
-    <div class="cursor-trail"></div>
-    <div class="parallax-bg"></div>
-    <div class="sakura-petals" id="sakuraPetalsContainer"></div>
-    <div class="particle-container" id="particleContainer"></div>
-
-    <nav id="navbar"> 
-        <div class="nav-container"> 
-            <a href="#home" class="logo scroll-link">Isekai Express</a> 
-            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation"><span></span><span></span><span></span></button> 
-            <ul class="nav-menu" id="navMenu"> 
-                <li><a href="#home" class="scroll-link active-link">Home</a></li> 
-                <li><a href="#about" class="scroll-link">About</a></li> 
-                <li><a href="#features" class="scroll-link">Features</a></li> 
-                <li><a href="#join" class="scroll-link">Join Us</a></li> 
-                <li><button class="modal-trigger-btn" data-modal-target="contactModal">Contact</button></li> 
-            </ul> 
-        </div> 
-    </nav>
-
-    <section id="home" class="hero"> 
-        <div class="hero-content"> 
-            <h1 class="hero-title-gsap">Isekai Express</h1> 
-            <p class="hero-subtitle-gsap">Your Journey to Another World of Trucking Excellence</p> 
-            <p class="hero-desc-gsap">Professional Virtual Trucking Company for Euro Truck Simulator 2 & American Truck Simulator</p> 
-            <a href="#join" class="button-base scroll-link hero-button-gsap">Start Your Adventure</a> 
-        </div> 
-    </section>
-    
-    <section id="about" class="section"> 
-        <div class="container"> 
-            <h2 class="gsap-section-title">About Isekai Express</h2> 
-            <p class="centered-text gsap-section-text" style="margin-bottom: 2rem;"> Welcome, Driver! At Isekai Express (異世界エクスプレス), we're not just a VTC; we're a portal to an extraordinary trucking experience. Founded on passion for simulation and a love for captivating narratives, we blend professional logistics with the thrill of exploring new horizons in ETS2 and ATS. </p> 
-            <p class="centered-text gsap-section-text"> Our mission is to deliver satisfaction, build a vibrant community, and help you forge your legend on the digital highways. Join us, and let's transport your cargo to another world! </p> 
-        </div> 
-    </section>
-    
-    <section id="features" class="section"> 
-        <div class="container"> 
-            <h2 class="gsap-section-title">Why Choose Isekai Express?</h2> 
-            <div class="features-grid"> 
-                <div class="feature-card gsap-feature-card"> <div class="icon">🎯</div> <h3>Pro Operations</h3> <p>Structured jobs, realistic schedules, and a commitment to VTC professionalism.</p> </div> 
-                <div class="feature-card gsap-feature-card"> <div class="icon">💖</div> <h3>Vibrant Community</h3> <p>Friendly, active drivers from across the globe. We're more than a team, we're Nakama!</p> </div> 
-                <div class="feature-card gsap-feature-card"> <div class="icon">📈</div> <h3>Career Progression</h3> <p>Climb the ranks, unlock special roles, and earn prestigious accolades within our VTC.</p> </div> 
-                <div class="feature-card gsap-feature-card"> <div class="icon">🚚💨</div> <h3>Epic Convoys</h3> <p>Participate in themed convoys, special events, and inter-VTC collaborations.</p> </div> 
-                <div class="feature-card gsap-feature-card"> <div class="icon">✨</div> <h3>Unique Themes</h3> <p>Immerse yourself in our Isekai-inspired world with custom assets and events.</p> </div> 
-                <div class="feature-card gsap-feature-card"> <div class="icon">🌐</div> <h3>Modern Tech</h3> <p>User-friendly dispatch system, real-time tracking, and active Discord support.</p> </div> 
-            </div> 
-        </div> 
-    </section>
-    
-    <section id="join" class="section"> 
-        <div class="container"> 
-            <h2 class="gsap-section-title">Ready for a New Beginning?</h2> 
-            <p class="centered-text gsap-section-text" style="margin-bottom: 3rem;"> Your next great adventure awaits! If you're passionate about trucking and looking for a welcoming community with an exciting twist, Isekai Express is your destination. </p> 
-            <div class="join-buttons-container gsap-reveal-buttons"> 
-                <a href="https://discord.gg/uE96rbK95j" target="_blank" class="button-base">Apply on Discord</a> 
-                <a href="#" class="button-base modal-trigger-btn" data-modal-target="guidelinesModal">View Guidelines</a> 
-            </div> 
-        </div> 
-    </section>
-    
-    <section id="contact-section-display" class="section"> 
-        <div class="container"> 
-            <h2 class="gsap-section-title">Connect With Us</h2> 
-            <p class="centered-text gsap-section-text" style="margin-bottom: 2.5rem;"> Have questions or just want to chat? Reach out! We're always happy to connect with fellow trucking enthusiasts and potential recruits. </p> 
-            <div class="social-links gsap-reveal-buttons"> 
-                <a href="https://discord.gg/uE96rbK95j" target="_blank" class="social-link button-base"> Discord Server</a> 
-                <a href="#" class="social-link modal-trigger-btn button-base" data-modal-target="contactModal"> Email Us</a> 
-                <!-- Changed from <button> to <a> for Email Us button consistency -->
-                <a href="#" class="social-link button-base" style="opacity: 0.6; pointer-events: none;"> Steam Group <small style="opacity:0.7; font-size:0.8em; display:block;">(Soon!)</small></a> 
-            </div> 
-        </div> 
-    </section>
-    
-    <footer style="background: linear-gradient(135deg, rgba(10, 10, 25, 0.98), rgba(26, 0, 51, 0.95)); color: #fff; text-align: center; padding: 3rem; margin-top: 2rem; border-top: 2px solid rgba(255, 105, 180, 0.3);"> 
-        <p>© <span id="currentYear"></span> Isekai Express VTC. All rights reserved. | For Euro Truck Simulator 2 & American Truck Simulator.</p> 
-        <p class="japanese-phrase" style="color: rgba(255, 105, 180, 0.9); margin-top: 0.5rem;">異世界への旅路を始めよう - Embark on your journey to another world!</p> 
-    </footer>
-    
-    <div class="modal-overlay" id="contactModalOverlay"> 
-        <div class="modal" id="contactModal"> 
-            <div class="modal-header"> <h3>Contact Us via Email</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> 
-            <div class="modal-content" id="contactModalContent"> 
-                <p>You can also send us a direct message using the form below, or email us at:</p> 
-                <a href="mailto:expressisekai@gmail.com" class="email-address">expressisekai@gmail.com</a>
-                <h4 style="margin-top: 2rem; margin-bottom: 1rem; color: #ffaeef; text-align:center;">Send a Quick Message</h4>
-                <form name="contact-form" class="modal-form" netlify data-netlify-honeypot="bot-field-contact">
-                    <p style="display:none;"><label>Don’t fill this out if you’re human: <input name="bot-field-contact" /></label></p>
-                    <div> <label for="contactName">Your Name:</label> <input type="text" id="contactName" name="name" required> </div>
-                    <div> <label for="contactEmailField">Your Email:</label> <input type="email" id="contactEmailField" name="email" required> </div>
-                    <div> <label for="contactMessage">Message:</label> <textarea id="contactMessage" name="message" rows="5" required></textarea> </div>
-                    <button type="submit" class="button-base form-submit-button">Send Message</button>
-                </form>
-                <div class="form-message" id="contactFormMessage"></div> 
-            </div> 
-        </div> 
-    </div>
-
-    <div class="modal-overlay" id="guidelinesModalOverlay"> 
-        <div class="modal" id="guidelinesModal"> 
-            <div class="modal-header"> <h3>VTC Guidelines</h3> <button class="modal-close-btn" data-modal-close>×</button> </div> 
-            <div class="modal-content" id="guidelinesModalContent"> 
-                <p>Welcome to Isekai Express! To ensure a fantastic experience for all our drivers, please adhere to the following guidelines:</p> 
-                <ul> 
-                    <li><strong>Respect & Professionalism:</strong> Treat all members, staff, and other road users (in-game) with respect and maintain a professional attitude. No harassment, discrimination, or offensive behavior will be tolerated.</li> 
-                    <li><strong>Discord Activity:</strong> Our Discord server (<a href="https://discord.gg/uE96rbK95j" target="_blank">https://discord.gg/uE96rbK95j</a>) is our main hub. Please check for announcements and participate actively.</li> 
-                    <li><strong>In-Game Representation:</strong> Wear the official VTC paint job and in-game tag (`[IKAI]` or `[ISEX]`) when representing Isekai Express, especially during official convoys or public events.</li> 
-                    <li><strong>Job Logging:</strong> (If applicable, e.g., using TrucksBook) Ensure all jobs completed for the VTC are logged accurately and in a timely manner. Adhere to any specified speed limits for logged jobs if required by the VTC.</li> 
-                    <li><strong>Convoy Etiquette:</strong> <ul> <li>Follow instructions from convoy leaders.</li> <li>Maintain a safe distance from other trucks.</li> <li>No reckless driving, ramming, or blocking.</li> <li>Use appropriate voice/text channels for communication.</li> <li>Be on time for convoy departures.</li> </ul> </li> 
-                    <li><strong>Activity Requirements:</strong> (Example - You can adjust this) We encourage regular participation. Members may be required to log a minimum number of jobs/miles per month or attend a certain number of convoys to maintain active status. Specifics will be detailed on Discord.</li> 
-                    <li><strong>Game Modifications:</strong> Only use mods approved by VTC management during official events to prevent conflicts. ProMods usage may be required for certain routes/events.</li> 
-                    <li><strong>Have Fun!:</strong> While we aim for professionalism, remember that we're here to enjoy the trucking simulation experience together!</li> 
-                </ul> 
-                <p style="margin-top:1.5rem;">Detailed rules and updates will always be available on our Discord server. Happy trucking!</p> 
-            </div> 
-        </div> 
-    </div>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- GSAP & ScrollTrigger Advanced Animations ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Hero Entrance
-        gsap.set([".hero-title-gsap", ".hero-subtitle-gsap", ".hero-desc-gsap", ".hero-button-gsap"], { opacity: 0, y: 30 });
-        const heroTl = gsap.timeline({ delay: 0.3, defaults: { ease: "power3.out" } });
-        heroTl
-            .to(".hero-title-gsap", { opacity: 1, y: 0, scale: 1, rotationX: 0, duration: 1.2 })
-            .to(".hero-subtitle-gsap", { opacity: 1, y: 0, duration: 1 }, "-=0.8")
-            .to(".hero-desc-gsap", { opacity: 1, y: 0, duration: 0.9 }, "-=0.7")
-            .to(".hero-button-gsap", { opacity: 1, y:0, scale: 1, duration: 0.8, ease: "elastic.out(1, 0.6)" }, "-=0.6");
-        
-        // Hero Content Parallax
-        gsap.to(".hero-content", {
-            yPercent: -15, // Move hero content up slightly faster than scroll
-            ease: "none",
-            scrollTrigger: {
-                trigger: ".hero",
-                start: "top top",
-                end: "bottom top",
-                scrub: 0.5 
+            .nav-menu { 
+                display: none; 
+                position: absolute; 
+                top: 100%; 
+                left: 0; 
+                width: 100%; 
+                background: rgba(15, 15, 35, 0.98); 
+                backdrop-filter: blur(10px); 
+                flex-direction: column; 
+                align-items: center; 
+                padding: 1rem 0; 
+                border-top: 1px solid rgba(255, 105, 180, 0.3); 
+                box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             }
-        });
-
-        // Section Titles Reveal
-        gsap.utils.toArray(".gsap-section-title").forEach(title => {
-            gsap.from(title, {
-                scrollTrigger: { trigger: title, start: "top 88%", toggleActions: "play none none none" },
-                opacity: 0, y: 50, scale: 0.9, rotationX: -15, duration: 0.8, ease: "circ.out"
-            });
-        });
-
-        // Section Text Paragraphs Reveal
-        gsap.utils.toArray(".gsap-section-text").forEach(text => {
-            gsap.from(text, {
-                scrollTrigger: { trigger: text, start: "top 90%", toggleActions: "play none none none" },
-                opacity: 0, y: 30, duration: 1, ease: "power2.out", delay: 0.2 // Delay after title typically
-            });
-        });
-
-        // Feature Cards Staggered Entrance with varied rotation
-        gsap.utils.toArray(".gsap-feature-card").forEach((card, index) => {
-            gsap.from(card, {
-                scrollTrigger: { trigger: card, start: "top 90%", toggleActions: "play none none none" },
-                opacity: 0, y: 60, scale: 0.95, 
-                rotationZ: Math.random() * 10 - 5, // Random slight rotation between -5 and 5 deg
-                duration: 0.7,
-                delay: index * 0.1, // Stagger
-                ease: "power3.out"
-            });
-        });
-
-        // Buttons Container (e.g., Join Us buttons, Social Links) - staggered reveal
-        gsap.utils.toArray(".gsap-reveal-buttons").forEach(container => {
-             gsap.from(container.querySelectorAll('.button-base'), {
-                scrollTrigger: { trigger: container, start: "top 90%",  toggleActions: "play none none none"},
-                opacity: 0,
-                y: 40,
-                scale: 0.8,
-                duration: 0.5,
-                stagger: 0.15,
-                ease: "back.out(1.2)"
-            });
-        });
-
-
-        // --- Non-GSAP JavaScript (Cursor, Petals, Particles, Navbar Scroll, Modals, Form etc.) ---
-        const cursor = document.querySelector('.cursor'); const cursorTrail = document.querySelector('.cursor-trail');
-        let mouseX = 0, mouseY = 0; let trailX = 0, trailY = 0; const trailSmoothness = 0.15;
-        function updateCursorPosition(e) { mouseX = e.clientX; mouseY = e.clientY; }
-        document.addEventListener('mousemove', updateCursorPosition);
-        document.addEventListener('mouseenter', () => { if (cursor) cursor.style.opacity = '1'; if (cursorTrail) cursorTrail.style.opacity = '1'; });
-        document.addEventListener('mouseleave', () => { if (cursor) cursor.style.opacity = '0'; if (cursorTrail) cursorTrail.style.opacity = '0'; });
-        function animateTrail() { trailX += (mouseX - trailX) * trailSmoothness; trailY += (mouseY - trailY) * trailSmoothness; if (cursor) { cursor.style.left = mouseX + 'px'; cursor.style.top = mouseY + 'px'; } if (cursorTrail) { cursorTrail.style.left = trailX + 'px'; cursorTrail.style.top = trailY + 'px'; } requestAnimationFrame(animateTrail); }
-        if (cursor && cursorTrail) { animateTrail(); }
-        document.addEventListener('mousedown', () => { if (cursor) cursor.classList.add('clicking'); createClickRipple(mouseX, mouseY); });
-        document.addEventListener('mouseup', () => { if (cursor) cursor.classList.remove('clicking'); });
-        function createClickRipple(x, y) { const ripple = document.createElement('div'); Object.assign(ripple.style, { position: 'fixed', left: x + 'px', top: y + 'px', width: '20px', height: '20px', borderRadius: '50%', background: 'rgba(255, 105, 180, 0.6)', pointerEvents: 'none', zIndex: '9997', transform: 'translate(-50%, -50%) scale(0)', transition: 'transform 0.5s cubic-bezier(0, 0, 0.2, 1), opacity 0.5s cubic-bezier(0, 0, 0.2, 1)' }); document.body.appendChild(ripple); requestAnimationFrame(() => { ripple.style.transform = 'translate(-50%, -50%) scale(10)'; ripple.style.opacity = '0'; }); setTimeout(() => ripple.remove(), 500); }
-        const petalsContainer = document.getElementById('sakuraPetalsContainer'); const numPagePetals = 30; function createPagePetal() { const petal = document.createElement('div'); petal.classList.add('petal'); const size = Math.random() * 10 + 10; petal.style.width = size + 'px'; petal.style.height = size * 0.7 + 'px'; petal.style.left = Math.random() * 100 + 'vw'; petal.style.animationDelay = Math.random() * 10 + 's'; petal.style.animationDuration = Math.random() * 5 + 8 + 's'; petal.style.setProperty('--sway-factor', (Math.random() - 0.5) * 5); if(petalsContainer) petalsContainer.appendChild(petal); }
-        if (petalsContainer) { for (let i = 0; i < numPagePetals; i++) createPagePetal(); }
-        const particleContainer = document.getElementById('particleContainer'); const numParticles = 25; function createParticle() { const particle = document.createElement('div'); particle.classList.add('particle'); const size = Math.random() * 4 + 2; particle.style.width = size + 'px'; particle.style.height = size + 'px'; particle.style.left = Math.random() * 100 + 'vw'; particle.style.top = Math.random() * 100 + 'vh'; particle.style.animationDelay = Math.random() * 5 + 's'; particle.style.animationDuration = Math.random() * 3 + 3 + 's'; particle.style.opacity = Math.random() * 0.4 + 0.2; if (particleContainer) particleContainer.appendChild(particle); }
-        if (particleContainer) { for (let i = 0; i < numParticles; i++) createParticle(); }
-        const navbar = document.getElementById('navbar'); window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
-        const navToggle = document.getElementById('navToggle'); const navMenu = document.getElementById('navMenu'); if (navToggle && navMenu) { navToggle.addEventListener('click', () => { navMenu.classList.toggle('active'); navToggle.classList.toggle('active'); }); }
-        const scrollLinks = document.querySelectorAll('.scroll-link'); const navMenuLinks = document.querySelectorAll('#navMenu a.scroll-link');
-        scrollLinks.forEach(link => { link.addEventListener('click', function(e) { const targetId = this.getAttribute('href'); if (targetId && targetId.startsWith('#')) { e.preventDefault(); const targetElement = document.querySelector(targetId); if (targetElement) { const navbarHeight = navbar.offsetHeight; const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - navbarHeight; window.scrollTo({ top: targetPosition, behavior: 'smooth' }); if (navMenu.classList.contains('active')) { navMenu.classList.remove('active'); navToggle.classList.remove('active');} } } }); });
-        function updateActiveLink() { let currentSectionId = ''; const pageSections = document.querySelectorAll('section[id]'); if (pageSections.length > 0) { pageSections.forEach(section => { const sectionTop = section.offsetTop - navbar.offsetHeight - 50; if (pageYOffset >= sectionTop && pageYOffset < sectionTop + section.offsetHeight) { currentSectionId = section.getAttribute('id'); } }); if (!currentSectionId && pageSections[0] && pageYOffset < (pageSections[0].offsetTop - navbar.offsetHeight - 50)) { currentSectionId = 'home'; } } else { currentSectionId = 'home'; } navMenuLinks.forEach(link => { link.classList.toggle('active-link', link.getAttribute('href') === `#${currentSectionId}`); }); }
-        window.addEventListener('scroll', updateActiveLink); updateActiveLink();
-        const currentYearSpan = document.getElementById('currentYear'); if(currentYearSpan) currentYearSpan.textContent = new Date().getFullYear();
-        const modalTriggerButtons = document.querySelectorAll('.modal-trigger-btn'); const modalCloseButtons = document.querySelectorAll('[data-modal-close]'); const overlays = document.querySelectorAll('.modal-overlay'); const numModalPetals = 15;
-        function createModalPetal(modalContentElement) { const petal = document.createElement('div'); petal.classList.add('modal-petal'); const size = Math.random() * 8 + 8; petal.style.width = size + 'px'; petal.style.height = size * 0.6 + 'px'; petal.style.left = Math.random() * 90 + 5 + '%'; petal.style.animationDelay = Math.random() * 7 + 's'; petal.style.animationDuration = Math.random() * 4 + 6 + 's'; petal.style.setProperty('--sway-factor', (Math.random() - 0.5) * 3); modalContentElement.appendChild(petal); }
-        function openModal(modalId) { const modalOverlay = document.getElementById(modalId + "Overlay"); if (modalOverlay) { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; const modalContent = modalOverlay.querySelector('.modal-content'); if (modalContent) { modalContent.querySelectorAll('.modal-petal').forEach(p => p.remove()); for (let i = 0; i < numModalPetals; i++) { createModalPetal(modalContent); } } } }
-        function closeModal(modalOverlay) { if (modalOverlay) { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; const modalContent = modalOverlay.querySelector('.modal-content'); if (modalContent) { modalContent.querySelectorAll('.modal-petal').forEach(p => p.remove()); } const formMessage = modalOverlay.querySelector('.form-message'); if (formMessage) { formMessage.style.display = 'none'; formMessage.textContent = ''; } } }
-        modalTriggerButtons.forEach(button => { button.addEventListener('click', (e) => { if (button.tagName === 'A' && button.getAttribute('href') === '#') { e.preventDefault(); } const modalTargetId = button.dataset.modalTarget; openModal(modalTargetId); }); });
-        modalCloseButtons.forEach(button => { button.addEventListener('click', () => { const modalOverlay = button.closest('.modal-overlay'); closeModal(modalOverlay); }); });
-        overlays.forEach(overlay => { overlay.addEventListener('click', (e) => { if (e.target === overlay) { closeModal(overlay); } }); });
-        document.addEventListener('keydown', (e) => { if (e.key === "Escape") { document.querySelectorAll('.modal-overlay.active').forEach(overlay => closeModal(overlay)); } });
-        const contactForm = document.querySelector('form[name="contact-form"]'); const formMessageContainer = document.getElementById('contactFormMessage');
-        if (contactForm && formMessageContainer) { contactForm.addEventListener('submit', function(e) { e.preventDefault(); formMessageContainer.style.display = 'none'; formMessageContainer.className = 'form-message'; const formData = new FormData(contactForm); const submitButton = contactForm.querySelector('button[type="submit"]'); const originalButtonText = submitButton.textContent; submitButton.textContent = 'Sending...'; submitButton.disabled = true; fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(formData).toString() }).then(response => { if (response.ok) { formMessageContainer.textContent = "Thanks for your message! We'll be in touch soon."; formMessageContainer.classList.add('success'); contactForm.reset(); } else { response.json().then(data => { formMessageContainer.textContent = data.error || "Oops! There was a problem submitting your form."; }).catch(() => { formMessageContainer.textContent = "Oops! There was a problem (status: " + response.status + ")."; }); formMessageContainer.classList.add('error'); } }).catch(error => { formMessageContainer.textContent = "Oops! Something went wrong. Check connection or email directly."; formMessageContainer.classList.add('error'); console.error('Form submission error:', error); }).finally(() => { formMessageContainer.style.display = 'block'; submitButton.textContent = originalButtonText; submitButton.disabled = false; }); }); }
-    });
-    </script>
-</body>
-</html>
+            .nav-menu.active { 
+                display: flex; 
+            } 
+            .nav-menu li { 
+                margin: 0.8rem 0; 
+                width: 100%; 
+                text-align: center; 
+            } 
+            .nav-menu l
