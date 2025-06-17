@@ -43,31 +43,41 @@
         }
         .custom-cursor.enlarged { width: 40px; height: 40px; opacity: 0.5; }
 
-        /* --- NEW: Portal Loading Effect --- */
+        /* --- Enhanced Portal Loading Effect --- */
         .loading-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #0a0a0a;
+            background: radial-gradient(circle at center, #1a0a2e 0%, #0a0a0a 100%);
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column;
         }
         .portal-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 400px;
+            height: 400px;
         }
         .portal-ring {
             position: absolute;
             top: 50%;
             left: 50%;
-            border: 2px solid white;
+            border: 3px solid;
             border-radius: 50%;
             transform: translate(-50%, -50%);
+            box-shadow: 0 0 20px currentColor;
+        }
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #80ccff;
+            text-shadow: 0 0 10px #80ccff;
+            margin-top: -50px; /* Adjust positioning */
+            opacity: 0;
         }
 
         /* --- Dynamic Background & Particles --- */
@@ -94,13 +104,10 @@
             height: 100vh;
             pointer-events: none;
             z-index: 1;
-            transform: translateZ(0);
         }
         .particle {
             position: absolute;
             border-radius: 50%;
-            pointer-events: none;
-            transform: translateZ(0);
             will-change: transform, opacity;
         }
 
@@ -116,9 +123,7 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            transform: translateY(-100%) translateZ(0);
-            will-change: transform;
+            transform: translateY(-100%);
         }
         .header-content {
             max-width: 1400px;
@@ -142,11 +147,7 @@
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
+        .nav-links { display: flex; gap: 2rem; list-style: none; }
         .nav-link {
             color: white;
             text-decoration: none;
@@ -155,7 +156,6 @@
             padding: 0.5rem 1rem;
             border-radius: 25px;
             position: relative;
-            overflow: hidden;
         }
         .nav-link:hover, .nav-link.active {
             color: #ff80cc;
@@ -174,14 +174,14 @@
             overflow: hidden;
         }
         .section-content {
-            max-width: 1400px;
+            max-width: 1200px;
             width: 100%;
             text-align: center;
             opacity: 0;
             transform: translateY(50px);
         }
         .hero-title {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
             font-weight: 700;
             margin-bottom: 1.5rem;
             background: linear-gradient(45deg, #fff, #ffb3d9, #b3d9ff);
@@ -195,31 +195,25 @@
             opacity: 0.9;
             line-height: 1.6;
             max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
+            margin: 0 auto 2.5rem;
         }
 
-        /* --- NEW: Japanese Themed Buttons --- */
-        .cta-group {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 3rem;
-        }
+        /* --- Enhanced Japanese-Themed Buttons --- */
+        .cta-group { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
         .cta-button {
             display: inline-block;
             padding: 1.2rem 3rem;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
-            transition: transform 0.3s ease, color 0.3s ease;
+            transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
             position: relative;
             cursor: pointer;
             border: 2px solid rgba(255, 255, 255, 0.4);
             color: white;
             background-color: transparent;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            overflow: hidden;
         }
         .cta-button::before {
             content: '';
@@ -229,67 +223,123 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(45deg, #ff80cc, #80ccff);
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
             z-index: -1;
             transform: translateX(-101%);
             transition: transform 0.4s ease-in-out;
         }
-        .cta-button:hover::before {
-            transform: translateX(0);
-        }
-        .cta-button:hover {
-            border-color: #ff80cc;
-        }
-        .cta-button.secondary {
-             border-color: rgba(255, 128, 204, 0.5);
-             color: #ff80cc;
-        }
-        .cta-button.secondary:hover {
-             color: white;
-             border-color: transparent;
-        }
+        .cta-button:hover::before { transform: translateX(0); }
+        .cta-button:hover { border-color: #ff80cc; box-shadow: 0 0 20px rgba(255, 128, 204, 0.5); }
+        .cta-button.secondary { border-color: rgba(255, 128, 204, 0.5); color: #ff80cc; }
+        .cta-button.secondary:hover { color: white; border-color: transparent; }
 
-        /* Other element styles remain the same */
-        .features-grid, .feature-card, .contact-grid, .contact-card { /* etc */ }
+        /* --- Features Section with Portal Effects --- */
+        .features-portal-container { position: relative; width: 100%; height: 300px; margin-bottom: 2rem; }
+        .features-portal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; opacity: 0; }
+        .feature-ring { position: absolute; top: 50%; left: 50%; border: 2px solid; border-radius: 50%; transform: translate(-50%, -50%); }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; opacity: 0; }
+        .feature-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
+        .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #ff80cc; }
+        .feature-title { font-size: 1.5rem; margin-bottom: 1rem; color: #80ccff; }
+        .feature-description { color: rgba(255, 255, 255, 0.8); line-height: 1.6; }
 
-        .scroll-progress {
+        /* --- Contact Section --- */
+        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .contact-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-decoration: none;
+            color: white;
+        }
+        .contact-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(128, 204, 255, 0.2); }
+        .contact-icon { font-size: 2.5rem; margin-bottom: 1rem; color: #80ccff; }
+        .contact-title { font-size: 1.3rem; margin-bottom: 0.5rem; color: #ff80cc; }
+        .contact-info a { color: #80ccff; text-decoration: none; word-break: break-all; transition: color 0.3s ease; }
+        .contact-info a:hover { color: #ff80cc; text-decoration: underline; }
+        
+        /* --- Guidelines Modal --- */
+        .guidelines-modal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(90deg, #ff80cc, #80ccff);
-            z-index: 1001;
+            width: 100%;
+            height: 100%;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 10001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease;
         }
+        .guidelines-modal.visible { opacity: 1; pointer-events: auto; }
+        .guidelines-content {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        .guidelines-body { overflow-y: auto; padding-right: 1rem; }
+        .guidelines-title { font-size: 2rem; margin-bottom: 1rem; text-align: center; color: #fff; }
+        .guidelines-section { margin-bottom: 1.5rem; }
+        .guidelines-section h3 { color: #ffb3d9; margin-bottom: 0.5rem; }
+        .guidelines-section ul { list-style: none; padding-left: 0; }
+        .guidelines-section li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
+        .guidelines-section li::before { content: '▶'; position: absolute; left: 0; color: #80ccff; }
+        .guidelines-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
+        .guidelines-button { padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; }
+        .guidelines-accept { background: linear-gradient(45deg, #43e97b, #38f9d7); color: #0a0a0a; }
+        .guidelines-accept:disabled { background: #555; color: #999; cursor: not-allowed; }
+        .guidelines-decline { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; }
 
-        /* --- FIX: Mobile Responsiveness for Header & Buttons --- */
+        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 1rem 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #80ccff, #ff80cc); width: 0%; transition: width 0.3s ease; }
+
+        .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #ff80cc, #80ccff); z-index: 1001; }
+
+        /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
             body { cursor: auto; }
             .custom-cursor { display: none; }
             header { padding: 1rem; }
-            .header-content { flex-direction: row; } /* Keep logo and nav on one line */
+            .header-content { flex-direction: row; }
             .logo { font-size: 1.5rem; }
-            .nav-links { gap: 0.5rem; }
-            .nav-link { padding: 0.5rem; font-size: 0.9rem; }
-            
-            .cta-group { 
-                flex-direction: column; 
-                align-items: center;
-                gap: 1rem;
-                width: 100%;
-                max-width: 350px;
-                margin-left: auto;
-                margin-right: auto;
-            }
+            .nav-links { display: none; } /* Simplified for mobile, can add hamburger menu later if needed */
+            .cta-group { flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
             .cta-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
+            .portal-container { transform: scale(0.7); }
+            .guidelines-content { padding: 1.5rem; }
         }
     </style>
 </head>
 <body>
     <div class="loading-overlay">
-        <div class="portal-container">
-            </div>
+        <div class="portal-container"></div>
+        <div class="loading-text">Entering Isekai...</div>
     </div>
     
     <div class="custom-cursor"></div>
@@ -297,13 +347,52 @@
     <div class="world-background world-1"></div>
     <div class="particle-system"></div>
 
+    <div class="guidelines-modal" id="guidelinesModal">
+        <div class="guidelines-content">
+            <h2 class="guidelines-title">🌸 Isekai Express Guidelines 🌸</h2>
+            <div class="progress-bar"><div class="progress-fill" id="readingProgress"></div></div>
+            <div class="guidelines-body" id="guidelinesBody">
+                <div class="guidelines-section">
+                    <h3>🚛 Professional Standards</h3>
+                    <ul>
+                        <li>Drive realistically and respect traffic laws during convoys.</li>
+                        <li>Use company paint jobs during official events.</li>
+                        <li>Complete your deliveries; don't abandon jobs without reason.</li>
+                    </ul>
+                </div>
+                <div class="guidelines-section">
+                    <h3>🎌 Community Respect</h3>
+                    <ul>
+                        <li>Treat all members with respect. No toxicity, drama, or hate speech.</li>
+                        <li>Our VTC is a friendly space for all anime fans. Keep debates civil.</li>
+                        <li>Help new drivers and be an active, positive member of the community.</li>
+                    </ul>
+                </div>
+                <div class="guidelines-section">
+                    <h3>📋 Core Requirements</h3>
+                    <ul>
+                        <li>Must own a legitimate copy of Euro Truck Simulator 2.</li>
+                        <li>Discord is mandatory for all communication and events.</li>
+                        <li>Be active! We expect members to participate in at least one event or log miles weekly.</li>
+                        <li>You must be 16 years or older to join.</li>
+                    </ul>
+                </div>
+                 <p>By clicking "Accept", you agree to follow these guidelines and join our Discord server.</p>
+            </div>
+            <div class="guidelines-actions">
+                <button class="guidelines-button guidelines-accept" id="acceptGuidelines" disabled>Read to Accept</button>
+                <button class="guidelines-button guidelines-decline" id="declineGuidelines">Decline</button>
+            </div>
+        </div>
+    </div>
+
     <header>
         <div class="header-content">
             <div class="logo">異世界 Express</div>
             <nav>
                 <ul class="nav-links">
                     <li><a href="#hero" class="nav-link">Home</a></li>
-                    <li><a href="#features" class="nav-link">Services</a></li>
+                    <li><a href="#features" class="nav-link">Features</a></li>
                     <li><a href="#contact" class="nav-link">Join Us</a></li>
                 </ul>
             </nav>
@@ -313,27 +402,47 @@
     <main>
         <section id="hero" data-world="1">
             <div class="section-content">
-                <h1 class="hero-title">Professional Trucking<br>Meets Anime Culture</h1>
-                <p class="hero-subtitle">Join Europe's most innovative Virtual Trucking Company. Experience structured operations, a professional community, and unique anime-themed events in Euro Truck Simulator 2.</p>
+                <h1 class="hero-title">Where Professional Trucking<br>Meets Anime Culture</h1>
+                <p class="hero-subtitle">Welcome to Isekai Express, Europe's premier Virtual Trucking Company for fans of anime and simulation. We unite professional operations with a vibrant, welcoming community.</p>
                 <div class="cta-group">
-                    <a href="#contact" class="cta-button magnetic-button">Start Your Journey</a>
-                    <a href="#features" class="cta-button secondary magnetic-button">Learn More</a>
+                    <a href="#" class="cta-button" id="joinButton">Start Your Journey</a>
+                    <a href="#features" class="cta-button secondary">Discover Our Features</a>
                 </div>
             </div>
         </section>
 
         <section id="features" data-world="2">
             <div class="section-content">
-                 <h2 class="hero-title">Our Services</h2>
-                 <p class="hero-subtitle">We offer a premium, structured experience for serious drivers.</p>
-                 </div>
+                <h2 class="hero-title">A Different World of Features</h2>
+                <p class="hero-subtitle">Our services are designed to create an immersive and professional VTC experience.</p>
+                <div class="features-portal-container">
+                    <div class="features-portal" id="featuresPortal"></div>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card"><div class="feature-icon">🚛</div><h3 class="feature-title">Professional Operations</h3><p class="feature-description">Structured deliveries, realistic gameplay, and a professional management system.</p></div>
+                    <div class="feature-card"><div class="feature-icon">🎌</div><h3 class="feature-title">Anime-Themed Events</h3><p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries.</p></div>
+                    <div class="feature-card"><div class="feature-icon">👥</div><h3 class="feature-title">United Community</h3><p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts in our welcoming Discord.</p></div>
+                </div>
+            </div>
         </section>
 
         <section id="contact" data-world="3">
             <div class="section-content">
-                <h2 class="hero-title">Start Your Isekai Adventure</h2>
-                <p class="hero-subtitle">Connect with us today and begin your journey into a different world of professional trucking.</p>
-                 </div>
+                <h2 class="hero-title">Begin Your Adventure</h2>
+                <p class="hero-subtitle">Ready to join? Our main hub of operations is on Discord. For inquiries, you can also reach us via email.</p>
+                <div class="contact-grid">
+                    <div class="contact-card">
+                        <div class="contact-icon">💬</div>
+                        <h3 class="contact-title">Join our Discord</h3>
+                        <p class="contact-info"><a href="https://discord.gg/uE96rbK95j" target="_blank" class="magnetic-button">Click to Join Server</a></p>
+                    </div>
+                    <div class="contact-card">
+                        <div class="contact-icon">✉️</div>
+                        <h3 class="contact-title">Email Management</h3>
+                        <p class="contact-info"><a href="mailto:expressisekai@gmail.com" class="magnetic-button">expressisekai@gmail.com</a></p>
+                    </div>
+                </div>
+            </div>
         </section>
     </main>
     
@@ -347,80 +456,112 @@
             loading: {
                 overlay: document.querySelector('.loading-overlay'),
                 portalContainer: document.querySelector('.portal-container'),
+                loadingText: document.querySelector('.loading-text'),
                 init() {
                     if (state.reduceMotion) {
-                        if(this.overlay) this.overlay.style.display = 'none';
+                        if (this.overlay) this.overlay.style.display = 'none';
                         document.querySelector('header').style.transform = 'translateY(0)';
                         animations.hero();
                         return;
                     }
                     if (!this.portalContainer) return;
-                    
-                    // Create portal rings
-                    for (let i = 0; i < 7; i++) {
+                    for (let i = 0; i < 8; i++) {
                         const ring = document.createElement('div');
                         ring.classList.add('portal-ring');
                         this.portalContainer.appendChild(ring);
                     }
-
-                    const portalTimeline = anime.timeline({
-                        autoplay: true,
-                        loop: true
-                    });
-
+                    const portalTimeline = anime.timeline({ autoplay: true, loop: true });
                     portalTimeline.add({
                         targets: '.portal-ring',
-                        width: [0, '100%'],
-                        height: [0, '100%'],
-                        opacity: [1, 0],
-                        borderWidth: [10, 2],
+                        width: [0, '110%'], height: [0, '110%'],
+                        opacity: [1, 0], borderWidth: [10, 1],
                         borderColor: ['#FFFFFF', '#80ccff'],
-                        duration: 1500,
-                        easing: 'easeOutExpo',
-                        delay: anime.stagger(150)
+                        duration: 1800, easing: 'easeOutExpo',
+                        delay: anime.stagger(120)
                     });
+                    anime({ targets: this.loadingText, opacity: [0, 1], translateY: [20, 0], delay: 500, easing: 'easeOutExpo' });
 
                     window.onload = () => {
                         portalTimeline.pause();
-                        anime({
+                        anime.timeline({ easing: 'easeInExpo' })
+                        .add({
+                            targets: this.loadingText,
+                            opacity: 0, scale: 0.5, duration: 400
+                        })
+                        .add({
                             targets: this.portalContainer,
-                            scale: 5,
-                            opacity: 0,
-                            duration: 800,
-                            easing: 'easeInExpo',
-                            complete: () => {
-                                if(this.overlay) this.overlay.style.display = 'none';
-                                anime({ targets: 'header', translateY: ['-100%', '0%'], duration: 1000, easing: 'easeOutExpo' });
-                                animations.hero(); 
-                            }
-                        });
+                            scale: 25, opacity: 0, duration: 1000,
+                            complete: () => { if(this.overlay) this.overlay.style.display = 'none'; }
+                        }, '-=400')
+                        .add({
+                            targets: 'header',
+                            translateY: ['-100%', '0%'],
+                            duration: 1000,
+                            easing: 'easeOutExpo'
+                        }, '-=600')
+                        .add({
+                            targets: '#hero .section-content',
+                            opacity: [0, 1],
+                            translateY: [50, 0],
+                            duration: 1200,
+                        }, '-=800');
                     };
                 }
             },
-            cursor: { /* ... as before ... */ },
-            magneticButtons: { /* ... as before ... */ },
-            particles: { /* ... as before ... */ },
-            scrollProgress: { /* ... as before ... */ },
-            backgroundChanger: {
-                el: document.querySelector('.world-background'),
-                sections: document.querySelectorAll('section[data-world]'),
+            cursor: {
+                cursorEl: document.querySelector('.custom-cursor'),
                 init() {
-                    if (state.reduceMotion || !this.el) return;
-                    const observer = new IntersectionObserver(entries => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                this.el.className = `world-background world-${entry.target.dataset.world}`;
-                            }
-                        });
-                    }, { threshold: 0.5 });
-                    this.sections.forEach(s => observer.observe(s));
+                    if (state.reduceMotion || isMobile || !this.cursorEl) return;
+                    let mouseX = 0, mouseY = 0;
+                    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
+                    const animate = () => {
+                        this.cursorEl.style.transform = `translate(${mouseX - this.cursorEl.offsetWidth / 2}px, ${mouseY - this.cursorEl.offsetHeight / 2}px)`;
+                        requestAnimationFrame(animate);
+                    }
+                    animate();
+                    document.querySelectorAll('a, button, .magnetic-button').forEach(el => {
+                        el.addEventListener('mouseenter', () => this.cursorEl.classList.add('enlarged'));
+                        el.addEventListener('mouseleave', () => this.cursorEl.classList.remove('enlarged'));
+                    });
                 }
             },
-            navHighlighter: { /* ... as before ... */ },
+            guidelines: {
+                modal: document.getElementById('guidelinesModal'),
+                openBtn: document.getElementById('joinButton'),
+                acceptBtn: document.getElementById('acceptGuidelines'),
+                declineBtn: document.getElementById('declineGuidelines'),
+                body: document.getElementById('guidelinesBody'),
+                progressFill: document.getElementById('readingProgress'),
+                init() {
+                    if(!this.modal) return;
+                    this.openBtn.addEventListener('click', e => { e.preventDefault(); this.open(); });
+                    this.declineBtn.addEventListener('click', () => this.close());
+                    this.acceptBtn.addEventListener('click', () => {
+                        this.close();
+                        window.open('https://discord.gg/uE96rbK95j', '_blank');
+                    });
+                    this.body.addEventListener('scroll', () => this.updateProgress());
+                },
+                open() {
+                    this.modal.classList.add('visible');
+                    anime({ targets: '.guidelines-content', scale: [0.9, 1], opacity: [0, 1], duration: 400, easing: 'easeOutExpo' });
+                },
+                close() {
+                    anime({ targets: '.guidelines-content', scale: 0.9, opacity: 0, duration: 400, easing: 'easeInExpo', complete: () => this.modal.classList.remove('visible') });
+                },
+                updateProgress() {
+                    const scrollPercent = this.body.scrollTop / (this.body.scrollHeight - this.body.clientHeight);
+                    this.progressFill.style.width = `${scrollPercent * 100}%`;
+                    if (scrollPercent >= 1) {
+                        this.acceptBtn.disabled = false;
+                        this.acceptBtn.textContent = 'Accept & Join Discord';
+                    }
+                }
+            },
             scrollAnimations: {
                 init() {
                     if (state.reduceMotion) {
-                        document.querySelectorAll('.section-content').forEach(el => el.style.opacity = 1);
+                        document.querySelectorAll('.section-content').forEach(el => { el.style.opacity = 1; el.style.transform = 'translateY(0)'; });
                         return;
                     }
                     const observer = new IntersectionObserver((entries, obs) => {
@@ -430,40 +571,38 @@
                                 obs.unobserve(entry.target);
                             }
                         });
-                    }, { threshold: 0.25 });
-                    document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+                    }, { threshold: 0.3 });
+                    document.querySelectorAll('section[id]').forEach(s => s.id !== 'hero' && observer.observe(s));
                 }
-            }
+            },
+            // Other systems like backgroundChanger, navHighlighter etc.
+            backgroundChanger: { /* as before */},
+            navHighlighter: { /* as before */ },
+            scrollProgress: { /* as before */ },
         };
 
         const animations = {
-            hero() {
-                anime({
-                    targets: '#hero .section-content',
-                    opacity: [0, 1],
-                    translateY: [50, 0],
-                    duration: 1200,
-                    easing: 'easeOutExpo',
-                    delay: 200
-                });
-            },
             features() {
-                anime({
-                    targets: '#features .section-content',
-                    opacity: [0, 1],
-                    translateY: [50, 0],
-                    duration: 800,
-                    easing: 'easeOutExpo'
-                });
+                const tl = anime.timeline({ easing: 'easeOutExpo' });
+                tl.add({ targets: '#features .section-content', opacity: [0, 1], translateY: [50, 0], duration: 800 })
+                  .add({
+                      targets: '#featuresPortal',
+                      scale: [0, 1], opacity: [0, 0.5], duration: 600
+                  }, '-=600')
+                  .add({
+                      targets: '#features .feature-card',
+                      opacity: [0, 1], scale: [0.5, 1],
+                      delay: anime.stagger(100)
+                  })
+                  .add({
+                      targets: '#featuresPortal',
+                      scale: 1.5, opacity: 0, duration: 600, easing: 'easeInExpo'
+                  }, '-=500');
             },
             contact() {
-                anime({
-                    targets: '#contact .section-content',
-                    opacity: [0, 1],
-                    translateY: [50, 0],
-                    duration: 800,
-                    easing: 'easeOutExpo'
-                });
+                anime.timeline({ easing: 'easeOutExpo' })
+                .add({ targets: '#contact .section-content', opacity: [0, 1], translateY: [50, 0], duration: 800 })
+                .add({ targets: '#contact .contact-card', opacity: [0, 1], translateY: [30, 0], delay: anime.stagger(150) }, '-=500');
             }
         };
 
