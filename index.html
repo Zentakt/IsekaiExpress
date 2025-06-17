@@ -72,12 +72,23 @@
             box-shadow: 0 0 20px currentColor;
         }
         .loading-text {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
             font-size: 1.5rem;
             font-weight: bold;
             color: #80ccff;
             text-shadow: 0 0 10px #80ccff;
-            margin-top: -50px; /* Adjust positioning */
-            opacity: 0;
+        }
+        .loading-subtitle {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
+            color: #ff80cc;
+            opacity: 0.8;
         }
 
         /* --- Dynamic Background & Particles --- */
@@ -104,10 +115,13 @@
             height: 100vh;
             pointer-events: none;
             z-index: 1;
+            transform: translateZ(0);
         }
         .particle {
             position: absolute;
             border-radius: 50%;
+            pointer-events: none;
+            transform: translateZ(0);
             will-change: transform, opacity;
         }
 
@@ -123,7 +137,9 @@
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transform: translateY(-100%);
+            transition: all 0.3s ease;
+            transform: translateY(-100%) translateZ(0);
+            will-change: transform;
         }
         .header-content {
             max-width: 1400px;
@@ -147,7 +163,11 @@
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
         }
-        .nav-links { display: flex; gap: 2rem; list-style: none; }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
         .nav-link {
             color: white;
             text-decoration: none;
@@ -156,6 +176,7 @@
             padding: 0.5rem 1rem;
             border-radius: 25px;
             position: relative;
+            overflow: hidden;
         }
         .nav-link:hover, .nav-link.active {
             color: #ff80cc;
@@ -174,14 +195,14 @@
             overflow: hidden;
         }
         .section-content {
-            max-width: 1200px;
+            max-width: 1400px;
             width: 100%;
             text-align: center;
             opacity: 0;
             transform: translateY(50px);
         }
         .hero-title {
-            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-size: clamp(2.5rem, 8vw, 4.5rem);
             font-weight: 700;
             margin-bottom: 1.5rem;
             background: linear-gradient(45deg, #fff, #ffb3d9, #b3d9ff);
@@ -195,24 +216,31 @@
             opacity: 0.9;
             line-height: 1.6;
             max-width: 800px;
-            margin: 0 auto 2.5rem;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         /* --- Enhanced Japanese-Themed Buttons --- */
-        .cta-group { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
+        .cta-group {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
         .cta-button {
             display: inline-block;
             padding: 1.2rem 3rem;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
-            transition: transform 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            transition: all 0.3s ease;
             position: relative;
             cursor: pointer;
             border: 2px solid rgba(255, 255, 255, 0.4);
             color: white;
             background-color: transparent;
-            clip-path: polygon(0 15px, 15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
             overflow: hidden;
         }
         .cta-button::before {
@@ -223,20 +251,71 @@
             width: 100%;
             height: 100%;
             background: linear-gradient(45deg, #ff80cc, #80ccff);
+            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
             z-index: -1;
             transform: translateX(-101%);
             transition: transform 0.4s ease-in-out;
         }
-        .cta-button:hover::before { transform: translateX(0); }
-        .cta-button:hover { border-color: #ff80cc; box-shadow: 0 0 20px rgba(255, 128, 204, 0.5); }
-        .cta-button.secondary { border-color: rgba(255, 128, 204, 0.5); color: #ff80cc; }
-        .cta-button.secondary:hover { color: white; border-color: transparent; }
+        .cta-button::after {
+            content: '▶';
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover::before {
+            transform: translateX(0);
+        }
+        .cta-button:hover::after {
+            opacity: 1;
+            transform: translateY(-50%) translateX(5px);
+        }
+        .cta-button:hover {
+            border-color: #ff80cc;
+            box-shadow: 0 0 20px rgba(255, 128, 204, 0.5);
+        }
+        .cta-button.secondary {
+            border-color: rgba(255, 128, 204, 0.5);
+            color: #ff80cc;
+        }
+        .cta-button.secondary:hover {
+            color: white;
+            border-color: transparent;
+        }
 
         /* --- Features Section with Portal Effects --- */
-        .features-portal-container { position: relative; width: 100%; height: 300px; margin-bottom: 2rem; }
-        .features-portal { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 300px; height: 300px; opacity: 0; }
-        .feature-ring { position: absolute; top: 50%; left: 50%; border: 2px solid; border-radius: 50%; transform: translate(-50%, -50%); }
-        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem; opacity: 0; }
+        .features-portal-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            margin: 3rem auto;
+        }
+        .features-portal { /* This div will be the target for anime.js */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px; /* Initial size, anime.js will control it */
+            height: 300px;
+            opacity: 0; /* Starts invisible */
+        }
+        .feature-ring { /* Individual rings for the portal effect */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            border: 2px solid;
+            border-radius: 50%;
+            transform: translate(-50%, -50%); /* Center rings */
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+            opacity: 0; /* Will be faded in after portal */
+        }
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -248,13 +327,45 @@
             position: relative;
             overflow: hidden;
         }
-        .feature-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); }
-        .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #ff80cc; }
-        .feature-title { font-size: 1.5rem; margin-bottom: 1rem; color: #80ccff; }
-        .feature-description { color: rgba(255, 255, 255, 0.8); line-height: 1.6; }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 128, 204, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        .feature-card:hover::before {
+            left: 100%;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(255, 128, 204, 0.2);
+        }
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ff80cc;
+        }
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #80ccff;
+        }
+        .feature-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
 
         /* --- Contact Section --- */
-        .contact-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem; }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
         .contact-card {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
@@ -263,15 +374,34 @@
             text-align: center;
             transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
-            text-decoration: none;
-            color: white;
         }
-        .contact-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(128, 204, 255, 0.2); }
-        .contact-icon { font-size: 2.5rem; margin-bottom: 1rem; color: #80ccff; }
-        .contact-title { font-size: 1.3rem; margin-bottom: 0.5rem; color: #ff80cc; }
-        .contact-info a { color: #80ccff; text-decoration: none; word-break: break-all; transition: color 0.3s ease; }
-        .contact-info a:hover { color: #ff80cc; text-decoration: underline; }
-        
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(128, 204, 255, 0.2);
+        }
+        .contact-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #80ccff;
+        }
+        .contact-title {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #ff80cc;
+        }
+        .contact-info {
+            color: rgba(255, 255, 255, 0.9);
+            word-break: break-all;
+        }
+        .contact-link {
+            color: #80ccff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .contact-link:hover {
+            color: #ff80cc;
+        }
+
         /* --- Guidelines Modal --- */
         .guidelines-modal {
             position: fixed;
@@ -279,67 +409,142 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(10, 10, 10, 0.8);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             z-index: 10001;
-            display: flex;
+            display: none; /* Changed from flex to none, JS will control */
             align-items: center;
             justify-content: center;
-            padding: 1rem;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.4s ease;
-        }
-        .guidelines-modal.visible { opacity: 1; pointer-events: auto; }
-        .guidelines-content {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-            border-radius: 20px;
             padding: 2rem;
+        }
+        .guidelines-content {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+            border-radius: 20px;
+            padding: 3rem;
             max-width: 600px;
             width: 100%;
-            max-height: 85vh;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
             border: 2px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            flex-direction: column;
         }
-        .guidelines-body { overflow-y: auto; padding-right: 1rem; }
-        .guidelines-title { font-size: 2rem; margin-bottom: 1rem; text-align: center; color: #fff; }
-        .guidelines-section { margin-bottom: 1.5rem; }
-        .guidelines-section h3 { color: #ffb3d9; margin-bottom: 0.5rem; }
-        .guidelines-section ul { list-style: none; padding-left: 0; }
-        .guidelines-section li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
-        .guidelines-section li::before { content: '▶'; position: absolute; left: 0; color: #80ccff; }
-        .guidelines-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(255,255,255,0.1); }
-        .guidelines-button { padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; }
-        .guidelines-accept { background: linear-gradient(45deg, #43e97b, #38f9d7); color: #0a0a0a; }
-        .guidelines-accept:disabled { background: #555; color: #999; cursor: not-allowed; }
-        .guidelines-decline { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; }
+        .guidelines-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        .guidelines-section {
+            margin-bottom: 2rem;
+        }
+        .guidelines-section h3 {
+            color: #ffb3d9;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .guidelines-section ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .guidelines-section li {
+            margin-bottom: 0.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        .guidelines-section li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #80ccff;
+        }
+        .guidelines-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+        .guidelines-button {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        .guidelines-accept {
+            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            color: white;
+        }
+        .guidelines-accept:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
+        }
+        .guidelines-decline {
+            background: linear-gradient(45deg, #f093fb, #f5576c);
+            color: white;
+        }
+        .guidelines-decline:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3);
+        }
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #80ccff, #ff80cc);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
 
-        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 1rem 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #80ccff, #ff80cc); width: 0%; transition: width 0.3s ease; }
-
-        .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #ff80cc, #80ccff); z-index: 1001; }
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 3px;
+            background: linear-gradient(90deg, #ff80cc, #80ccff);
+            z-index: 1001;
+        }
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
             body { cursor: auto; }
             .custom-cursor { display: none; }
             header { padding: 1rem; }
-            .header-content { flex-direction: row; }
+            .header-content { flex-direction: row; } /* Keep logo and nav inline */
             .logo { font-size: 1.5rem; }
-            .nav-links { display: none; } /* Simplified for mobile, can add hamburger menu later if needed */
-            .cta-group { flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
+            .nav-links { gap: 0.5rem; }
+            .nav-link { padding: 0.5rem; font-size: 0.9rem; }
+            
+            .cta-group { 
+                flex-direction: column; 
+                align-items: center;
+                gap: 1rem;
+                width: 100%;
+                max-width: 350px; /* Limit width of buttons on mobile */
+                margin-left: auto;
+                margin-right: auto;
+            }
             .cta-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
-            .portal-container { transform: scale(0.7); }
-            .guidelines-content { padding: 1.5rem; }
+            .portal-container { width: 300px; height: 300px; }
+            .guidelines-content { padding: 2rem; margin: 1rem; }
         }
     </style>
 </head>
 <body>
     <div class="loading-overlay">
         <div class="portal-container"></div>
-        <div class="loading-text">Entering Isekai...</div>
+        <div class="loading-text">Entering the Isekai...</div>
+        <div class="loading-subtitle">Loading your adventure</div>
     </div>
     
     <div class="custom-cursor"></div>
@@ -347,41 +552,62 @@
     <div class="world-background world-1"></div>
     <div class="particle-system"></div>
 
+    <!-- Guidelines Modal -->
     <div class="guidelines-modal" id="guidelinesModal">
         <div class="guidelines-content">
             <h2 class="guidelines-title">🌸 Isekai Express Guidelines 🌸</h2>
-            <div class="progress-bar"><div class="progress-fill" id="readingProgress"></div></div>
-            <div class="guidelines-body" id="guidelinesBody">
-                <div class="guidelines-section">
-                    <h3>🚛 Professional Standards</h3>
-                    <ul>
-                        <li>Drive realistically and respect traffic laws during convoys.</li>
-                        <li>Use company paint jobs during official events.</li>
-                        <li>Complete your deliveries; don't abandon jobs without reason.</li>
-                    </ul>
-                </div>
-                <div class="guidelines-section">
-                    <h3>🎌 Community Respect</h3>
-                    <ul>
-                        <li>Treat all members with respect. No toxicity, drama, or hate speech.</li>
-                        <li>Our VTC is a friendly space for all anime fans. Keep debates civil.</li>
-                        <li>Help new drivers and be an active, positive member of the community.</li>
-                    </ul>
-                </div>
-                <div class="guidelines-section">
-                    <h3>📋 Core Requirements</h3>
-                    <ul>
-                        <li>Must own a legitimate copy of Euro Truck Simulator 2.</li>
-                        <li>Discord is mandatory for all communication and events.</li>
-                        <li>Be active! We expect members to participate in at least one event or log miles weekly.</li>
-                        <li>You must be 16 years or older to join.</li>
-                    </ul>
-                </div>
-                 <p>By clicking "Accept", you agree to follow these guidelines and join our Discord server.</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="readingProgress"></div>
             </div>
+
+            <div class="guidelines-section">
+                <h3>🚛 Professional Standards</h3>
+                <ul>
+                    <li>Maintain realistic driving behavior at all times</li>
+                    <li>Follow traffic rules and speed limits</li>
+                    <li>Complete deliveries on schedule</li>
+                    <li>Report any issues promptly to management</li>
+                </ul>
+            </div>
+
+            <div class="guidelines-section">
+                <h3>🎌 Community Respect</h3>
+                <ul>
+                    <li>Be respectful to all members regardless of anime preferences</li>
+                    <li>Use appropriate language in all communications</li>
+                    <li>Help new drivers learn the ropes</li>
+                    <li>Participate positively in events and discussions</li>
+                </ul>
+            </div>
+
+            <div class="guidelines-section">
+                <h3>⚡ Event Participation</h3>
+                <ul>
+                    <li>Join anime-themed convoys when available</li>
+                    <li>Customize your truck with approved anime liveries</li>
+                    <li>Attend weekly meetups and special events</li>
+                    <li>Share your favorite anime recommendations!</li>
+                </ul>
+            </div>
+
+            <div class="guidelines-section">
+                <h3>📋 Requirements</h3>
+                <ul>
+                    <li>Own Euro Truck Simulator 2 with DLCs recommended</li>
+                    <li>Have Discord for communication</li>
+                    <li>Be active at least once per week</li>
+                    <li>Age 16+ (parental consent required for under 18)</li>
+                </ul>
+            </div>
+
             <div class="guidelines-actions">
-                <button class="guidelines-button guidelines-accept" id="acceptGuidelines" disabled>Read to Accept</button>
-                <button class="guidelines-button guidelines-decline" id="declineGuidelines">Decline</button>
+                <button class="guidelines-button guidelines-accept" id="acceptGuidelines" disabled>
+                    Accept & Join (Read All First)
+                </button>
+                <button class="guidelines-button guidelines-decline" id="declineGuidelines">
+                    Not Ready Yet
+                </button>
             </div>
         </div>
     </div>
@@ -392,7 +618,7 @@
             <nav>
                 <ul class="nav-links">
                     <li><a href="#hero" class="nav-link">Home</a></li>
-                    <li><a href="#features" class="nav-link">Features</a></li>
+                    <li><a href="#features" class="nav-link">Services</a></li>
                     <li><a href="#contact" class="nav-link">Join Us</a></li>
                 </ul>
             </nav>
@@ -402,44 +628,78 @@
     <main>
         <section id="hero" data-world="1">
             <div class="section-content">
-                <h1 class="hero-title">Where Professional Trucking<br>Meets Anime Culture</h1>
-                <p class="hero-subtitle">Welcome to Isekai Express, Europe's premier Virtual Trucking Company for fans of anime and simulation. We unite professional operations with a vibrant, welcoming community.</p>
+                <h1 class="hero-title">Professional Trucking<br>Meets Anime Culture</h1>
+                <p class="hero-subtitle">Join Europe's most innovative Virtual Trucking Company. Experience structured operations, a professional community, and unique anime-themed events in Euro Truck Simulator 2.</p>
                 <div class="cta-group">
                     <a href="#" class="cta-button" id="joinButton">Start Your Journey</a>
-                    <a href="#features" class="cta-button secondary">Discover Our Features</a>
+                    <a href="#features" class="cta-button secondary">Learn More</a>
                 </div>
             </div>
         </section>
 
         <section id="features" data-world="2">
             <div class="section-content">
-                <h2 class="hero-title">A Different World of Features</h2>
-                <p class="hero-subtitle">Our services are designed to create an immersive and professional VTC experience.</p>
+                <h2 class="hero-title">Our Services</h2>
+                <p class="hero-subtitle">We offer a premium, structured experience for serious drivers who love anime culture.</p>
+                
                 <div class="features-portal-container">
                     <div class="features-portal" id="featuresPortal"></div>
                 </div>
+
                 <div class="features-grid">
-                    <div class="feature-card"><div class="feature-icon">🚛</div><h3 class="feature-title">Professional Operations</h3><p class="feature-description">Structured deliveries, realistic gameplay, and a professional management system.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎌</div><h3 class="feature-title">Anime-Themed Events</h3><p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries.</p></div>
-                    <div class="feature-card"><div class="feature-icon">👥</div><h3 class="feature-title">United Community</h3><p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts in our welcoming Discord.</p></div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚛</div>
+                        <h3 class="feature-title">Professional Operations</h3>
+                        <p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎌</div>
+                        <h3 class="feature-title">Anime-Themed Events</h3>
+                        <p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👥</div>
+                        <h3 class="feature-title">United Community</h3>
+                        <p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts from across Europe in our welcoming Discord community.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🏆</div>
+                        <h3 class="feature-title">Achievement System</h3>
+                        <p class="feature-description">Earn ranks, badges, and recognition for your driving skills, event participation, and community contributions.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎮</div>
+                        <h3 class="feature-title">Gaming Excellence</h3>
+                        <p class="feature-description">High-quality gaming experience with organized events, training programs, and competitive seasonal challenges.</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🌟</div>
+                        <h3 class="feature-title">Special Benefits</h3>
+                        <p class="feature-description">Exclusive access to custom mods, priority event slots, and special recognition for dedicated members.</p>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="contact" data-world="3">
             <div class="section-content">
-                <h2 class="hero-title">Begin Your Adventure</h2>
-                <p class="hero-subtitle">Ready to join? Our main hub of operations is on Discord. For inquiries, you can also reach us via email.</p>
+                <h2 class="hero-title">Start Your Isekai Adventure</h2>
+                <p class="hero-subtitle">Connect with us today and begin your journey into a different world of professional trucking.</p>
+                
                 <div class="contact-grid">
                     <div class="contact-card">
-                        <div class="contact-icon">💬</div>
-                        <h3 class="contact-title">Join our Discord</h3>
-                        <p class="contact-info"><a href="https://discord.gg/uE96rbK95j" target="_blank" class="magnetic-button">Click to Join Server</a></p>
+                        <div class="contact-icon">✉️</div>
+                        <h3 class="contact-title">Email Us</h3>
+                        <p class="contact-info">
+                            <a href="mailto:expressisekai@gmail.com" class="contact-link">expressisekai@gmail.com</a>
+                        </p>
                     </div>
                     <div class="contact-card">
-                        <div class="contact-icon">✉️</div>
-                        <h3 class="contact-title">Email Management</h3>
-                        <p class="contact-info"><a href="mailto:expressisekai@gmail.com" class="magnetic-button">expressisekai@gmail.com</a></p>
+                        <div class="contact-icon">💬</div>
+                        <h3 class="contact-title">Join Discord</h3>
+                        <p class="contact-info">
+                            <a href="https://discord.gg/uE96rbK95j" target="_blank" class="contact-link">discord.gg/uE96rbK95j</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -450,165 +710,442 @@
     document.addEventListener('DOMContentLoaded', () => {
         const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
         const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        const state = { reduceMotion: motionQuery.matches };
+        const state = { 
+            reduceMotion: motionQuery.matches,
+            guidelinesRead: false,
+            readingProgress: 0
+        };
 
         const systems = {
             loading: {
                 overlay: document.querySelector('.loading-overlay'),
                 portalContainer: document.querySelector('.portal-container'),
-                loadingText: document.querySelector('.loading-text'),
                 init() {
                     if (state.reduceMotion) {
-                        if (this.overlay) this.overlay.style.display = 'none';
+                        if(this.overlay) this.overlay.style.display = 'none';
                         document.querySelector('header').style.transform = 'translateY(0)';
                         animations.hero();
                         return;
                     }
                     if (!this.portalContainer) return;
-                    for (let i = 0; i < 8; i++) {
+                    
+                    // Create enhanced portal rings
+                    const colors = ['#80ccff', '#ff80cc', '#ffb3d9', '#b3d9ff', '#e6ccff', '#ccffe6', '#ffe6cc'];
+                    for (let i = 0; i < 10; i++) {
                         const ring = document.createElement('div');
                         ring.classList.add('portal-ring');
+                        ring.style.borderColor = colors[i % colors.length];
                         this.portalContainer.appendChild(ring);
                     }
-                    const portalTimeline = anime.timeline({ autoplay: true, loop: true });
+
+                    const portalTimeline = anime.timeline({
+                        autoplay: true,
+                        loop: true
+                    });
+
                     portalTimeline.add({
                         targets: '.portal-ring',
-                        width: [0, '110%'], height: [0, '110%'],
-                        opacity: [1, 0], borderWidth: [10, 1],
-                        borderColor: ['#FFFFFF', '#80ccff'],
-                        duration: 1800, easing: 'easeOutExpo',
-                        delay: anime.stagger(120)
+                        width: [0, '120%'],
+                        height: [0, '120%'],
+                        opacity: [1, 0],
+                        borderWidth: [8, 1],
+                        rotate: [0, 360],
+                        duration: 2000,
+                        easing: 'easeOutExpo',
+                        delay: anime.stagger(100)
                     });
-                    anime({ targets: this.loadingText, opacity: [0, 1], translateY: [20, 0], delay: 500, easing: 'easeOutExpo' });
+
+                    // Add text animations
+                    anime({
+                        targets: '.loading-text',
+                        opacity: [0, 1, 0],
+                        translateY: [20, 0, -20],
+                        duration: 3000,
+                        loop: true,
+                        easing: 'easeInOutSine'
+                    });
+
+                    anime({
+                        targets: '.loading-subtitle',
+                        opacity: [0, 0.8, 0],
+                        duration: 4000,
+                        loop: true,
+                        delay: 1000,
+                        easing: 'easeInOutSine'
+                    });
 
                     window.onload = () => {
-                        portalTimeline.pause();
-                        anime.timeline({ easing: 'easeInExpo' })
-                        .add({
-                            targets: this.loadingText,
-                            opacity: 0, scale: 0.5, duration: 400
-                        })
-                        .add({
-                            targets: this.portalContainer,
-                            scale: 25, opacity: 0, duration: 1000,
-                            complete: () => { if(this.overlay) this.overlay.style.display = 'none'; }
-                        }, '-=400')
-                        .add({
-                            targets: 'header',
-                            translateY: ['-100%', '0%'],
-                            duration: 1000,
-                            easing: 'easeOutExpo'
-                        }, '-=600')
-                        .add({
-                            targets: '#hero .section-content',
-                            opacity: [0, 1],
-                            translateY: [50, 0],
-                            duration: 1200,
-                        }, '-=800');
+                        setTimeout(() => {
+                            portalTimeline.pause();
+                            anime({
+                                targets: this.portalContainer,
+                                scale: [1, 8],
+                                opacity: [1, 0],
+                                duration: 1200,
+                                easing: 'easeInExpo'
+                            });
+                            anime({
+                                targets: ['.loading-text', '.loading-subtitle'],
+                                opacity: 0,
+                                scale: 0.5,
+                                duration: 800,
+                                easing: 'easeInExpo',
+                                complete: () => {
+                                    if(this.overlay) {
+                                        anime({
+                                            targets: this.overlay,
+                                            opacity: 0,
+                                            duration: 500,
+                                            easing: 'easeInOutQuad',
+                                            complete: () => {
+                                                if(this.overlay) this.overlay.style.display = 'none';
+                                                anime({
+                                                    targets: 'header',
+                                                    translateY: ['-100%', '0%'],
+                                                    duration: 800,
+                                                    easing: 'easeOutExpo'
+                                                });
+                                                animations.hero();
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        }, 2500); // Minimum loading time
                     };
                 }
             },
             cursor: {
-                cursorEl: document.querySelector('.custom-cursor'),
+                el: document.querySelector('.custom-cursor'),
                 init() {
-                    if (state.reduceMotion || isMobile || !this.cursorEl) return;
+                    if (state.reduceMotion || isMobile || !this.el) return;
+                    document.body.style.cursor = 'none';
                     let mouseX = 0, mouseY = 0;
-                    window.addEventListener('mousemove', e => { mouseX = e.clientX; mouseY = e.clientY; });
-                    const animate = () => {
-                        this.cursorEl.style.transform = `translate(${mouseX - this.cursorEl.offsetWidth / 2}px, ${mouseY - this.cursorEl.offsetHeight / 2}px)`;
-                        requestAnimationFrame(animate);
-                    }
-                    animate();
-                    document.querySelectorAll('a, button, .magnetic-button').forEach(el => {
-                        el.addEventListener('mouseenter', () => this.cursorEl.classList.add('enlarged'));
-                        el.addEventListener('mouseleave', () => this.cursorEl.classList.remove('enlarged'));
+                    let cursorX = 0, cursorY = 0;
+
+                    window.addEventListener('mousemove', e => {
+                        mouseX = e.clientX;
+                        mouseY = e.clientY;
+                    });
+
+                    const updateCursor = () => {
+                        const dx = mouseX - cursorX;
+                        const dy = mouseY - cursorY;
+                        cursorX += dx * 0.1;
+                        cursorY += dy * 0.1;
+                        if(this.el) this.el.style.transform = `translate3d(${cursorX - 10}px, ${cursorY - 10}px, 0)`;
+                        requestAnimationFrame(updateCursor);
+                    };
+                    updateCursor();
+
+                    document.querySelectorAll('a, button, .logo, .feature-card, .contact-card').forEach(item => {
+                        item.addEventListener('mouseenter', () => this.el.classList.add('enlarged'));
+                        item.addEventListener('mouseleave', () => this.el.classList.remove('enlarged'));
                     });
                 }
             },
-            guidelines: {
+            particles: {
+                el: document.querySelector('.particle-system'),
+                init() {
+                    if (state.reduceMotion || !this.el) return;
+                    const numParticles = isMobile ? 20 : 50;
+                    const colors = ['#ff80cc', '#80ccff', '#ffb3d9', '#b3d9ff'];
+                    for (let i = 0; i < numParticles; i++) {
+                        const particle = document.createElement('div');
+                        particle.classList.add('particle');
+                        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        particle.style.width = `${Math.random() * 5 + 2}px`;
+                        particle.style.height = particle.style.width;
+                        particle.style.left = `${Math.random() * 100}%`;
+                        particle.style.top = `${Math.random() * 100}%`;
+                        this.el.appendChild(particle);
+                        this.animateParticle(particle);
+                    }
+                },
+                animateParticle(p) {
+                    anime({
+                        targets: p,
+                        translateX: () => anime.random(-100, 100) + 'px',
+                        translateY: () => anime.random(-100, 100) + 'px',
+                        scale: [1, anime.random(0.5, 1.5), 1],
+                        opacity: [0, anime.random(0.2, 0.8), 0],
+                        duration: () => anime.random(3000, 8000),
+                        easing: 'easeInOutSine',
+                        loop: true,
+                        direction: 'alternate'
+                    });
+                }
+            },
+            background: {
+                el: document.querySelector('.world-background'),
+                init() {
+                    if (!this.el) return;
+                    // Background changes handled by Intersection Observer
+                }
+            },
+            guidelinesModal: {
                 modal: document.getElementById('guidelinesModal'),
-                openBtn: document.getElementById('joinButton'),
+                content: document.querySelector('.guidelines-content'),
                 acceptBtn: document.getElementById('acceptGuidelines'),
                 declineBtn: document.getElementById('declineGuidelines'),
-                body: document.getElementById('guidelinesBody'),
+                joinBtn: document.getElementById('joinButton'),
                 progressFill: document.getElementById('readingProgress'),
                 init() {
-                    if(!this.modal) return;
-                    this.openBtn.addEventListener('click', e => { e.preventDefault(); this.open(); });
+                    if (!this.modal || !this.content || !this.acceptBtn || !this.declineBtn || !this.joinBtn || !this.progressFill) return;
+
+                    this.joinBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.open();
+                    });
                     this.declineBtn.addEventListener('click', () => this.close());
                     this.acceptBtn.addEventListener('click', () => {
-                        this.close();
-                        window.open('https://discord.gg/uE96rbK95j', '_blank');
+                        if (state.guidelinesRead) {
+                            this.close();
+                            // Redirect to Discord or application form
+                            window.open('https://discord.gg/uE96rbK95j', '_blank');
+                        }
                     });
-                    this.body.addEventListener('scroll', () => this.updateProgress());
+
+                    this.content.addEventListener('scroll', () => this.updateProgress());
                 },
                 open() {
-                    this.modal.classList.add('visible');
-                    anime({ targets: '.guidelines-content', scale: [0.9, 1], opacity: [0, 1], duration: 400, easing: 'easeOutExpo' });
+                    this.modal.style.display = 'flex';
+                    state.guidelinesRead = false;
+                    this.acceptBtn.disabled = true;
+                    this.acceptBtn.textContent = 'Accept & Join (Read All First)';
+                    this.updateProgress(); // Initial progress check
+                    anime({
+                        targets: this.modal,
+                        opacity: [0, 1],
+                        duration: 500,
+                        easing: 'easeOutQuad'
+                    });
+                    anime({
+                        targets: this.content,
+                        scale: [0.8, 1],
+                        opacity: [0, 1],
+                        translateY: [50, 0],
+                        duration: 500,
+                        easing: 'easeOutExpo',
+                        delay: 100
+                    });
                 },
                 close() {
-                    anime({ targets: '.guidelines-content', scale: 0.9, opacity: 0, duration: 400, easing: 'easeInExpo', complete: () => this.modal.classList.remove('visible') });
+                     anime({
+                        targets: this.content,
+                        scale: [1, 0.8],
+                        opacity: [1, 0],
+                        translateY: [0, 50],
+                        duration: 300,
+                        easing: 'easeInExpo',
+                     });
+                    anime({
+                        targets: this.modal,
+                        opacity: [1, 0],
+                        duration: 400,
+                        easing: 'easeInQuad',
+                        delay: 50,
+                        complete: () => {
+                            this.modal.style.display = 'none';
+                        }
+                    });
                 },
                 updateProgress() {
-                    const scrollPercent = this.body.scrollTop / (this.body.scrollHeight - this.body.clientHeight);
-                    this.progressFill.style.width = `${scrollPercent * 100}%`;
-                    if (scrollPercent >= 1) {
-                        this.acceptBtn.disabled = false;
-                        this.acceptBtn.textContent = 'Accept & Join Discord';
-                    }
-                }
-            },
-            scrollAnimations: {
-                init() {
-                    if (state.reduceMotion) {
-                        document.querySelectorAll('.section-content').forEach(el => { el.style.opacity = 1; el.style.transform = 'translateY(0)'; });
-                        return;
-                    }
-                    const observer = new IntersectionObserver((entries, obs) => {
-                        entries.forEach(entry => {
-                            if (entry.isIntersecting) {
-                                if (animations[entry.target.id]) animations[entry.target.id]();
-                                obs.unobserve(entry.target);
-                            }
-                        });
-                    }, { threshold: 0.3 });
-                    document.querySelectorAll('section[id]').forEach(s => s.id !== 'hero' && observer.observe(s));
-                }
-            },
-            // Other systems like backgroundChanger, navHighlighter etc.
-            backgroundChanger: { /* as before */},
-            navHighlighter: { /* as before */ },
-            scrollProgress: { /* as before */ },
-        };
+                    const scrollableHeight = this.content.scrollHeight - this.content.clientHeight;
+                    state.readingProgress = (this.content.scrollTop / scrollableHeight) * 100;
+                    this.progressFill.style.width = `${Math.min(state.readingProgress, 100)}%`;
 
-        const animations = {
-            features() {
-                const tl = anime.timeline({ easing: 'easeOutExpo' });
-                tl.add({ targets: '#features .section-content', opacity: [0, 1], translateY: [50, 0], duration: 800 })
-                  .add({
-                      targets: '#featuresPortal',
-                      scale: [0, 1], opacity: [0, 0.5], duration: 600
-                  }, '-=600')
-                  .add({
-                      targets: '#features .feature-card',
-                      opacity: [0, 1], scale: [0.5, 1],
-                      delay: anime.stagger(100)
-                  })
-                  .add({
-                      targets: '#featuresPortal',
-                      scale: 1.5, opacity: 0, duration: 600, easing: 'easeInExpo'
-                  }, '-=500');
-            },
-            contact() {
-                anime.timeline({ easing: 'easeOutExpo' })
-                .add({ targets: '#contact .section-content', opacity: [0, 1], translateY: [50, 0], duration: 800 })
-                .add({ targets: '#contact .contact-card', opacity: [0, 1], translateY: [30, 0], delay: anime.stagger(150) }, '-=500');
+                    if (state.readingProgress >= 99) { // A little leeway
+                        state.guidelinesRead = true;
+                        this.acceptBtn.disabled = false;
+                        this.acceptBtn.textContent = 'Accept & Join Now!';
+                    }
+                }
             }
         };
 
-        Object.values(systems).forEach(system => {
-            if (typeof system.init === 'function') system.init();
+        const animations = {
+            hero() {
+                const heroSection = document.querySelector('#hero .section-content');
+                if (!heroSection) return;
+                anime.timeline({ easing: 'easeOutExpo' })
+                    .add({
+                        targets: heroSection,
+                        opacity: [0, 1],
+                        translateY: [50, 0],
+                        duration: 1000,
+                        delay: state.reduceMotion ? 0 : 500
+                    })
+                    .add({
+                        targets: '#hero .hero-title',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 800
+                    }, '-=600')
+                    .add({
+                        targets: '#hero .hero-subtitle',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 800
+                    }, '-=600')
+                    .add({
+                        targets: '#hero .cta-button',
+                        opacity: [0, 1],
+                        translateY: [20, 0],
+                        duration: 600,
+                        delay: anime.stagger(150)
+                    }, '-=500');
+            },
+            section(el) {
+                if (!el) return;
+                anime({
+                    targets: el,
+                    opacity: [0, 1],
+                    translateY: [50, 0],
+                    duration: 1200,
+                    easing: 'easeOutExpo'
+                });
+            },
+            featuresPortal() {
+                const portalEl = document.getElementById('featuresPortal');
+                const featuresGrid = document.querySelector('#features .features-grid');
+                if (!portalEl || !featuresGrid || state.reduceMotion) {
+                    if(featuresGrid) featuresGrid.style.opacity = 1; // Show grid if no portal
+                    return;
+                }
+
+                // Clear any previous rings
+                portalEl.innerHTML = '';
+                
+                // Create portal rings for features section
+                const colors = ['#ff80cc', '#80ccff', '#43e97b', '#f093fb'];
+                for (let i = 0; i < 7; i++) {
+                    const ring = document.createElement('div');
+                    ring.classList.add('feature-ring'); // Use specific class if needed
+                    ring.style.borderColor = colors[i % colors.length];
+                    portalEl.appendChild(ring);
+                }
+
+                anime.timeline({
+                    easing: 'easeOutExpo',
+                    begin: () => { portalEl.style.opacity = 1; }
+                })
+                .add({
+                    targets: portalEl.querySelectorAll('.feature-ring'),
+                    width: ['0%', '100%'],
+                    height: ['0%', '100%'],
+                    opacity: [0.8, 0],
+                    borderWidth: [5, 1],
+                    rotate: anime.stagger([-180, 180]),
+                    duration: 1500,
+                    delay: anime.stagger(80),
+                })
+                .add({
+                    targets: portalEl,
+                    scale: [1, 1.5],
+                    opacity: [1, 0],
+                    duration: 800,
+                    easing: 'easeInQuad',
+                    complete: () => {
+                        portalEl.style.opacity = 0; // Ensure it's hidden
+                        anime({
+                            targets: featuresGrid,
+                            opacity: [0, 1],
+                            translateY: [30, 0],
+                            duration: 1000,
+                            easing: 'easeOutExpo',
+                            delay: anime.stagger(100, { grid: [3, 2], from: 'center' })
+                        });
+                    }
+                }, '-=500');
+            }
+        };
+
+        // Initialize systems
+        systems.loading.init();
+        systems.cursor.init();
+        systems.particles.init();
+        systems.background.init();
+        systems.guidelinesModal.init();
+
+        // Scroll progress bar
+        const scrollProgressBar = document.querySelector('.scroll-progress');
+        if (scrollProgressBar) {
+            window.addEventListener('scroll', () => {
+                const scrollTop = document.documentElement.scrollTop;
+                const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                const scrollPercent = (scrollTop / scrollHeight) * 100;
+                scrollProgressBar.style.width = scrollPercent + '%';
+            });
+        }
+        
+        // Intersection Observer for section animations and background changes
+        const sections = document.querySelectorAll('section');
+        const worldBg = systems.background.el;
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.3 // When 30% of the section is visible
+        };
+
+        const observerCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionContent = entry.target.querySelector('.section-content');
+                    if (sectionContent && sectionContent.style.opacity !== '1') {
+                         animations.section(sectionContent);
+                    }
+
+                    // Special animation for features portal
+                    if (entry.target.id === 'features') {
+                        const featuresGrid = entry.target.querySelector('.features-grid');
+                        if (featuresGrid && featuresGrid.style.opacity !== '1') {
+                            animations.featuresPortal();
+                        }
+                    }
+                    
+                    // Change background
+                    if (worldBg) {
+                        const world = entry.target.dataset.world;
+                        if (world) {
+                            worldBg.className = `world-background world-${world}`;
+                        }
+                    }
+
+                    // Update active nav link
+                    const navLinks = document.querySelectorAll('.nav-link');
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${entry.target.id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(observerCallback, observerOptions);
+        sections.forEach(section => observer.observe(section));
+
+        // Smooth scroll for nav links & set active for initial view
+        document.querySelectorAll('.nav-link').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
         });
+
+        // Set initial active link if page loads on a specific hash
+        if (window.location.hash) {
+            const activeLink = document.querySelector(`.nav-link[href="${window.location.hash}"]`);
+            if (activeLink) activeLink.classList.add('active');
+        } else {
+            const homeLink = document.querySelector('.nav-link[href="#hero"]');
+            if (homeLink) homeLink.classList.add('active');
+        }
     });
     </script>
 </body>
