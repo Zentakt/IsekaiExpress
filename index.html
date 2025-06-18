@@ -13,7 +13,7 @@
             color: white;
             overflow-x: hidden;
             background: #0a0a0a;
-            cursor: none;
+            /* cursor: none; // Keep cursor visible for now for easier debugging */
         }
 
         /* Accessibility & Performance */
@@ -25,11 +25,11 @@
             }
             body { cursor: auto; }
             .custom-cursor, .particle-system, .loading-overlay { display: none !important; }
-            .feature-panel .panel-background-colorblock { clip-path: polygon(0 0, 100% 15vh, 100% 100%, 0 85vh) !important; }
+            .feature-panel .panel-background-wipe { clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%) !important; } /* Full reveal */
             .feature-panel .panel-content-container { opacity: 1 !important; transform: none !important; }
         }
 
-        /* --- Cursor, Loading, Background, Particles, Header, CTA, Contact, Guidelines, Scroll Progress (minified) --- */
+        /* --- Minified CSS for other sections (Loading, Cursor, Particles, Header, CTA, Contact, Guidelines, Scroll Progress) --- */
         .custom-cursor{position:fixed;width:20px;height:20px;background:#ff80cc;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:exclusion;transform:translateZ(0);will-change:transform;transition:width .3s ease,height .3s ease,opacity .3s ease}.custom-cursor.enlarged{width:40px;height:40px;opacity:.5}
         .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#1a0a2e 0%,#0a0a0a 100%);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column}
         .planet-container{position:relative;width:clamp(90px,23vmin,160px);height:clamp(90px,23vmin,160px);margin-bottom:2rem;display:flex;align-items:center;justify-content:center}
@@ -37,15 +37,20 @@
         .planet-silhouette{width:clamp(80px,20vmin,150px);height:clamp(80px,20vmin,150px);background-color:#0c001f;border-radius:50%;box-shadow:0 0 10px 3px rgba(128,204,255,.2)}
         .loading-text{font-size:1.5rem;font-weight:700;color:#80ccff;text-shadow:0 0 10px #80ccff;margin-top:1.5rem;text-align:center}
         .loading-subtitle{font-size:1rem;color:#ff80cc;opacity:.8;margin-top:.75rem;text-align:center}
-        .world-background{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;transition:background 1.5s cubic-bezier(.4,0,.2,1);transform:translateZ(0);will-change:background}.world-1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}.world-2{background:linear-gradient(135deg,#1d1335 0%,#3c226b 100%)}.world-3{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)} /* Changed world-2 background for feature panels */
+        .world-background{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;transition:background 1.5s cubic-bezier(.4,0,.2,1);transform:translateZ(0);will-change:background}.world-1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}.world-2{background:linear-gradient(135deg,#1d1335 0%,#3c226b 100%)}.world-3{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
         .particle-system{position:fixed;top:0;left:0;width:100%;height:100vh;pointer-events:none;z-index:1;transform:translateZ(0)}.particle{position:absolute;border-radius:50%;pointer-events:none;transform:translateZ(0);will-change:transform,opacity}
         header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;background:rgba(0,0,0,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.1);transition:all .3s ease;transform:translateY(-100%) translateZ(0);will-change:transform}.header-content{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
         .logo{font-size:2rem;font-weight:700;background:linear-gradient(45deg,#ff80cc,#80ccff,#ffb3d9,#b3d9ff);background-size:400% 400%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease-in-out infinite;cursor:pointer}@keyframes gradientShift{0%,to{background-position:0 50%}50%{background-position:100% 50%}}
         .nav-links{display:flex;gap:2rem;list-style:none}.nav-link{color:#fff;text-decoration:none;font-weight:500;transition:all .3s ease;padding:.5rem 1rem;border-radius:25px;position:relative;overflow:hidden}.nav-link:hover,.nav-link.active{color:#ff80cc;background:rgba(255,128,204,.1)}
-        section{min-height:100vh;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;padding: 8rem 0 4rem; /* Adjusted padding for full width sections */ overflow:hidden;} /* Hide overflow for clip-path */
-        section#features { padding: 0; min-height: auto;} /* Features section takes height from its panels */
-        .section-content{max-width:1400px;width:100%;text-align:center;opacity:0;transform:translateY(50px); padding: 0 2rem;} /* Add padding for non-full-width content */
-        section#features .section-content {max-width: none; padding: 0;} /* Features section content is full width */
+        section{min-height:100vh;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;padding: 8rem 2rem 4rem; overflow:hidden;} /* Generic section padding */
+        section#features { padding: 0; min-height:auto; overflow: visible;} /* Override for features to allow panels to control height */
+        .section-content{max-width:1400px;width:100%;text-align:center;opacity:0;transform:translateY(50px);}
+        section#features .section-content {max-width: none; padding: 0;} /* Features main content wrapper for title */
+        #features .section-content-title-wrapper { /* Specific wrapper for features title and subtitle */
+            opacity: 0; transform: translateY(50px); /* Animated by main section observer */
+            padding: 6rem 2rem 4rem; /* Space for title before panels start */
+            position: relative; z-index: 5; /* Ensure title is above panels if overlap occurs */
+        }
 
         .hero-title{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:700;margin-bottom:1.5rem;background:linear-gradient(45deg,#fff,#ffb3d9,#b3d9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
         .hero-subtitle{font-size:clamp(1rem,3vw,1.5rem);margin-bottom:2rem;opacity:.9;line-height:1.6;max-width:800px;margin-left:auto;margin-right:auto}
@@ -55,56 +60,63 @@
         .contact-action-button:hover{border-color:#80ccff;box-shadow:0 0 15px rgba(128,204,255,.4);color:#80ccff}.contact-action-button .contact-action-icon{font-size:1.3em;line-height:1}.contact-action-button .slash{position:absolute;background-color:transparent;transition:all .2s cubic-bezier(.68,-.55,.265,1.55);width:0;height:130%;opacity:0;z-index:0}.contact-action-button .slash.one{top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg)}.contact-action-button .slash.two{top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);transition-delay:.05s}.contact-action-button:hover .slash{width:3px;opacity:1}.contact-action-button:hover .slash.one{background-color:#ff80cc}.contact-action-button:hover .slash.two{background-color:#80ccff}
         .guidelines-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10001;display:none;align-items:center;justify-content:center;padding:2rem}.guidelines-content{background:linear-gradient(135deg,rgba(102,126,234,.9),rgba(118,75,162,.9));border-radius:20px;padding:3rem;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;position:relative;border:2px solid rgba(255,255,255,.2)}.guidelines-title{font-size:2rem;margin-bottom:1.5rem;text-align:center;color:#fff;text-shadow:0 0 10px rgba(255,255,255,.5)}.guidelines-section{margin-bottom:2rem}.guidelines-section h3{color:#ffb3d9;margin-bottom:.5rem;font-size:1.2rem}.guidelines-section ul{list-style:none;padding-left:0}.guidelines-section li{margin-bottom:.5rem;padding-left:1.5rem;position:relative}.guidelines-section li::before{content:'▶';position:absolute;left:0;color:#80ccff}.guidelines-actions{display:flex;gap:1rem;justify-content:center;margin-top:2rem}.guidelines-button{padding:1rem 2rem;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all .3s ease;font-size:1rem}.guidelines-accept{background:linear-gradient(45deg,#43e97b,#38f9d7);color:#fff}.guidelines-accept:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(67,233,123,.3)}.guidelines-decline{background:linear-gradient(45deg,#f093fb,#f5576c);color:#fff}.guidelines-decline:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(240,147,251,.3)}.progress-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:1rem 0;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#80ccff,#ff80cc);width:0%;transition:width .3s ease}
         .scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,#ff80cc,#80ccff);z-index:1001}
-
+        
         /* --- Features Section - Slanting Panel Wipe Effect --- */
-        #features .section-content .hero-title,
-        #features .section-content .hero-subtitle {
-            position: relative; /* Ensure they are on top if panels overlap */
-            z-index: 10;
-             color: #fff; /* Ensure visibility if world background changes */
-             padding: 4rem 2rem 2rem; /* Space for title before panels start */
-        }
         .features-grid {
             display: block; /* Stack panels */
-            position: relative;
+            position: relative; /* For z-indexing if needed */
         }
 
         .feature-panel {
             width: 100vw;
-            height: 90vh; /* Each panel is almost full viewport height */
-            position: relative; /* Changed to relative for normal flow, sticky for advanced effects */
-            overflow: hidden;
+            height: 100vh; 
+            position: relative; /* Each panel will be stacked in normal flow */
+            overflow: hidden; /* Crucial for clip-path */
             display: flex;
             align-items: center;
             justify-content: center;
         }
-        .feature-panel:nth-child(odd) .panel-background-colorblock { background-color: #6f42c1; } /* Example Purple */
-        .feature-panel:nth-child(even) .panel-background-colorblock { background-color: #ff80cc; } /* Example Pink */
-        
-        .panel-background-colorblock {
+        /* Alternating background colors for panels */
+        .feature-panel:nth-child(odd) .panel-background-wipe { background-color: #4a235a; } /* Darker Purple */
+        .feature-panel:nth-child(even) .panel-background-wipe { background-color: #7d3c98; } /* Medium Purple */
+        /* Override specific ones for your palette */
+        .feature-panel[data-feature-index="0"] .panel-background-wipe,
+        .feature-panel[data-feature-index="3"] .panel-background-wipe { background-color: #6f42c1; } /* Your Blue/Purple */
+        .feature-panel[data-feature-index="1"] .panel-background-wipe,
+        .feature-panel[data-feature-index="4"] .panel-background-wipe { background-color: #ff80cc; } /* Your Pink */
+        .feature-panel[data-feature-index="2"] .panel-background-wipe,
+        .feature-panel[data-feature-index="5"] .panel-background-wipe { background-color: #80ccff; } /* Your Light Blue */
+
+
+        .panel-background-wipe {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             will-change: clip-path;
-            /* Initial state: hidden off to the right, slanted */
-            clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); 
+            /* Initial state: hidden, wiped from left-to-right, slanted */
+            /* Points: Top-Left, Top-Right, Bottom-Right, Bottom-Left */
+            /* Slant defined by difference in Y between left and right edges */
+            /* Example: Top-Left at 0%, Top-Right at 15% Vh, Bottom-Right at 100%, Bottom-Left at 85% Vh */
+            /* Initial (hidden to the left): All points at x=0, maintaining their Y proportions for slant */
+             clip-path: polygon(0% 0%, 0% 15vh, 0% 85vh, 0% 100%); /* Collapsed to left edge, maintaining slant */
         }
 
         .panel-content-container {
             position: relative;
-            z-index: 2;
-            max-width: 700px; /* Content width */
+            z-index: 2; /* Above wipe layer */
+            max-width: 700px;
             padding: 2rem;
             text-align: center;
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateY(30px) scale(0.95);
             will-change: opacity, transform;
         }
-        .feature-panel .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #fff; }
-        .feature-panel .feature-title { font-size: 2rem; margin-bottom: 1rem; color: #fff; }
-        .feature-panel .feature-description { color: rgba(255, 255, 255, 0.9); line-height: 1.6; font-size: 1.1rem;}
+        .feature-panel .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .feature-panel .feature-title { font-size: 2.2rem; margin-bottom: 1rem; color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .feature-panel .feature-description { color: rgba(255, 255, 255, 0.9); line-height: 1.7; font-size: 1.1rem;}
+
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
@@ -112,24 +124,48 @@
             header { padding: 1rem; } .header-content { flex-direction: row; } .logo { font-size: 1.5rem; } .nav-links { gap: 0.5rem; } .nav-link { padding: 0.5rem; font-size: 0.9rem; }
             .cta-group, .contact-grid { flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
             .cta-button, .contact-action-button { width: 100%; text-align: center; }
-            section { padding: 6rem 0 2rem; } /* Reduce bottom padding */
-            section#features { padding: 0; }
+            section { padding: 6rem 2rem 2rem; } /* Restore generic padding */
+            section#features { padding: 0; } /* Keep features section padding 0 */
+            #features .section-content-title-wrapper { padding: 4rem 1rem 2rem; }
             .guidelines-content { padding: 2rem; margin: 1rem; }
             
-            .feature-panel { height: auto; min-height: 70vh; padding: 4rem 1rem; } /* Adjust panel height for content on mobile */
-            #features .section-content .hero-title {font-size: clamp(2rem, 7vw, 3rem); padding: 3rem 1rem 1.5rem;}
-            #features .section-content .hero-subtitle {font-size: clamp(0.9rem, 2.5vw, 1.2rem); margin-bottom: 1rem; padding: 0 1rem;}
-            .panel-content-container { padding: 1rem; }
-            .feature-panel .feature-title { font-size: 1.5rem; }
+            .feature-panel { height: auto; min-height: 80vh; padding: 3rem 1rem; }
+            .panel-background-wipe { clip-path: polygon(0% 0%, 100% 10vh, 100% 100%, 0% 90vh) !important; } /* Simpler fixed slant for mobile */
+            .panel-content-container { opacity: 1 !important; transform: none !important; padding: 1.5rem; }
+            .feature-panel .feature-title { font-size: 1.8rem; }
             .feature-panel .feature-description { font-size: 1rem;}
         }
     </style>
 </head>
 <body>
-    <div class="loading-overlay"> <!-- Loading structure --> </div>
-    <div class="custom-cursor"></div> <div class="scroll-progress"></div> <div class="world-background world-1"></div> <div class="particle-system"></div>
-    <div class="guidelines-modal" id="guidelinesModal"> <!-- Guidelines structure --> </div>
-    <header> <!-- Header structure --> </header>
+    <div class="loading-overlay">
+        <div class="loading-text">Entering the Isekai...</div>
+        <div class="loading-subtitle">Loading your adventure</div>
+    </div>
+    
+    <div class="custom-cursor"></div>
+    <div class="scroll-progress"></div>
+    <div class="world-background world-1"></div> <!-- Default background -->
+    <div class="particle-system"></div>
+
+    <div class="guidelines-modal" id="guidelinesModal">
+        <div class="guidelines-content">
+            <h2 class="guidelines-title">🌸 Isekai Express Guidelines 🌸</h2>
+            <div class="progress-bar"><div class="progress-fill" id="readingProgress"></div></div>
+            <div class="guidelines-section"><h3>🚛 Professional Standards</h3><ul><li>Maintain realistic driving behavior at all times</li><li>Follow traffic rules and speed limits</li><li>Complete deliveries on schedule</li><li>Report any issues promptly to management</li></ul></div>
+            <div class="guidelines-section"><h3>🎌 Community Respect</h3><ul><li>Be respectful to all members regardless of anime preferences</li><li>Use appropriate language in all communications</li><li>Help new drivers learn the ropes</li><li>Participate positively in events and discussions</li></ul></div>
+            <div class="guidelines-section"><h3>⚡ Event Participation</h3><ul><li>Join anime-themed convoys when available</li><li>Customize your truck with approved anime liveries</li><li>Attend weekly meetups and special events</li><li>Share your favorite anime recommendations!</li></ul></div>
+            <div class="guidelines-section"><h3>📋 Requirements</h3><ul><li>Own Euro Truck Simulator 2 with DLCs recommended</li><li>Have Discord for communication</li><li>Be active at least once per week</li><li>Age 16+ (parental consent required for under 18)</li></ul></div>
+            <div class="guidelines-actions"><button class="guidelines-button guidelines-accept" id="acceptGuidelines" disabled>Accept & Join (Read All First)</button><button class="guidelines-button guidelines-decline" id="declineGuidelines">Not Ready Yet</button></div>
+        </div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="logo">異世界 Express</div>
+            <nav><ul class="nav-links"><li><a href="#hero" class="nav-link">Home</a></li><li><a href="#features" class="nav-link">Services</a></li><li><a href="#contact" class="nav-link">Join Us</a></li></ul></nav>
+        </div>
+    </header>
 
     <main>
         <section id="hero" data-world="1">
@@ -144,43 +180,44 @@
         </section>
 
         <section id="features" data-world="2">
-            <div class="section-content"> <!-- This div is now mainly for the section title and subtitle -->
+            <div class="section-content section-content-title-wrapper"> <!-- Wrapper for title and subtitle -->
                 <h2 class="hero-title">Our Services</h2>
                 <p class="hero-subtitle">We offer a premium, structured experience for serious drivers who love anime culture.</p>
             </div>
             <div class="features-grid">
+                <!-- Panels will be structured like this -->
                 <div class="feature-panel" data-feature-index="0">
-                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-background-wipe"></div>
                     <div class="panel-content-container">
                         <div class="feature-icon">🚛</div> <h3 class="feature-title">Professional Operations</h3> <p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p>
                     </div>
                 </div>
                 <div class="feature-panel" data-feature-index="1">
-                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-background-wipe"></div>
                     <div class="panel-content-container">
                         <div class="feature-icon">🎌</div> <h3 class="feature-title">Anime-Themed Events</h3> <p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p>
                     </div>
                 </div>
                  <div class="feature-panel" data-feature-index="2">
-                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-background-wipe"></div>
                     <div class="panel-content-container">
                         <div class="feature-icon">👥</div> <h3 class="feature-title">United Community</h3> <p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts from across Europe in our welcoming Discord community.</p>
                     </div>
                 </div>
                 <div class="feature-panel" data-feature-index="3">
-                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-background-wipe"></div>
                     <div class="panel-content-container">
                         <div class="feature-icon">🏆</div> <h3 class="feature-title">Achievement System</h3> <p class="feature-description">Earn ranks, badges, and recognition for your driving skills, event participation, and community contributions.</p>
                     </div>
                 </div>
                 <div class="feature-panel" data-feature-index="4">
-                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-background-wipe"></div>
                     <div class="panel-content-container">
                         <div class="feature-icon">🎮</div> <h3 class="feature-title">Gaming Excellence</h3> <p class="feature-description">High-quality gaming experience with organized events, training programs, and competitive seasonal challenges.</p>
                     </div>
                 </div>
                 <div class="feature-panel" data-feature-index="5">
-                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-background-wipe"></div>
                     <div class="panel-content-container">
                         <div class="feature-icon">🌟</div> <h3 class="feature-title">Special Benefits</h3> <p class="feature-description">Exclusive access to custom mods, priority event slots, and special recognition for dedicated members.</p>
                     </div>
@@ -188,7 +225,16 @@
             </div>
         </section>
 
-        <section id="contact" data-world="3"> <!-- Contact section structure --> </section>
+        <section id="contact" data-world="3">
+            <div class="section-content">
+                <h2 class="hero-title">Start Your Isekai Adventure</h2>
+                <p class="hero-subtitle">Connect with us today and begin your journey into a different world of professional trucking.</p>
+                <div class="contact-grid">
+                    <a href="mailto:expressisekai@gmail.com" class="contact-action-button" rel="noopener noreferrer"><span class="contact-action-icon">✉️</span><span class="contact-action-text">Email Us</span><span class="slash one"></span><span class="slash two"></span></a>
+                    <a href="https://discord.gg/uE96rbK95j" class="contact-action-button" target="_blank" rel="noopener noreferrer"><span class="contact-action-icon">💬</span><span class="contact-action-text">Join Discord</span><span class="slash one"></span><span class="slash two"></span></a>
+                </div>
+            </div>
+        </section>
     </main>
     
     <script>
@@ -199,8 +245,8 @@
             reduceMotion: motionQuery.matches,
             guidelinesRead: false,
             readingProgress: 0,
-            activeFeaturePanel: null, // Track the currently animating/visible panel
-            isPanelAnimating: false
+            isPanelAnimating: false, // To prevent multiple panels animating simultaneously
+            currentlyVisiblePanel: null
         };
 
         // --- Minified System Definitions (Loading, Cursor, Particles, Background, Guidelines) ---
@@ -226,18 +272,16 @@
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const sectionContent = entry.target.querySelector('.section-content:not(#features .section-content)'); // Exclude features title from this generic animation
+                    const sectionContent = entry.target.querySelector('.section-content:not(.section-content-title-wrapper)');
+                    const featuresTitleWrapper = entry.target.querySelector('.section-content-title-wrapper');
+
                     if (sectionContent && !sectionContent.classList.contains('is-visible')) {
                          animations.section(sectionContent); 
                          sectionContent.classList.add('is-visible'); 
                     }
-                     // Animate features section title specifically if it's the features section
-                    if (entry.target.id === 'features') {
-                        const featuresTitleContent = entry.target.querySelector('.section-content'); // The one holding h2 and p
-                        if (featuresTitleContent && !featuresTitleContent.classList.contains('is-visible')) {
-                            animations.section(featuresTitleContent);
-                            featuresTitleContent.classList.add('is-visible');
-                        }
+                    if (featuresTitleWrapper && !featuresTitleWrapper.classList.contains('is-visible')) {
+                        animations.section(featuresTitleWrapper);
+                        featuresTitleWrapper.classList.add('is-visible');
                     }
 
                     if (worldBg) { const world = entry.target.dataset.world; if (world) worldBg.className = `world-background world-${world}`; }
@@ -254,78 +298,86 @@
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
         sections.forEach(section => sectionObserver.observe(section));
 
-
-        // Observer for individual feature panels
         const featurePanels = document.querySelectorAll('.feature-panel');
         const featurePanelObserverOptions = { 
             root: null, 
-            rootMargin: isMobile ? '-10% 0px -10% 0px' : '-30% 0px -30% 0px', // When panel is more centered
-            threshold: 0.3 // Need a good portion of it in the adjusted viewport
+            rootMargin: isMobile ? '-15% 0px -15% 0px' : '-40% 0px -40% 0px', // Panel needs to be fairly centered
+            threshold: 0.5 // At least 50% of the panel is visible in the adjusted viewport
         }; 
         
         const featurePanelObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 const panel = entry.target;
-                const bgBlock = panel.querySelector('.panel-background-colorblock');
+                const bgWipe = panel.querySelector('.panel-background-wipe');
                 const content = panel.querySelector('.panel-content-container');
 
                 if (entry.isIntersecting) {
-                    if (!panel.classList.contains('is-animated') && !state.isPanelAnimating) {
+                    if (!panel.classList.contains('is-active') && !state.isPanelAnimating) {
                         state.isPanelAnimating = true;
-                        panel.classList.add('is-animated');
+                        panel.classList.add('is-active');
+                        state.currentlyVisiblePanel = panel;
 
-                        if(state.reduceMotion || isMobile){
-                            anime({ targets: bgBlock, clipPath: ['polygon(100% 0, 100% 0, 100% 100%, 100% 100%)', 'polygon(0 0, 100% 15vh, 100% 100%, 0 85vh)'], duration: 1, easing: 'linear' }); // instant for reduce motion
-                            anime({ targets: content, opacity: [0, 1], translateY: [20,0], duration: 1, delay: 10, easing: 'linear', complete: () => {state.isPanelAnimating = false;} });
+                        // Slant: top-left, top-right, bottom-right, bottom-left
+                        const initialClip = 'polygon(0% 0%, 0% 15vh, 0% 85vh, 0% 100%)'; // Hidden left
+                        const finalClip = 'polygon(0% 0%, 100% 15vh, 100% 85vh, 0% 100%)'; // Fully revealed, slanted
+                        // For right-to-left wipe, adjust initial and final:
+                        // const initialClip = 'polygon(100% 0%, 100% 15vh, 100% 85vh, 100% 100%)'; 
+
+
+                        if (state.reduceMotion || isMobile) { // Simplified for mobile/reduced motion
+                            bgWipe.style.clipPath = finalClip;
+                            content.style.opacity = '1';
+                            content.style.transform = 'translateY(0px) scale(1)';
+                            state.isPanelAnimating = false;
                             return;
                         }
-
+                        
                         anime.timeline({
-                            easing: 'easeOutExpo',
-                            complete: () => {
-                                state.isPanelAnimating = false;
-                            }
+                            easing: 'easeInOutCubic', // Changed easing
+                            complete: () => { state.isPanelAnimating = false; }
                         })
                         .add({
-                            targets: bgBlock,
-                            clipPath: ['polygon(100% 0, 100% 0, 100% 100%, 100% 100%)', 'polygon(0 0, 100% 15vh, 100% 100%, 0 85vh)'],
-                            duration: 900, 
-                            easing: 'easeInOutQuart'
+                            targets: bgWipe,
+                            clipPath: [initialClip, finalClip],
+                            duration: 800, // Faster wipe
                         })
                         .add({
                             targets: content,
                             opacity: [0, 1],
-                            translateY: [40, 0],
+                            translateY: [30, 0],
+                            scale: [0.95, 1],
                             duration: 700,
-                            easing: 'easeOutCubic'
-                        }, '-=500'); // Start content animation while wipe is finishing
+                        }, '-=400'); // Overlap content animation
                     }
-                } else {
-                    // Panel is NOT intersecting the "active zone"
-                    // Reset if it was animated, to allow re-animation if scrolled back
-                    // Only reset if not currently animating to avoid conflicts
-                    if (panel.classList.contains('is-animated') && !state.isPanelAnimating) {
-                         if(state.reduceMotion || isMobile) { // Simpler reset for mobile/reduce motion
-                            bgBlock.style.clipPath = 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)';
-                            content.style.opacity = '0';
-                            content.style.transform = 'translateY(40px)';
+                } else { // Panel is NOT in the "active" zone
+                    if (panel.classList.contains('is-active') && !state.isPanelAnimating) {
+                         const initialClip = 'polygon(0% 0%, 0% 15vh, 0% 85vh, 0% 100%)'; // Hidden left
+                        
+                        if (state.reduceMotion || isMobile) {
+                             bgWipe.style.clipPath = initialClip;
+                             content.style.opacity = '0';
+                             content.style.transform = 'translateY(30px) scale(0.95)';
                         } else {
-                            anime.remove([bgBlock, content]); // Stop any ongoing animations on these elements
+                            anime.remove([bgWipe, content]);
                             anime({
-                                targets: bgBlock,
-                                clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)',
-                                duration: 500,
-                                easing: 'easeInQuart'
+                                targets: bgWipe,
+                                clipPath: initialClip,
+                                duration: 600, // Faster hide
+                                easing: 'easeInOutCubic'
                             });
                             anime({
                                 targets: content,
                                 opacity: 0,
-                                translateY: 40,
-                                duration: 300,
+                                translateY: 30,
+                                scale: 0.95,
+                                duration: 400,
                                 easing: 'easeInCubic'
                             });
                         }
-                        panel.classList.remove('is-animated');
+                        panel.classList.remove('is-active');
+                        if (state.currentlyVisiblePanel === panel) {
+                            state.currentlyVisiblePanel = null;
+                        }
                     }
                 }
             });
@@ -338,7 +390,6 @@
             });
         }
 
-        // Initial setup for nav links and hash
         document.querySelectorAll('.nav-link').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const tId=this.getAttribute('href');const tE=document.querySelector(tId); if(tE){tE.scrollIntoView({behavior:'smooth'});}});});
         if(window.location.hash){const aL=document.querySelector(`.nav-link[href="${window.location.hash}"]`);if(aL)aL.classList.add('active');}else{const hL=document.querySelector('.nav-link[href="#hero"]');if(hL)hL.classList.add('active');}
     });
