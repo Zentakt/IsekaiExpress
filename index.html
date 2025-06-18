@@ -43,7 +43,7 @@
         }
         .custom-cursor.enlarged { width: 40px; height: 40px; opacity: 0.5; }
 
-        /* --- Enhanced Portal Loading Effect --- */
+        /* --- Enhanced Planet Loading Effect --- */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -57,46 +57,28 @@
             justify-content: center;
             flex-direction: column;
         }
-        .portal-container {
-            position: relative;
-            width: clamp(280px, 70vmin, 400px);
-            height: clamp(280px, 70vmin, 400px);
-            /* Ensured it doesn't have margins that could offset flex centering */
-            margin: 0;
-        }
-        .portal-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            border: 3px solid;
+        .planet-silhouette {
+            width: clamp(80px, 20vmin, 150px); /* Responsive initial size */
+            height: clamp(80px, 20vmin, 150px);
+            background-color: #0c001f; /* Dark purple, almost black */
             border-radius: 50%;
-            transform: translate(-50%, -50%);
-            box-shadow: 0 0 20px currentColor;
+            margin-bottom: 2rem; /* Space before the text */
+            box-shadow: 0 0 15px 5px rgba(128, 204, 255, 0.3); /* Subtle outer glow */
         }
         .loading-text {
-            /* MODIFIED: Removed absolute positioning, now a flex item */
-            /* position: absolute; */
-            /* bottom: 20%; */
-            /* left: 50%; */
-            /* transform: translateX(-50%); */
             font-size: 1.5rem;
             font-weight: bold;
             color: #80ccff;
             text-shadow: 0 0 10px #80ccff;
-            margin-top: 1.5rem; /* Space below portal animation */
-            text-align: center; /* Ensures text is centered if it wraps */
+            margin-top: 1.5rem;
+            text-align: center;
         }
         .loading-subtitle {
-            /* MODIFIED: Removed absolute positioning, now a flex item */
-            /* position: absolute; */
-            /* bottom: 15%; */
-            /* left: 50%; */
-            /* transform: translateX(-50%); */
             font-size: 1rem;
             color: #ff80cc;
             opacity: 0.8;
-            margin-top: 0.75rem; /* Space below main loading text */
-            text-align: center; /* Ensures text is centered if it wraps */
+            margin-top: 0.75rem;
+            text-align: center;
         }
 
         /* --- Dynamic Background & Particles --- */
@@ -550,7 +532,7 @@
 </head>
 <body>
     <div class="loading-overlay">
-        <div class="portal-container"></div>
+        <!-- The planet-silhouette div will be created and prepended here by JavaScript -->
         <div class="loading-text">Entering the Isekai...</div>
         <div class="loading-subtitle">Loading your adventure</div>
     </div>
@@ -727,7 +709,7 @@
         const systems = {
             loading: {
                 overlay: document.querySelector('.loading-overlay'),
-                portalContainer: document.querySelector('.portal-container'),
+                // Removed portalContainer, will use planetSilhouetteEl directly
                 init() {
                     if (state.reduceMotion) {
                         if(this.overlay) this.overlay.style.display = 'none';
@@ -735,98 +717,83 @@
                         animations.hero();
                         return;
                     }
-                    if (!this.portalContainer) return;
+                    if (!this.overlay) return; // Guard clause
+
+                    const planetSilhouetteEl = document.createElement('div');
+                    planetSilhouetteEl.classList.add('planet-silhouette');
                     
-                    const colors = ['#80ccff', '#ff80cc', '#ffb3d9', '#b3d9ff', '#e6ccff', '#ccffe6', '#ffe6cc'];
-                    for (let i = 0; i < 10; i++) {
-                        const ring = document.createElement('div');
-                        ring.classList.add('portal-ring');
-                        ring.style.borderColor = colors[i % colors.length];
-                        this.portalContainer.appendChild(ring);
+                    const loadingTextEl = this.overlay.querySelector('.loading-text');
+                    const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle');
+
+                    // Prepend planet, so text appears below it in flex-column layout
+                    if (loadingTextEl) { // Prepend before the first text element
+                        this.overlay.insertBefore(planetSilhouetteEl, loadingTextEl);
+                    } else { // Fallback if no text elements, just append
+                        this.overlay.appendChild(planetSilhouetteEl);
                     }
 
-                    const portalTimeline = anime.timeline({
-                        autoplay: true,
-                        loop: true
-                    });
-
-                    portalTimeline.add({
-                        targets: '.portal-ring',
-                        width: [0, '120%'], 
-                        height: [0, '120%'], 
-                        opacity: [1, 0],
-                        borderWidth: [8, 1],
-                        rotate: [0, 360],
-                        duration: 2000,
-                        easing: 'easeOutExpo',
-                        delay: anime.stagger(100)
-                    });
-
-                    // Text animations still apply, but their positioning is now handled by flex layout
-                    anime({
-                        targets: '.loading-text',
-                        opacity: [0, 1, 0], // Kept for effect, but could be simplified
-                        // translateY: [20, 0, -20], // This might conflict with flex positioning, consider removing if issues
-                        duration: 3000,
+                    // Initial looping text animations
+                    const textIntro1 = anime({
+                        targets: loadingTextEl,
+                        opacity: [0, 1, 0.9, 1, 0.9, 1, 0], // More dynamic flicker
+                        translateY: [10, 0, -5, 0, 5, 0, -10],
+                        duration: 3000, // Slightly faster loop
                         loop: true,
                         easing: 'easeInOutSine'
                     });
-
-                    anime({
-                        targets: '.loading-subtitle',
-                        opacity: [0, 0.8, 0], // Kept for effect
-                        duration: 4000,
+                    const textIntro2 = anime({
+                        targets: loadingSubtitleEl,
+                        opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0],
+                        translateY: [10, 0, -5, 0, 5, 0, -10],
+                        duration: 3000,
                         loop: true,
-                        delay: 1000,
+                        delay: 300, // Shorter delay
                         easing: 'easeInOutSine'
                     });
 
                     window.onload = () => {
                         setTimeout(() => {
-                            portalTimeline.pause();
-                            anime({
-                                targets: this.portalContainer,
-                                scale: [1, 8], // Scale up the portal container
-                                opacity: [1, 0],
-                                duration: 1200,
-                                easing: 'easeInExpo'
-                            });
-                            anime({
-                                targets: ['.loading-text', '.loading-subtitle'],
-                                opacity: 0, // Fade out text with the portal
-                                scale: 0.5, // Optionally shrink text as it fades
-                                duration: 800,
+                            textIntro1.pause();
+                            textIntro2.pause();
+
+                            // Set text to fully visible before exit animation
+                            anime.set([loadingTextEl, loadingSubtitleEl], { opacity: 1, translateY: 0 });
+
+                            const exitTimeline = anime.timeline({});
+
+                            exitTimeline
+                            .add({
+                                targets: [loadingTextEl, loadingSubtitleEl],
+                                opacity: 0,
+                                translateY: -25, // Slightly more upward movement
+                                duration: 500, // Quick fade out for text
+                                easing: 'easeInCubic',
+                            })
+                            .add({
+                                targets: planetSilhouetteEl,
+                                scale: [1, 40], // Increased scale for full viewport coverage
+                                opacity: [1, 0], 
+                                duration: 1000, // Faster planet expansion/fade
                                 easing: 'easeInExpo',
+                            }, '-=300') // Overlap: Planet starts expanding as text is fading
+                            .add({
+                                targets: this.overlay,
+                                opacity: 0,
+                                duration: 400, // Faster overlay fade
+                                easing: 'easeOutQuad', // Smoother fade out
                                 complete: () => {
-                                    if(this.overlay) { 
-                                        anime({
-                                            targets: this.overlay,
-                                            opacity: 0,
-                                            duration: 500,
-                                            easing: 'easeInOutQuad',
-                                            complete: () => {
-                                                if(this.overlay) this.overlay.style.display = 'none';
-                                                anime({
-                                                    targets: 'header',
-                                                    translateY: ['-100%', '0%'],
-                                                    duration: 800,
-                                                    easing: 'easeOutExpo'
-                                                });
-                                                animations.hero();
-                                            }
-                                        });
-                                    } else { 
-                                         anime({
-                                            targets: 'header',
-                                            translateY: ['-100%', '0%'],
-                                            duration: 800,
-                                            easing: 'easeOutExpo'
-                                        });
-                                        animations.hero();
-                                    }
+                                    if (this.overlay) this.overlay.style.display = 'none';
+                                    anime({
+                                        targets: 'header',
+                                        translateY: ['-100%', '0%'],
+                                        duration: 800,
+                                        easing: 'easeOutExpo'
+                                    });
+                                    animations.hero(); // Trigger hero animation
                                 }
-                            });
-                        }, 2500); 
+                            }, '-=200'); // Overlay starts fading as planet is almost gone
+
+                        }, 1200); // Shorter timeout for quicker loading feel
                     };
                 }
             },
@@ -981,7 +948,7 @@
             }
         };
 
-        const animations = {
+        const animations = { // This object should be defined outside systems if systems.loading.init calls animations.hero
             hero() {
                 const heroSection = document.querySelector('#hero .section-content');
                 if (!heroSection) return;
@@ -991,7 +958,7 @@
                         opacity: [0, 1],
                         translateY: [50, 0],
                         duration: 1000,
-                        delay: state.reduceMotion ? 0 : 500
+                        delay: state.reduceMotion ? 0 : 300 // Slight delay after loading screen
                     })
                     .add({
                         targets: '#hero .hero-title',
@@ -1036,8 +1003,7 @@
                     return;
                 }
 
-
-                portalEl.innerHTML = '';
+                portalEl.innerHTML = ''; // Clear previous rings
                 
                 const colors = ['#ff80cc', '#80ccff', '#43e97b', '#f093fb'];
                 for (let i = 0; i < 7; i++) {
@@ -1081,6 +1047,7 @@
             }
         };
 
+        // Initialize all systems
         systems.loading.init();
         systems.cursor.init();
         systems.particles.init();
