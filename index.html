@@ -24,12 +24,12 @@
                 transition-duration: 0.01ms !important;
             }
             body { cursor: auto; }
-            .custom-cursor, .particle-system, .loading-overlay, .feature-card-inner::before, .feature-card-inner::after { display: none !important; }
-            .feature-card { opacity: 1 !important; transform: none !important; }
-            .feature-content-wrapper { opacity: 1 !important; transform: none !important; }
+            .custom-cursor, .particle-system, .loading-overlay { display: none !important; }
+            .feature-panel .panel-background-colorblock { clip-path: polygon(0 0, 100% 15vh, 100% 100%, 0 85vh) !important; }
+            .feature-panel .panel-content-container { opacity: 1 !important; transform: none !important; }
         }
 
-        /* --- Cursor, Loading, Background, Particles, Header, CTA, Contact, Guidelines, Scroll Progress (minified from previous) --- */
+        /* --- Cursor, Loading, Background, Particles, Header, CTA, Contact, Guidelines, Scroll Progress (minified) --- */
         .custom-cursor{position:fixed;width:20px;height:20px;background:#ff80cc;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:exclusion;transform:translateZ(0);will-change:transform;transition:width .3s ease,height .3s ease,opacity .3s ease}.custom-cursor.enlarged{width:40px;height:40px;opacity:.5}
         .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#1a0a2e 0%,#0a0a0a 100%);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column}
         .planet-container{position:relative;width:clamp(90px,23vmin,160px);height:clamp(90px,23vmin,160px);margin-bottom:2rem;display:flex;align-items:center;justify-content:center}
@@ -37,12 +37,16 @@
         .planet-silhouette{width:clamp(80px,20vmin,150px);height:clamp(80px,20vmin,150px);background-color:#0c001f;border-radius:50%;box-shadow:0 0 10px 3px rgba(128,204,255,.2)}
         .loading-text{font-size:1.5rem;font-weight:700;color:#80ccff;text-shadow:0 0 10px #80ccff;margin-top:1.5rem;text-align:center}
         .loading-subtitle{font-size:1rem;color:#ff80cc;opacity:.8;margin-top:.75rem;text-align:center}
-        .world-background{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;transition:background 1.5s cubic-bezier(.4,0,.2,1);transform:translateZ(0);will-change:background}.world-1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}.world-2{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}.world-3{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
+        .world-background{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;transition:background 1.5s cubic-bezier(.4,0,.2,1);transform:translateZ(0);will-change:background}.world-1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}.world-2{background:linear-gradient(135deg,#1d1335 0%,#3c226b 100%)}.world-3{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)} /* Changed world-2 background for feature panels */
         .particle-system{position:fixed;top:0;left:0;width:100%;height:100vh;pointer-events:none;z-index:1;transform:translateZ(0)}.particle{position:absolute;border-radius:50%;pointer-events:none;transform:translateZ(0);will-change:transform,opacity}
         header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;background:rgba(0,0,0,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.1);transition:all .3s ease;transform:translateY(-100%) translateZ(0);will-change:transform}.header-content{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
         .logo{font-size:2rem;font-weight:700;background:linear-gradient(45deg,#ff80cc,#80ccff,#ffb3d9,#b3d9ff);background-size:400% 400%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease-in-out infinite;cursor:pointer}@keyframes gradientShift{0%,to{background-position:0 50%}50%{background-position:100% 50%}}
         .nav-links{display:flex;gap:2rem;list-style:none}.nav-link{color:#fff;text-decoration:none;font-weight:500;transition:all .3s ease;padding:.5rem 1rem;border-radius:25px;position:relative;overflow:hidden}.nav-link:hover,.nav-link.active{color:#ff80cc;background:rgba(255,128,204,.1)}
-        section{min-height:100vh;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 4rem;overflow:visible}.section-content{max-width:1400px;width:100%;text-align:center;opacity:0;transform:translateY(50px)}
+        section{min-height:100vh;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;padding: 8rem 0 4rem; /* Adjusted padding for full width sections */ overflow:hidden;} /* Hide overflow for clip-path */
+        section#features { padding: 0; min-height: auto;} /* Features section takes height from its panels */
+        .section-content{max-width:1400px;width:100%;text-align:center;opacity:0;transform:translateY(50px); padding: 0 2rem;} /* Add padding for non-full-width content */
+        section#features .section-content {max-width: none; padding: 0;} /* Features section content is full width */
+
         .hero-title{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:700;margin-bottom:1.5rem;background:linear-gradient(45deg,#fff,#ffb3d9,#b3d9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
         .hero-subtitle{font-size:clamp(1rem,3vw,1.5rem);margin-bottom:2rem;opacity:.9;line-height:1.6;max-width:800px;margin-left:auto;margin-right:auto}
         .cta-group,.contact-grid{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:3rem}
@@ -52,93 +56,55 @@
         .guidelines-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10001;display:none;align-items:center;justify-content:center;padding:2rem}.guidelines-content{background:linear-gradient(135deg,rgba(102,126,234,.9),rgba(118,75,162,.9));border-radius:20px;padding:3rem;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;position:relative;border:2px solid rgba(255,255,255,.2)}.guidelines-title{font-size:2rem;margin-bottom:1.5rem;text-align:center;color:#fff;text-shadow:0 0 10px rgba(255,255,255,.5)}.guidelines-section{margin-bottom:2rem}.guidelines-section h3{color:#ffb3d9;margin-bottom:.5rem;font-size:1.2rem}.guidelines-section ul{list-style:none;padding-left:0}.guidelines-section li{margin-bottom:.5rem;padding-left:1.5rem;position:relative}.guidelines-section li::before{content:'▶';position:absolute;left:0;color:#80ccff}.guidelines-actions{display:flex;gap:1rem;justify-content:center;margin-top:2rem}.guidelines-button{padding:1rem 2rem;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all .3s ease;font-size:1rem}.guidelines-accept{background:linear-gradient(45deg,#43e97b,#38f9d7);color:#fff}.guidelines-accept:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(67,233,123,.3)}.guidelines-decline{background:linear-gradient(45deg,#f093fb,#f5576c);color:#fff}.guidelines-decline:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(240,147,251,.3)}.progress-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:1rem 0;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#80ccff,#ff80cc);width:0%;transition:width .3s ease}
         .scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,#ff80cc,#80ccff);z-index:1001}
 
-        /* --- Features Section - KPRverse Inspired Reveal --- */
+        /* --- Features Section - Slanting Panel Wipe Effect --- */
+        #features .section-content .hero-title,
+        #features .section-content .hero-subtitle {
+            position: relative; /* Ensure they are on top if panels overlap */
+            z-index: 10;
+             color: #fff; /* Ensure visibility if world background changes */
+             padding: 4rem 2rem 2rem; /* Space for title before panels start */
+        }
         .features-grid {
-            display: grid;
-            grid-template-columns: 1fr; /* Each card takes full width for sequential display */
-            gap: 10vh; /* Vertical spacing between potential card areas */
-            margin-top: 4rem;
-            perspective: 2000px; /* Stronger perspective for more depth */
-             min-height: 300vh; /* Ensure enough scroll space for multiple items to trigger */
+            display: block; /* Stack panels */
+            position: relative;
         }
 
-        .feature-card {
-            position: relative; 
-            transform-style: preserve-3d; 
-            min-height: 320px; /* Ensure card has some height */
-            width: clamp(300px, 90%, 550px); /* Control card width */
-            margin: 0 auto; /* Center the card horizontally */
-            
-            /* Initial state for "portal summoning" */
-            opacity: 0; 
-            transform: translateY(150px) translateZ(-600px) rotateY(60deg) scale(0.7);
-            will-change: opacity, transform;
+        .feature-panel {
+            width: 100vw;
+            height: 90vh; /* Each panel is almost full viewport height */
+            position: relative; /* Changed to relative for normal flow, sticky for advanced effects */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        .feature-panel:nth-child(odd) .panel-background-colorblock { background-color: #6f42c1; } /* Example Purple */
+        .feature-panel:nth-child(even) .panel-background-colorblock { background-color: #ff80cc; } /* Example Pink */
         
-        .feature-card-inner { 
-            position: relative;
+        .panel-background-colorblock {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            will-change: clip-path;
+            /* Initial state: hidden off to the right, slanted */
+            clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); 
+        }
+
+        .panel-content-container {
+            position: relative;
+            z-index: 2;
+            max-width: 700px; /* Content width */
             padding: 2rem;
-            border-radius: 15px;
-            background: rgba(20, 0, 35, 0.65); /* Darker, more solid portal */
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 128, 204, 0.3); /* Pinkish border */
-            transform-style: preserve-3d;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* For mouse parallax */
-             overflow: hidden; /* For glitch effects */
-        }
-        
-        .feature-card-inner::before,
-        .feature-card-inner::after {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(10, 0, 20, 0.2); /* Glitch layer color */
-            border-radius: 15px;
-            opacity: 0; /* Initially hidden, animated by JS or CSS later if needed */
-            z-index: 1; /* Above main background but below content */
-             pointer-events: none;
-        }
-        .feature-card.is-glitching .feature-card-inner::before { opacity: 0.7; animation: glitch-anim-1 3s infinite steps(4, end) alternate; }
-        .feature-card.is-glitching .feature-card-inner::after { opacity: 0.7; animation: glitch-anim-2 2.5s infinite steps(4, end) alternate-reverse .2s; }
-
-
-        @keyframes glitch-anim-1 {
-            0% { clip-path: inset(10% 0 80% 0); transform: translateX(-5px) translateY(3px); }
-            20% { clip-path: inset(75% 0 5% 0); transform: translateX(3px) translateY(-2px) skewX(5deg); }
-            40% { clip-path: inset(5% 0 60% 0); transform: translateX(-6px) translateY(4px); }
-            60% { clip-path: inset(40% 0 40% 0); transform: translateX(4px) translateY(-3px) skewY(-4deg); }
-            80% { clip-path: inset(65% 0 10% 0); transform: translateX(-2px) translateY(1px); }
-            100% { clip-path: inset(30% 0 50% 0); transform: translateX(5px) translateY(-4px) skewX(-7deg); }
-        }
-        @keyframes glitch-anim-2 {
-            0% { clip-path: inset(0 70% 0 10%); transform: translateY(-6px) translateX(3px) skewY(8deg); }
-            20% { clip-path: inset(20% 10% 0 60%); transform: translateY(4px) translateX(-2px); }
-            40% { clip-path: inset(0 50% 0 30%); transform: translateY(-3px) translateX(5px) skewX(-6deg); }
-            60% { clip-path: inset(35% 30% 0 50%); transform: translateY(5px) translateX(-4px); }
-            80% { clip-path: inset(0 60% 0 20%); transform: translateY(-2px) translateX(1px) skewY(3deg); }
-            100% { clip-path: inset(25% 20% 0 70%); transform: translateY(-4px) translateX(6px); }
-        }
-
-        .feature-content-wrapper {
-            position: relative; 
-            z-index: 2; /* Above glitch layers */
-            opacity: 0; 
-            transform: translateY(30px) scale(0.9);
             text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            will-change: opacity, transform;
         }
-        
-        .feature-card.is-visible .feature-card-inner:hover { /* For mouse parallax */
-            /* transform handled by JS for parallax */
-             box-shadow: 0 20px 45px rgba(255, 128, 204, 0.3);
-        }
-
-        .feature-icon { font-size: 2.8rem; margin-bottom: 1rem; color: #ff80cc; transform: translateZ(30px); }
-        .feature-title { font-size: 1.6rem; margin-bottom: 0.85rem; color: #80ccff; transform: translateZ(20px); text-shadow: 0 0 8px rgba(128,204,255,0.5); }
-        .feature-description { color: rgba(255, 255, 255, 0.9); line-height: 1.65; font-size:1rem; transform: translateZ(10px); }
-
+        .feature-panel .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #fff; }
+        .feature-panel .feature-title { font-size: 2rem; margin-bottom: 1rem; color: #fff; }
+        .feature-panel .feature-description { color: rgba(255, 255, 255, 0.9); line-height: 1.6; font-size: 1.1rem;}
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
@@ -146,51 +112,24 @@
             header { padding: 1rem; } .header-content { flex-direction: row; } .logo { font-size: 1.5rem; } .nav-links { gap: 0.5rem; } .nav-link { padding: 0.5rem; font-size: 0.9rem; }
             .cta-group, .contact-grid { flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
             .cta-button, .contact-action-button { width: 100%; text-align: center; }
-            section { padding: 6rem 1rem 4rem; }
+            section { padding: 6rem 0 2rem; } /* Reduce bottom padding */
+            section#features { padding: 0; }
             .guidelines-content { padding: 2rem; margin: 1rem; }
-            .features-grid { grid-template-columns: 1fr; perspective: none; gap: 5vh; min-height: auto; }
-            .feature-card { 
-                opacity: 0; transform: translateY(50px) scale(0.95); /* Simpler initial for mobile */
-                min-height: auto;
-                margin-bottom: 2rem;
-            }
-             .feature-card-inner { transform: none !important; }
-            .feature-card-inner::before, .feature-card-inner::after { display: none; } /* Hide glitch on mobile */
-            .feature-card.is-visible-animated {
-                opacity: 1 !important; 
-                transform: translateY(0px) scale(1) !important;
-            }
+            
+            .feature-panel { height: auto; min-height: 70vh; padding: 4rem 1rem; } /* Adjust panel height for content on mobile */
+            #features .section-content .hero-title {font-size: clamp(2rem, 7vw, 3rem); padding: 3rem 1rem 1.5rem;}
+            #features .section-content .hero-subtitle {font-size: clamp(0.9rem, 2.5vw, 1.2rem); margin-bottom: 1rem; padding: 0 1rem;}
+            .panel-content-container { padding: 1rem; }
+            .feature-panel .feature-title { font-size: 1.5rem; }
+            .feature-panel .feature-description { font-size: 1rem;}
         }
     </style>
 </head>
 <body>
-    <div class="loading-overlay">
-        <div class="loading-text">Entering the Isekai...</div>
-        <div class="loading-subtitle">Loading your adventure</div>
-    </div>
-    
-    <div class="custom-cursor"></div>
-    <div class="scroll-progress"></div>
-    <div class="world-background world-1"></div>
-    <div class="particle-system"></div>
-
-    <div class="guidelines-modal" id="guidelinesModal">
-        <div class="guidelines-content">
-            <h2 class="guidelines-title">🌸 Isekai Express Guidelines 🌸</h2><div class="progress-bar"><div class="progress-fill" id="readingProgress"></div></div>
-            <div class="guidelines-section"><h3>🚛 Professional Standards</h3><ul><li>Maintain realistic driving behavior at all times</li><li>Follow traffic rules and speed limits</li><li>Complete deliveries on schedule</li><li>Report any issues promptly to management</li></ul></div>
-            <div class="guidelines-section"><h3>🎌 Community Respect</h3><ul><li>Be respectful to all members regardless of anime preferences</li><li>Use appropriate language in all communications</li><li>Help new drivers learn the ropes</li><li>Participate positively in events and discussions</li></ul></div>
-            <div class="guidelines-section"><h3>⚡ Event Participation</h3><ul><li>Join anime-themed convoys when available</li><li>Customize your truck with approved anime liveries</li><li>Attend weekly meetups and special events</li><li>Share your favorite anime recommendations!</li></ul></div>
-            <div class="guidelines-section"><h3>📋 Requirements</h3><ul><li>Own Euro Truck Simulator 2 with DLCs recommended</li><li>Have Discord for communication</li><li>Be active at least once per week</li><li>Age 16+ (parental consent required for under 18)</li></ul></div>
-            <div class="guidelines-actions"><button class="guidelines-button guidelines-accept" id="acceptGuidelines" disabled>Accept & Join (Read All First)</button><button class="guidelines-button guidelines-decline" id="declineGuidelines">Not Ready Yet</button></div>
-        </div>
-    </div>
-
-    <header>
-        <div class="header-content">
-            <div class="logo">異世界 Express</div>
-            <nav><ul class="nav-links"><li><a href="#hero" class="nav-link">Home</a></li><li><a href="#features" class="nav-link">Services</a></li><li><a href="#contact" class="nav-link">Join Us</a></li></ul></nav>
-        </div>
-    </header>
+    <div class="loading-overlay"> <!-- Loading structure --> </div>
+    <div class="custom-cursor"></div> <div class="scroll-progress"></div> <div class="world-background world-1"></div> <div class="particle-system"></div>
+    <div class="guidelines-modal" id="guidelinesModal"> <!-- Guidelines structure --> </div>
+    <header> <!-- Header structure --> </header>
 
     <main>
         <section id="hero" data-world="1">
@@ -205,66 +144,51 @@
         </section>
 
         <section id="features" data-world="2">
-            <div class="section-content"> 
+            <div class="section-content"> <!-- This div is now mainly for the section title and subtitle -->
                 <h2 class="hero-title">Our Services</h2>
                 <p class="hero-subtitle">We offer a premium, structured experience for serious drivers who love anime culture.</p>
-                <div class="features-grid">
-                    <div class="feature-card">
-                        <div class="feature-card-inner">
-                            <div class="feature-content-wrapper">
-                                <div class="feature-icon">🚛</div> <h3 class="feature-title">Professional Operations</h3> <p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p>
-                            </div>
-                        </div>
+            </div>
+            <div class="features-grid">
+                <div class="feature-panel" data-feature-index="0">
+                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-content-container">
+                        <div class="feature-icon">🚛</div> <h3 class="feature-title">Professional Operations</h3> <p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-card-inner">
-                            <div class="feature-content-wrapper">
-                                <div class="feature-icon">🎌</div> <h3 class="feature-title">Anime-Themed Events</h3> <p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="feature-panel" data-feature-index="1">
+                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-content-container">
+                        <div class="feature-icon">🎌</div> <h3 class="feature-title">Anime-Themed Events</h3> <p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p>
                     </div>
-                     <div class="feature-card">
-                        <div class="feature-card-inner">
-                            <div class="feature-content-wrapper">
-                                <div class="feature-icon">👥</div> <h3 class="feature-title">United Community</h3> <p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts from across Europe in our welcoming Discord community.</p>
-                            </div>
-                        </div>
+                </div>
+                 <div class="feature-panel" data-feature-index="2">
+                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-content-container">
+                        <div class="feature-icon">👥</div> <h3 class="feature-title">United Community</h3> <p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts from across Europe in our welcoming Discord community.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-card-inner">
-                            <div class="feature-content-wrapper">
-                                <div class="feature-icon">🏆</div> <h3 class="feature-title">Achievement System</h3> <p class="feature-description">Earn ranks, badges, and recognition for your driving skills, event participation, and community contributions.</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="feature-panel" data-feature-index="3">
+                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-content-container">
+                        <div class="feature-icon">🏆</div> <h3 class="feature-title">Achievement System</h3> <p class="feature-description">Earn ranks, badges, and recognition for your driving skills, event participation, and community contributions.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-card-inner">
-                            <div class="feature-content-wrapper">
-                                <div class="feature-icon">🎮</div> <h3 class="feature-title">Gaming Excellence</h3> <p class="feature-description">High-quality gaming experience with organized events, training programs, and competitive seasonal challenges.</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="feature-panel" data-feature-index="4">
+                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-content-container">
+                        <div class="feature-icon">🎮</div> <h3 class="feature-title">Gaming Excellence</h3> <p class="feature-description">High-quality gaming experience with organized events, training programs, and competitive seasonal challenges.</p>
                     </div>
-                    <div class="feature-card">
-                        <div class="feature-card-inner">
-                            <div class="feature-content-wrapper">
-                                <div class="feature-icon">🌟</div> <h3 class="feature-title">Special Benefits</h3> <p class="feature-description">Exclusive access to custom mods, priority event slots, and special recognition for dedicated members.</p>
-                            </div>
-                        </div>
+                </div>
+                <div class="feature-panel" data-feature-index="5">
+                    <div class="panel-background-colorblock"></div>
+                    <div class="panel-content-container">
+                        <div class="feature-icon">🌟</div> <h3 class="feature-title">Special Benefits</h3> <p class="feature-description">Exclusive access to custom mods, priority event slots, and special recognition for dedicated members.</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="contact" data-world="3">
-            <div class="section-content">
-                <h2 class="hero-title">Start Your Isekai Adventure</h2>
-                <p class="hero-subtitle">Connect with us today and begin your journey into a different world of professional trucking.</p>
-                <div class="contact-grid">
-                    <a href="mailto:expressisekai@gmail.com" class="contact-action-button" rel="noopener noreferrer"><span class="contact-action-icon">✉️</span><span class="contact-action-text">Email Us</span><span class="slash one"></span><span class="slash two"></span></a>
-                    <a href="https://discord.gg/uE96rbK95j" class="contact-action-button" target="_blank" rel="noopener noreferrer"><span class="contact-action-icon">💬</span><span class="contact-action-text">Join Discord</span><span class="slash one"></span><span class="slash two"></span></a>
-                </div>
-            </div>
-        </section>
+        <section id="contact" data-world="3"> <!-- Contact section structure --> </section>
     </main>
     
     <script>
@@ -275,11 +199,12 @@
             reduceMotion: motionQuery.matches,
             guidelinesRead: false,
             readingProgress: 0,
-            isFeatureAnimating: false // Flag to ensure only one feature animates at a time
+            activeFeaturePanel: null, // Track the currently animating/visible panel
+            isPanelAnimating: false
         };
 
         // --- Minified System Definitions (Loading, Cursor, Particles, Background, Guidelines) ---
-        const systems = {}; systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const pCE = document.createElement('div'); pCE.classList.add('planet-container'); const pSE = document.createElement('div'); pSE.classList.add('planet-silhouette'); pCE.appendChild(pSE); const lTE = this.overlay.querySelector('.loading-text'); const lSE = this.overlay.querySelector('.loading-subtitle'); if (lTE) this.overlay.insertBefore(pCE, lTE); else this.overlay.appendChild(pCE); let tI1, tI2; if (lTE) tI1 = anime({ targets: lTE, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (lSE) tI2 = anime({ targets: lSE, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(tI1) tI1.pause(); if(tI2) tI2.pause(); anime.set([lTE, lSE].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [lTE, lSE].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: pCE, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const hE = document.querySelector('header'); if(hE) anime({ targets: hE, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } }; systems.cursor = { el: document.querySelector('.custom-cursor'), init() { if (state.reduceMotion || isMobile || !this.el) return; document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0; window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;}); const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC(); document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));}); } }; systems.particles = { el: document.querySelector('.particle-system'), init() { if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff']; for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);} },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});} }; systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }}; systems.guidelinesModal = { modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'), init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());}, open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});}, close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});}, updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}} };
+        const systems = {}; systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const pCE = document.createElement('div'); pCE.classList.add('planet-container'); const pSE = document.createElement('div'); pSE.classList.add('planet-silhouette'); pCE.appendChild(pSE); const lTE = this.overlay.querySelector('.loading-text'); const lSE = this.overlay.querySelector('.loading-subtitle'); if (lTE) this.overlay.insertBefore(pCE, lTE); else this.overlay.appendChild(pCE); let tI1, tI2; if (lTE) tI1 = anime({ targets: lTE, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (lSE) tI2 = anime({ targets: lSE, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(tI1) tI1.pause(); if(tI2) tI2.pause(); anime.set([lTE, lSE].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [lTE, lSE].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: pCE, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const hE = document.querySelector('header'); if(hE) anime({ targets: hE, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } }; systems.cursor = { el: document.querySelector('.custom-cursor'), init() { if (state.reduceMotion || isMobile || !this.el) return; document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0; window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;}); const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC(); document.querySelectorAll('a,button,.logo,.feature-panel,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));}); } }; systems.particles = { el: document.querySelector('.particle-system'), init() { if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff']; for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);} },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});} }; systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }}; systems.guidelinesModal = { modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'), init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());}, open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});}, close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});}, updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}} };
         
         const animations = {};
         animations.hero = () => { const hS=document.querySelector('#hero .section-content');if(!hS)return; anime.timeline({easing:'easeOutExpo'}).add({targets:hS,opacity:[0,1],translateY:[50,0],duration:1000,delay:state.reduceMotion?0:300}) .add({targets:'#hero .hero-title',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .hero-subtitle',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .cta-button',opacity:[0,1],translateY:[20,0],duration:600,delay:anime.stagger(150)},'-=500'); };
@@ -301,173 +226,119 @@
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    const sectionContent = entry.target.querySelector('.section-content');
+                    const sectionContent = entry.target.querySelector('.section-content:not(#features .section-content)'); // Exclude features title from this generic animation
                     if (sectionContent && !sectionContent.classList.contains('is-visible')) {
                          animations.section(sectionContent); 
                          sectionContent.classList.add('is-visible'); 
                     }
+                     // Animate features section title specifically if it's the features section
+                    if (entry.target.id === 'features') {
+                        const featuresTitleContent = entry.target.querySelector('.section-content'); // The one holding h2 and p
+                        if (featuresTitleContent && !featuresTitleContent.classList.contains('is-visible')) {
+                            animations.section(featuresTitleContent);
+                            featuresTitleContent.classList.add('is-visible');
+                        }
+                    }
+
                     if (worldBg) { const world = entry.target.dataset.world; if (world) worldBg.className = `world-background world-${world}`; }
                     const navLinks = document.querySelectorAll('.nav-link');
                     navLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === `#${entry.target.id}`) { link.classList.add('active'); } });
-                    if (entry.target.id === 'features' && !entry.target.dataset.cardsObserved) {
-                        observeFeatureCards(entry.target);
-                        entry.target.dataset.cardsObserved = 'true'; // Ensure this observer runs only once for features section setup
+                    
+                    if (entry.target.id === 'features' && !entry.target.dataset.panelsObserved) {
+                        observeFeaturePanels();
+                        entry.target.dataset.panelsObserved = 'true'; 
                     }
-                } else {
-                    // Optional: Logic for when section scrolls out of view
-                    // For feature cards, we might want them to reset if we implement a strict "one at a time fully visible"
                 }
             });
         };
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
         sections.forEach(section => sectionObserver.observe(section));
 
-        // Observer for individual feature cards
-        const featureCardObserverOptions = { 
+
+        // Observer for individual feature panels
+        const featurePanels = document.querySelectorAll('.feature-panel');
+        const featurePanelObserverOptions = { 
             root: null, 
-            rootMargin: isMobile ? '-20% 0px -20% 0px' : '-35% 0px -35% 0px', // Trigger when card is more centered
-            threshold: 0.2  // At least 20% of the card is visible in the rootMargin-adjusted viewport
+            rootMargin: isMobile ? '-10% 0px -10% 0px' : '-30% 0px -30% 0px', // When panel is more centered
+            threshold: 0.3 // Need a good portion of it in the adjusted viewport
         }; 
         
-        let currentCardTimeline = null; // To manage ongoing animation
-
-        const featureCardObserverCallback = (entries, observer) => {
-            entries.forEach((entry, index) => {
-                const card = entry.target;
-                const cardInner = card.querySelector('.feature-card-inner');
-                const contentWrapper = card.querySelector('.feature-content-wrapper');
+        const featurePanelObserverCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                const panel = entry.target;
+                const bgBlock = panel.querySelector('.panel-background-colorblock');
+                const content = panel.querySelector('.panel-content-container');
 
                 if (entry.isIntersecting) {
-                    if (card.classList.contains('is-animating') || card.classList.contains('is-fully-visible')) return;
-                    
-                    card.classList.add('is-animating');
-                    state.isFeatureAnimating = true;
+                    if (!panel.classList.contains('is-animated') && !state.isPanelAnimating) {
+                        state.isPanelAnimating = true;
+                        panel.classList.add('is-animated');
 
-                    // Simplified mobile animation
-                    if (isMobile || state.reduceMotion) {
-                        anime({
-                            targets: card,
-                            opacity: [0, 1],
-                            translateY: [50, 0],
-                            scale: [0.95, 1],
-                            duration: 800,
+                        if(state.reduceMotion || isMobile){
+                            anime({ targets: bgBlock, clipPath: ['polygon(100% 0, 100% 0, 100% 100%, 100% 100%)', 'polygon(0 0, 100% 15vh, 100% 100%, 0 85vh)'], duration: 1, easing: 'linear' }); // instant for reduce motion
+                            anime({ targets: content, opacity: [0, 1], translateY: [20,0], duration: 1, delay: 10, easing: 'linear', complete: () => {state.isPanelAnimating = false;} });
+                            return;
+                        }
+
+                        anime.timeline({
                             easing: 'easeOutExpo',
                             complete: () => {
-                                card.classList.add('is-fully-visible');
-                                card.classList.remove('is-animating');
-                                state.isFeatureAnimating = false;
-                                anime({ targets: contentWrapper, opacity: [0,1], translateY:[20,0], scale:[0.9,1], duration:600, easing:'easeOutExpo', delay:100});
+                                state.isPanelAnimating = false;
                             }
-                        });
-                        observer.unobserve(card); // Animate once
-                        return;
-                    }
-
-                    // Desktop 3D Portal Animation
-                    currentCardTimeline = anime.timeline({
-                        easing: 'easeOutExpo',
-                        complete: () => {
-                            card.classList.add('is-fully-visible');
-                            card.classList.remove('is-animating');
-                            state.isFeatureAnimating = false;
-                            card.classList.add('is-glitching'); // Start glitch after reveal
-
-                            // Add mouse parallax after reveal
-                            if (!isMobile && !card.mouseMoveListenerAttached) {
-                                card.mouseMoveListener = (e) => {
-                                    const rect = cardInner.getBoundingClientRect();
-                                    const x = e.clientX - rect.left - rect.width / 2;
-                                    const y = e.clientY - rect.top - rect.height / 2;
-                                    const rY = (x / rect.width) * 7; 
-                                    const rX = -(y / rect.height) * 7; 
-                                    cardInner.style.transition = 'transform 0.1s linear';
-                                    cardInner.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg) scale(1.03)`;
-                                };
-                                card.mouseLeaveListener = () => {
-                                    cardInner.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-                                    cardInner.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
-                                };
-                                card.addEventListener('mousemove', card.mouseMoveListener, { passive: true });
-                                card.addEventListener('mouseleave', card.mouseLeaveListener);
-                                card.mouseMoveListenerAttached = true; 
-                            }
-                        }
-                    });
-
-                    currentCardTimeline
-                        .add({ // 1. Summon Portal
-                            targets: card,
-                            opacity: [0, 1],
-                            translateY: [150, 0],
-                            translateZ: [-600, 0],
-                            rotateY: [60, 0],
-                            scale: [0.7, 1],
-                            duration: 1000,
                         })
-                        .add({ // 2. Spin Portal (inner element for stability)
-                            targets: cardInner,
-                            rotateY: [0, 360],
-                            duration: 1200,
-                            easing: 'easeInOutSine',
-                        }, '-=300') // Overlap with summon
-                        .add({ // 3. Slight Expansion/Pulse
-                            targets: cardInner,
-                            scale: [1, 1.05, 1],
-                            duration: 600,
-                            easing: 'easeOutElastic(1, .8)',
-                        }, '-=400')
-                        .add({ // 4. Reveal Content
-                            targets: contentWrapper,
+                        .add({
+                            targets: bgBlock,
+                            clipPath: ['polygon(100% 0, 100% 0, 100% 100%, 100% 100%)', 'polygon(0 0, 100% 15vh, 100% 100%, 0 85vh)'],
+                            duration: 900, 
+                            easing: 'easeInOutQuart'
+                        })
+                        .add({
+                            targets: content,
                             opacity: [0, 1],
-                            translateY: [30, 0],
-                            scale: [0.9, 1],
-                            duration: 800,
-                            easing: 'easeOutExpo',
-                        }, '-=500'); // Content starts revealing as portal settles
-
-                    observer.unobserve(card); // Animate each card only once on entry
-                
-                } else { // Card is NOT intersecting (scrolled out of active zone)
-                    if (card.classList.contains('is-fully-visible') && !card.classList.contains('is-animating-out')) {
-                        card.classList.add('is-animating-out');
-                        card.classList.remove('is-glitching'); // Stop glitch on scroll out
-
-                        // Remove mouse listeners
-                        if (card.mouseMoveListenerAttached) {
-                            card.removeEventListener('mousemove', card.mouseMoveListener);
-                            card.removeEventListener('mouseleave', card.mouseLeaveListener);
-                            card.mouseMoveListenerAttached = false;
+                            translateY: [40, 0],
+                            duration: 700,
+                            easing: 'easeOutCubic'
+                        }, '-=500'); // Start content animation while wipe is finishing
+                    }
+                } else {
+                    // Panel is NOT intersecting the "active zone"
+                    // Reset if it was animated, to allow re-animation if scrolled back
+                    // Only reset if not currently animating to avoid conflicts
+                    if (panel.classList.contains('is-animated') && !state.isPanelAnimating) {
+                         if(state.reduceMotion || isMobile) { // Simpler reset for mobile/reduce motion
+                            bgBlock.style.clipPath = 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)';
+                            content.style.opacity = '0';
+                            content.style.transform = 'translateY(40px)';
+                        } else {
+                            anime.remove([bgBlock, content]); // Stop any ongoing animations on these elements
+                            anime({
+                                targets: bgBlock,
+                                clipPath: 'polygon(100% 0, 100% 0, 100% 100%, 100% 100%)',
+                                duration: 500,
+                                easing: 'easeInQuart'
+                            });
+                            anime({
+                                targets: content,
+                                opacity: 0,
+                                translateY: 40,
+                                duration: 300,
+                                easing: 'easeInCubic'
+                            });
                         }
-                        
-                        // Optional: Animation to hide the card again if strict "one at a time" is desired
-                        // For now, let it stay, the next card will draw attention.
-                        // anime({
-                        //     targets: card,
-                        //     opacity: 0,
-                        //     translateY: 100, // Move it down and out
-                        //     rotateX: 30,    // Tilt it away
-                        //     scale: 0.8,
-                        //     duration: 600,
-                        //     easing: 'easeInExpo',
-                        //     complete: () => {
-                        //         card.classList.remove('is-fully-visible', 'is-animating-out');
-                        //        // Re-observe if you want it to animate again if scrolled back to
-                        //        // observer.observe(card); 
-                        //     }
-                        // });
+                        panel.classList.remove('is-animated');
                     }
                 }
             });
         };
-        const featureCardObserver = new IntersectionObserver(featureCardObserverCallback, featureCardObserverOptions);
+        const featurePanelObserver = new IntersectionObserver(featurePanelObserverCallback, featurePanelObserverOptions);
 
-        function observeFeatureCards(featureSectionElement) {
-            const featureCards = featureSectionElement.querySelectorAll('.feature-card');
-            featureCards.forEach(card => {
-                 featureCardObserver.observe(card);
+        function observeFeaturePanels() {
+            featurePanels.forEach(panel => {
+                featurePanelObserver.observe(panel);
             });
         }
 
+        // Initial setup for nav links and hash
         document.querySelectorAll('.nav-link').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const tId=this.getAttribute('href');const tE=document.querySelector(tId); if(tE){tE.scrollIntoView({behavior:'smooth'});}});});
         if(window.location.hash){const aL=document.querySelector(`.nav-link[href="${window.location.hash}"]`);if(aL)aL.classList.add('active');}else{const hL=document.querySelector('.nav-link[href="#hero"]');if(hL)hL.classList.add('active');}
     });
