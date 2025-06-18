@@ -218,7 +218,7 @@
             align-items: center;
             justify-content: center;
             padding: 8rem 2rem 4rem;
-            overflow: hidden; 
+            overflow: visible; 
         }
         .section-content {
             max-width: 1400px;
@@ -247,161 +247,127 @@
         }
 
         /* --- Enhanced Japanese-Themed Buttons (CTA & Contact) --- */
-        .cta-group, .contact-grid {
-            display: flex;
-            gap: 1.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-            margin-top: 3rem;
-        }
-        .cta-button, .contact-action-button {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            padding: 1.2rem 2.5rem;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            position: relative;
-            cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            color: white;
-            background-color: transparent;
-            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-            overflow: hidden;
-        }
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #ff80cc, #80ccff);
-            clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-            z-index: -1;
-            transform: translateX(-101%);
-            transition: transform 0.4s ease-in-out;
-        }
-        .cta-button::after {
-            content: '▶';
-            position: absolute;
-            right: 1rem;
-            top: 50%;
-            transform: translateY(-50%);
-            opacity: 0;
-            transition: all 0.3s ease;
-        }
-        .cta-button:hover::before { transform: translateX(0); }
-        .cta-button:hover::after { opacity: 1; transform: translateY(-50%) translateX(5px); }
-        .cta-button:hover { border-color: #ff80cc; box-shadow: 0 0 20px rgba(255, 128, 204, 0.5); }
-        .cta-button.secondary { border-color: rgba(255, 128, 204, 0.5); color: #ff80cc; }
-        .cta-button.secondary:hover { color: white; border-color: transparent; }
-        
-        .contact-action-button:hover { border-color: #80ccff; box-shadow: 0 0 15px rgba(128, 204, 255, 0.4); color: #80ccff; }
-        .contact-action-button .contact-action-icon { font-size: 1.3em; line-height: 1; }
-        .contact-action-button .slash { position: absolute; background-color: transparent; transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); width: 0; height: 130%; opacity: 0; z-index: 0; }
-        .contact-action-button .slash.one { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); }
-        .contact-action-button .slash.two { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); transition-delay: 0.05s; }
-        .contact-action-button:hover .slash { width: 3px; opacity: 1; }
-        .contact-action-button:hover .slash.one { background-color: #ff80cc; }
-        .contact-action-button:hover .slash.two { background-color: #80ccff; }
+        .cta-group, .contact-grid { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
+        .cta-button, .contact-action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1.2rem 2.5rem; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; position: relative; cursor: pointer; border: 2px solid rgba(255, 255, 255, 0.4); color: white; background-color: transparent; clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)); overflow: hidden; }
+        .cta-button::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #ff80cc, #80ccff); clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)); z-index: -1; transform: translateX(-101%); transition: transform 0.4s ease-in-out; }
+        .cta-button::after { content: '▶'; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); opacity: 0; transition: all 0.3s ease; }
+        .cta-button:hover::before { transform: translateX(0); } .cta-button:hover::after { opacity: 1; transform: translateY(-50%) translateX(5px); } .cta-button:hover { border-color: #ff80cc; box-shadow: 0 0 20px rgba(255, 128, 204, 0.5); } .cta-button.secondary { border-color: rgba(255, 128, 204, 0.5); color: #ff80cc; } .cta-button.secondary:hover { color: white; border-color: transparent; }
+        .contact-action-button:hover { border-color: #80ccff; box-shadow: 0 0 15px rgba(128, 204, 255, 0.4); color: #80ccff; } .contact-action-button .contact-action-icon { font-size: 1.3em; line-height: 1; } .contact-action-button .slash { position: absolute; background-color: transparent; transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); width: 0; height: 130%; opacity: 0; z-index: 0; } .contact-action-button .slash.one { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); } .contact-action-button .slash.two { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); transition-delay: 0.05s; } .contact-action-button:hover .slash { width: 3px; opacity: 1; } .contact-action-button:hover .slash.one { background-color: #ff80cc; } .contact-action-button:hover .slash.two { background-color: #80ccff; }
 
-
-        /* --- Features Section --- */
+        /* --- Features Section - KPRverse Inspired Reveal --- */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            gap: 3rem; 
             margin-top: 4rem;
-            perspective: 1200px; /* Enable 3D space for children cards */
-        }
-        .feature-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 2rem;
-            text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            position: relative;
-            overflow: hidden; /* Keep this if you have ::before shine effects */
-            
-            /* Initial state for 3D "unfold" animation */
-            opacity: 0;
-            transform: rotateX(-80deg) translateY(60px) translateZ(-150px);
-            transform-origin: top center; /* Rotate from the top edge */
-            will-change: opacity, transform;
-            /* Basic CSS transition as fallback / initial smoothing */
-            /* transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); */
-        }
-        .feature-card.is-visible { 
-            /* This class is mainly a flag now, animation done by Anime.js */
-            /* opacity: 1; */
-            /* transform: rotateX(0deg) translateY(0px) translateZ(0px); */
+            perspective: 1500px; 
         }
 
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
+        .feature-card {
+            position: relative; 
+            transform-style: preserve-3d; 
+            min-height: 280px; 
+            opacity: 0; 
+            transform: translateY(100px) rotateX(-30deg) scale(0.9); 
+            will-change: opacity, transform;
+            transition: opacity 0.5s ease, transform 0.5s ease; 
+        }
+        
+        .feature-card-inner { 
+            position: relative;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 128, 204, 0.2), transparent);
-            transition: left 0.5s ease;
+            padding: 2rem;
+            border-radius: 15px;
+            background: rgba(26, 10, 46, 0.7); 
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(128, 204, 255, 0.3); 
+            transform-style: preserve-3d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        .feature-card:hover::before { left: 100%; }
         
-        .feature-card:hover { /* Hover effect for *after* it's visible */
-            box-shadow: 0 20px 40px rgba(255, 128, 204, 0.2);
-        }
-        .feature-card.is-visible:hover { /* Only apply hover transform if visible */
-             transform: translateY(-10px) rotateX(0deg) translateZ(0px) !important; /* Slight lift */
+        .feature-card-inner::before,
+        .feature-card-inner::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: inherit; 
+            border-radius: 15px;
+            opacity: 0.8;
+            z-index: -1; 
         }
 
+        .feature-card-inner::before {
+            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
+        }
+        .feature-card-inner::after {
+            animation: glitch-anim-2 2s infinite linear alternate-reverse;
+        }
 
-        .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #ff80cc; }
-        .feature-title { font-size: 1.5rem; margin-bottom: 1rem; color: #80ccff; }
-        .feature-description { color: rgba(255, 255, 255, 0.8); line-height: 1.6; }
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(30% 0 40% 0); transform: translateX(-3px) translateY(2px); }
+            25% { clip-path: inset(10% 0 55% 0); transform: translateX(2px) translateY(-1px); }
+            50% { clip-path: inset(50% 0 20% 0); transform: translateX(-4px) translateY(3px); }
+            75% { clip-path: inset(20% 0 40% 0); transform: translateX(3px) translateY(-2px); }
+            100% { clip-path: inset(40% 0 30% 0); transform: translateX(-1px) translateY(1px); }
+        }
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(0 50% 0 20%); transform: translateY(-4px) translateX(2px) skewX(10deg); }
+            25% { clip-path: inset(20% 20% 0 50%); transform: translateY(3px) translateX(-3px) skewX(-8deg); }
+            50% { clip-path: inset(0 40% 0 30%); transform: translateY(-2px) translateX(4px) skewX(5deg); }
+            75% { clip-path: inset(30% 50% 0 20%); transform: translateY(2px) translateX(-1px) skewX(-12deg); }
+            100% { clip-path: inset(0 30% 0 40%); transform: translateY(-3px) translateX(3px) skewX(7deg); }
+        }
+
+        .feature-content-wrapper {
+            position: relative; 
+            z-index: 1;
+            opacity: 0; 
+            transform: translateY(20px) scale(0.95);
+            transition: opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s; 
+        }
+        
+        .feature-card.is-visible .feature-content-wrapper {
+            opacity: 1;
+            transform: translateY(0px) scale(1);
+        }
+        
+        .feature-card.is-visible .feature-card-inner:hover {
+            transform: rotateX(5deg) rotateY(-5deg) scale(1.03);
+            box-shadow: 0 15px 40px rgba(128, 204, 255, 0.2);
+        }
+
+        .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; color: #ff80cc; transform: translateZ(20px); }
+        .feature-title { font-size: 1.4rem; margin-bottom: 0.75rem; color: #80ccff; transform: translateZ(10px); }
+        .feature-description { color: rgba(255, 255, 255, 0.85); line-height: 1.6; font-size:0.95rem; }
+
 
         /* --- Guidelines Modal --- */
         .guidelines-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 2rem; }
         .guidelines-content { background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)); border-radius: 20px; padding: 3rem; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; border: 2px solid rgba(255, 255, 255, 0.2); }
         .guidelines-title { font-size: 2rem; margin-bottom: 1.5rem; text-align: center; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
-        .guidelines-section { margin-bottom: 2rem; }
-        .guidelines-section h3 { color: #ffb3d9; margin-bottom: 0.5rem; font-size: 1.2rem; }
-        .guidelines-section ul { list-style: none; padding-left: 0; }
-        .guidelines-section li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
-        .guidelines-section li::before { content: '▶'; position: absolute; left: 0; color: #80ccff; }
-        .guidelines-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
-        .guidelines-button { padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; }
-        .guidelines-accept { background: linear-gradient(45deg, #43e97b, #38f9d7); color: white; }
-        .guidelines-accept:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3); }
-        .guidelines-decline { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; }
-        .guidelines-decline:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3); }
-        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 1rem 0; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, #80ccff, #ff80cc); width: 0%; transition: width 0.3s ease; }
-
+        .guidelines-section { margin-bottom: 2rem; } .guidelines-section h3 { color: #ffb3d9; margin-bottom: 0.5rem; font-size: 1.2rem; } .guidelines-section ul { list-style: none; padding-left: 0; } .guidelines-section li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; } .guidelines-section li::before { content: '▶'; position: absolute; left: 0; color: #80ccff; } .guidelines-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; } .guidelines-button { padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; } .guidelines-accept { background: linear-gradient(45deg, #43e97b, #38f9d7); color: white; } .guidelines-accept:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3); } .guidelines-decline { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; } .guidelines-decline:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3); } .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 1rem 0; overflow: hidden; } .progress-fill { height: 100%; background: linear-gradient(90deg, #80ccff, #ff80cc); width: 0%; transition: width 0.3s ease; }
         .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #ff80cc, #80ccff); z-index: 1001; }
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
-            body { cursor: auto; }
-            .custom-cursor { display: none; }
-            header { padding: 1rem; }
-            .header-content { flex-direction: row; }
-            .logo { font-size: 1.5rem; }
-            .nav-links { gap: 0.5rem; }
-            .nav-link { padding: 0.5rem; font-size: 0.9rem; }
+            body { cursor: auto; } .custom-cursor { display: none; }
+            header { padding: 1rem; } .header-content { flex-direction: row; } .logo { font-size: 1.5rem; } .nav-links { gap: 0.5rem; } .nav-link { padding: 0.5rem; font-size: 0.9rem; }
             .cta-group, .contact-grid { flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
             .cta-button, .contact-action-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
             .guidelines-content { padding: 2rem; margin: 1rem; }
-            .features-grid { grid-template-columns: 1fr; perspective: none; /* Disable perspective on mobile if it causes issues or isn't desired */ }
-            .feature-card { transform: rotateX(0deg) translateY(0px) translateZ(0px); opacity: 1; /* Simpler reveal for mobile, or could keep 3D */ }
-
+            .features-grid { grid-template-columns: 1fr; perspective: none; }
+            .feature-card { 
+                opacity: 0; transform: translateY(30px); /* Simpler initial state for mobile */
+            }
+            .feature-card.is-visible-animated { /* Simpler reveal animation for mobile via JS */
+                opacity: 1 !important; 
+                transform: translateY(0px) !important;
+            }
+             .feature-card-inner { transform: none !important; /* Disable hover tilt on mobile */ }
+            .feature-card-inner::before, .feature-card-inner::after { display: none; }
         }
     </style>
 </head>
@@ -451,12 +417,48 @@
                 <h2 class="hero-title">Our Services</h2>
                 <p class="hero-subtitle">We offer a premium, structured experience for serious drivers who love anime culture.</p>
                 <div class="features-grid">
-                    <div class="feature-card"><div class="feature-icon">🚛</div><h3 class="feature-title">Professional Operations</h3><p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎌</div><h3 class="feature-title">Anime-Themed Events</h3><p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p></div>
-                    <div class="feature-card"><div class="feature-icon">👥</div><h3 class="feature-title">United Community</h3><p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts from across Europe in our welcoming Discord community.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🏆</div><h3 class="feature-title">Achievement System</h3><p class="feature-description">Earn ranks, badges, and recognition for your driving skills, event participation, and community contributions.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🎮</div><h3 class="feature-title">Gaming Excellence</h3><p class="feature-description">High-quality gaming experience with organized events, training programs, and competitive seasonal challenges.</p></div>
-                    <div class="feature-card"><div class="feature-icon">🌟</div><h3 class="feature-title">Special Benefits</h3><p class="feature-description">Exclusive access to custom mods, priority event slots, and special recognition for dedicated members.</p></div>
+                    <div class="feature-card">
+                        <div class="feature-card-inner">
+                            <div class="feature-content-wrapper">
+                                <div class="feature-icon">🚛</div> <h3 class="feature-title">Professional Operations</h3> <p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-inner">
+                            <div class="feature-content-wrapper">
+                                <div class="feature-icon">🎌</div> <h3 class="feature-title">Anime-Themed Events</h3> <p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p>
+                            </div>
+                        </div>
+                    </div>
+                     <div class="feature-card">
+                        <div class="feature-card-inner">
+                            <div class="feature-content-wrapper">
+                                <div class="feature-icon">👥</div> <h3 class="feature-title">United Community</h3> <p class="feature-description">Connect with fellow anime lovers and trucking enthusiasts from across Europe in our welcoming Discord community.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-inner">
+                            <div class="feature-content-wrapper">
+                                <div class="feature-icon">🏆</div> <h3 class="feature-title">Achievement System</h3> <p class="feature-description">Earn ranks, badges, and recognition for your driving skills, event participation, and community contributions.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-inner">
+                            <div class="feature-content-wrapper">
+                                <div class="feature-icon">🎮</div> <h3 class="feature-title">Gaming Excellence</h3> <p class="feature-description">High-quality gaming experience with organized events, training programs, and competitive seasonal challenges.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-inner">
+                            <div class="feature-content-wrapper">
+                                <div class="feature-icon">🌟</div> <h3 class="feature-title">Special Benefits</h3> <p class="feature-description">Exclusive access to custom mods, priority event slots, and special recognition for dedicated members.</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -483,25 +485,20 @@
             readingProgress: 0
         };
 
-        const systems = { /* ... All systems code (loading, cursor, particles, background, guidelinesModal) from previous step ... */ };
-        // --- Paste all system definitions from the previous correct step here ---
-        systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const planetContainerEl = document.createElement('div'); planetContainerEl.classList.add('planet-container'); const planetSilhouetteEl = document.createElement('div'); planetSilhouetteEl.classList.add('planet-silhouette'); planetContainerEl.appendChild(planetSilhouetteEl); const loadingTextEl = this.overlay.querySelector('.loading-text'); const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle'); if (loadingTextEl) this.overlay.insertBefore(planetContainerEl, loadingTextEl); else this.overlay.appendChild(planetContainerEl); let textIntro1, textIntro2; if (loadingTextEl) textIntro1 = anime({ targets: loadingTextEl, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (loadingSubtitleEl) textIntro2 = anime({ targets: loadingSubtitleEl, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(textIntro1) textIntro1.pause(); if(textIntro2) textIntro2.pause(); anime.set([loadingTextEl, loadingSubtitleEl].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [loadingTextEl, loadingSubtitleEl].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: planetContainerEl, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if(headerEl) anime({ targets: headerEl, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } };
+        const systems = { /* All systems code (loading, cursor, particles, background, guidelinesModal) */ };
+        // --- Minified system definitions from previous step ---
+        systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const pCE = document.createElement('div'); pCE.classList.add('planet-container'); const pSE = document.createElement('div'); pSE.classList.add('planet-silhouette'); pCE.appendChild(pSE); const lTE = this.overlay.querySelector('.loading-text'); const lSE = this.overlay.querySelector('.loading-subtitle'); if (lTE) this.overlay.insertBefore(pCE, lTE); else this.overlay.appendChild(pCE); let tI1, tI2; if (lTE) tI1 = anime({ targets: lTE, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (lSE) tI2 = anime({ targets: lSE, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(tI1) tI1.pause(); if(tI2) tI2.pause(); anime.set([lTE, lSE].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [lTE, lSE].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: pCE, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const hE = document.querySelector('header'); if(hE) anime({ targets: hE, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } };
         systems.cursor = { el: document.querySelector('.custom-cursor'), init() { if (state.reduceMotion || isMobile || !this.el) return; document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0; window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;}); const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC(); document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));}); } };
         systems.particles = { el: document.querySelector('.particle-system'), init() { if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff']; for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);} },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});} };
         systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }};
         systems.guidelinesModal = { modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'), init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());}, open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});}, close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});}, updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}} };
-        // --- End of pasted system definitions ---
+        // --- End of minified system definitions ---
 
-
-        const animations = {
-             hero() { /* ... (hero animation code remains the same) ... */ },
-             section(el) { /* ... (section animation code remains the same) ... */ },
-        };
-        // --- Paste hero and section animation definitions from the previous correct step here ---
+        const animations = { /* ... hero and section animation definitions ... */ };
+        // --- Minified animation definitions ---
         animations.hero = () => { const hS=document.querySelector('#hero .section-content');if(!hS)return; anime.timeline({easing:'easeOutExpo'}).add({targets:hS,opacity:[0,1],translateY:[50,0],duration:1000,delay:state.reduceMotion?0:300}) .add({targets:'#hero .hero-title',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .hero-subtitle',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .cta-button',opacity:[0,1],translateY:[20,0],duration:600,delay:anime.stagger(150)},'-=500'); };
-        animations.section = (el) => { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1000, easing: 'easeOutExpo', delay: 200 }); }; // Slightly reduced duration for main sections
-        // --- End of pasted animation definitions ---
-
+        animations.section = (el) => { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1000, easing: 'easeOutExpo', delay: 100 }); }; 
+        // --- End of minified animation definitions ---
 
         systems.loading.init();
         systems.cursor.init();
@@ -514,7 +511,7 @@
         
         const sections = document.querySelectorAll('section');
         const worldBg = systems.background.el;
-        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.2 }; 
+        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.15 }; 
 
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
@@ -522,21 +519,11 @@
                     const sectionContent = entry.target.querySelector('.section-content');
                     if (sectionContent && !sectionContent.classList.contains('is-visible')) {
                          animations.section(sectionContent); 
-                         sectionContent.classList.add('is-visible'); // Mark as animated
+                         sectionContent.classList.add('is-visible'); 
                     }
-                    
-                    if (worldBg) {
-                        const world = entry.target.dataset.world;
-                        if (world) worldBg.className = `world-background world-${world}`;
-                    }
+                    if (worldBg) { const world = entry.target.dataset.world; if (world) worldBg.className = `world-background world-${world}`; }
                     const navLinks = document.querySelectorAll('.nav-link');
-                    navLinks.forEach(link => {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${entry.target.id}`) {
-                            link.classList.add('active');
-                        }
-                    });
-
+                    navLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === `#${entry.target.id}`) { link.classList.add('active'); } });
                     if (entry.target.id === 'features' && !entry.target.dataset.cardsObserved) {
                         observeFeatureCards(entry.target);
                         entry.target.dataset.cardsObserved = 'true';
@@ -547,29 +534,68 @@
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
         sections.forEach(section => sectionObserver.observe(section));
 
-        const featureCardObserverOptions = { root: null, rootMargin: isMobile ? '-50px 0px -50px 0px' : '-100px 0px -100px 0px' , threshold: 0.1 }; // Adjusted rootMargin
+        const featureCardObserverOptions = { root: null, rootMargin: isMobile ? '0px' : '-150px 0px -150px 0px' , threshold: 0.2 }; // More threshold for triggering
         
         const featureCardObserverCallback = (entries, observer) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    if (entry.target.classList.contains('is-visible')) return; // Already animated
+                    if (entry.target.classList.contains('is-visible-animated')) return; 
 
-                    if (state.reduceMotion) {
+                    if (state.reduceMotion || isMobile) { // Apply simpler mobile animation
                         entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'rotateX(0deg) translateY(0px) translateZ(0px)';
-                        entry.target.classList.add('is-visible');
-                    } else {
+                        entry.target.style.transform = 'translateY(0px)';
+                        entry.target.classList.add('is-visible-animated'); // Mark as done
+                        const contentWrapper = entry.target.querySelector('.feature-content-wrapper');
+                        if(contentWrapper) {
+                             contentWrapper.style.opacity = '1';
+                             contentWrapper.style.transform = 'translateY(0px) scale(1)';
+                        }
+                    } else { // Desktop 3D animation
                         anime({
                             targets: entry.target,
                             opacity: [0, 1],
-                            translateY: [60, 0],    // Start from further down
-                            translateZ: [-150, 0],  // Bring it forward
-                            rotateX: [-80, 0],      // Rotate it into view
-                            duration: 800,         // Slightly longer for more pronounced effect
-                            easing: 'easeOutElastic(1, .8)', // More bouncy/elastic
-                            delay: isMobile ? index * 100 : index * 150, // Stagger
+                            translateY: { value: [100, 0], easing: 'easeOutExpo' },    
+                            rotateX: { value: [-30, 0], easing: 'easeOutExpo' }, 
+                            scale: { value: [0.9, 1], easing: 'easeOutExpo' },
+                            duration: 1000, // Duration for the card itself        
+                            easing: 'easeOutExpo', 
+                            delay: index * 200, // Stagger for each card
+                            begin: () => {
+                                const innerCard = entry.target.querySelector('.feature-card-inner');
+                                if (innerCard && !entry.target.mouseMoveListenerAttached) {
+                                    entry.target.mouseMoveListener = (e) => {
+                                        const rect = innerCard.getBoundingClientRect(); // Use innerCard rect
+                                        const x = e.clientX - rect.left - rect.width / 2;
+                                        const y = e.clientY - rect.top - rect.height / 2;
+                                        const rY = (x / rect.width) * 8; 
+                                        const rX = -(y / rect.height) * 8; 
+                                        innerCard.style.transition = 'transform 0.1s linear'; // Smooth quick follow
+                                        innerCard.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
+                                    };
+                                    entry.target.mouseLeaveListener = () => {
+                                        innerCard.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'; // Smooth return
+                                        innerCard.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+                                    };
+                                    entry.target.addEventListener('mousemove', entry.target.mouseMoveListener);
+                                    entry.target.addEventListener('mouseleave', entry.target.mouseLeaveListener);
+                                    entry.target.mouseMoveListenerAttached = true; 
+                                }
+                            },
                             complete: () => {
-                                entry.target.classList.add('is-visible');
+                                entry.target.classList.add('is-visible'); 
+                                entry.target.classList.add('is-visible-animated');
+                                const contentWrapper = entry.target.querySelector('.feature-content-wrapper');
+                                if(contentWrapper) {
+                                     anime({ 
+                                        targets: contentWrapper,
+                                        opacity: [0, 1],
+                                        translateY: [20, 0],
+                                        scale: [0.95, 1],
+                                        duration: 700, // Content animation
+                                        easing: 'easeOutExpo',
+                                        delay:150 
+                                     });
+                                }
                             }
                         });
                     }
@@ -582,12 +608,20 @@
         function observeFeatureCards(featureSectionElement) {
             const featureCards = featureSectionElement.querySelectorAll('.feature-card');
             featureCards.forEach(card => {
-                if (state.reduceMotion) {
-                     card.style.opacity = '1';
-                     card.style.transform = 'rotateX(0deg) translateY(0px) translateZ(0px)';
-                     card.classList.add('is-visible');
-                } else {
-                    featureCardObserver.observe(card);
+                // For mobile, the simplified animation is handled in the observer callback
+                // If not mobile and no reduce motion, observe for 3D animation
+                if (!(state.reduceMotion || isMobile)) {
+                     featureCardObserver.observe(card);
+                } else { // Directly apply final styles for mobile/reduced motion
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0px)';
+                    card.classList.add('is-visible');
+                    card.classList.add('is-visible-animated');
+                    const contentWrapper = card.querySelector('.feature-content-wrapper');
+                    if(contentWrapper) {
+                        contentWrapper.style.opacity = '1';
+                        contentWrapper.style.transform = 'translateY(0px) scale(1)';
+                    }
                 }
             });
         }
