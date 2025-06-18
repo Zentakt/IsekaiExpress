@@ -57,20 +57,58 @@
             justify-content: center;
             flex-direction: column;
         }
-        .planet-silhouette {
-            width: clamp(80px, 20vmin, 150px); /* Responsive initial size */
-            height: clamp(80px, 20vmin, 150px);
-            background-color: #0c001f; /* Dark purple, almost black */
-            border-radius: 50%;
-            margin-bottom: 2rem; /* Space before the text */
-            box-shadow: 0 0 15px 5px rgba(128, 204, 255, 0.3); /* Subtle outer glow */
+
+        .planet-container { /* New wrapper for planet + outline */
+            position: relative;
+            /* width/height should be slightly larger than planet to accommodate outline thickness */
+            width: clamp(90px, 23vmin, 160px);
+            height: clamp(90px, 23vmin, 160px);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .planet-container::before { /* The spinning gradient outline */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            padding: 4px; /* Adjust for outline thickness */
+            background: conic-gradient(from 0deg, #80ccff, #ff80cc, #80ccff); /* Blue to Pink to Blue */
+            animation: spinOutline 2.5s linear infinite;
+            -webkit-mask:
+                linear-gradient(#fff 0 0) content-box, /* Keeps the padding area */
+                linear-gradient(#fff 0 0); /* The inner circle to cut out */
+            mask:
+                linear-gradient(#fff 0 0) content-box,
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; /* Older browsers */
+            mask-composite: exclude; /* Standard */
+        }
+
+        @keyframes spinOutline {
+            to { transform: rotate(1turn); }
+        }
+
+        .planet-silhouette { /* The dark core of the planet */
+            width: clamp(80px, 20vmin, 150px);
+            height: clamp(80px, 20vmin, 150px);
+            background-color: #0c001f;
+            border-radius: 50%;
+            box-shadow: 0 0 10px 3px rgba(128, 204, 255, 0.2); /* Inner subtle glow */
+            /* position relative is not strictly needed if it's centered by flex in parent */
+        }
+
         .loading-text {
             font-size: 1.5rem;
             font-weight: bold;
             color: #80ccff;
             text-shadow: 0 0 10px #80ccff;
-            margin-top: 1.5rem;
+            margin-top: 1.5rem; /* Will be relative to planet-container now */
             text-align: center;
         }
         .loading-subtitle {
@@ -532,7 +570,7 @@
 </head>
 <body>
     <div class="loading-overlay">
-        <!-- The planet-silhouette div will be created and prepended here by JavaScript -->
+        <!-- Planet container and text will be structured here by JS -->
         <div class="loading-text">Entering the Isekai...</div>
         <div class="loading-subtitle">Loading your adventure</div>
     </div>
@@ -709,7 +747,6 @@
         const systems = {
             loading: {
                 overlay: document.querySelector('.loading-overlay'),
-                // Removed portalContainer, will use planetSilhouetteEl directly
                 init() {
                     if (state.reduceMotion) {
                         if(this.overlay) this.overlay.style.display = 'none';
@@ -717,27 +754,31 @@
                         animations.hero();
                         return;
                     }
-                    if (!this.overlay) return; // Guard clause
+                    if (!this.overlay) return;
+
+                    // Create planet container and planet core
+                    const planetContainerEl = document.createElement('div');
+                    planetContainerEl.classList.add('planet-container');
 
                     const planetSilhouetteEl = document.createElement('div');
                     planetSilhouetteEl.classList.add('planet-silhouette');
+                    planetContainerEl.appendChild(planetSilhouetteEl);
                     
                     const loadingTextEl = this.overlay.querySelector('.loading-text');
                     const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle');
 
-                    // Prepend planet, so text appears below it in flex-column layout
-                    if (loadingTextEl) { // Prepend before the first text element
-                        this.overlay.insertBefore(planetSilhouetteEl, loadingTextEl);
-                    } else { // Fallback if no text elements, just append
-                        this.overlay.appendChild(planetSilhouetteEl);
+                    // Prepend planet container before the text elements
+                    if (loadingTextEl) {
+                        this.overlay.insertBefore(planetContainerEl, loadingTextEl);
+                    } else {
+                        this.overlay.appendChild(planetContainerEl);
                     }
 
-                    // Initial looping text animations
                     const textIntro1 = anime({
                         targets: loadingTextEl,
-                        opacity: [0, 1, 0.9, 1, 0.9, 1, 0], // More dynamic flicker
+                        opacity: [0, 1, 0.9, 1, 0.9, 1, 0],
                         translateY: [10, 0, -5, 0, 5, 0, -10],
-                        duration: 3000, // Slightly faster loop
+                        duration: 3000,
                         loop: true,
                         easing: 'easeInOutSine'
                     });
@@ -747,7 +788,7 @@
                         translateY: [10, 0, -5, 0, 5, 0, -10],
                         duration: 3000,
                         loop: true,
-                        delay: 300, // Shorter delay
+                        delay: 300,
                         easing: 'easeInOutSine'
                     });
 
@@ -755,32 +796,29 @@
                         setTimeout(() => {
                             textIntro1.pause();
                             textIntro2.pause();
-
-                            // Set text to fully visible before exit animation
                             anime.set([loadingTextEl, loadingSubtitleEl], { opacity: 1, translateY: 0 });
 
                             const exitTimeline = anime.timeline({});
-
                             exitTimeline
                             .add({
                                 targets: [loadingTextEl, loadingSubtitleEl],
                                 opacity: 0,
-                                translateY: -25, // Slightly more upward movement
-                                duration: 500, // Quick fade out for text
+                                translateY: -25,
+                                duration: 500,
                                 easing: 'easeInCubic',
                             })
                             .add({
-                                targets: planetSilhouetteEl,
-                                scale: [1, 40], // Increased scale for full viewport coverage
+                                targets: planetContainerEl, // Animate the container
+                                scale: [1, 40],
                                 opacity: [1, 0], 
-                                duration: 1000, // Faster planet expansion/fade
+                                duration: 1000,
                                 easing: 'easeInExpo',
-                            }, '-=300') // Overlap: Planet starts expanding as text is fading
+                            }, '-=300') 
                             .add({
                                 targets: this.overlay,
                                 opacity: 0,
-                                duration: 400, // Faster overlay fade
-                                easing: 'easeOutQuad', // Smoother fade out
+                                duration: 400,
+                                easing: 'easeOutQuad',
                                 complete: () => {
                                     if (this.overlay) this.overlay.style.display = 'none';
                                     anime({
@@ -789,11 +827,10 @@
                                         duration: 800,
                                         easing: 'easeOutExpo'
                                     });
-                                    animations.hero(); // Trigger hero animation
+                                    animations.hero();
                                 }
-                            }, '-=200'); // Overlay starts fading as planet is almost gone
-
-                        }, 1200); // Shorter timeout for quicker loading feel
+                            }, '-=200'); 
+                        }, 1200); 
                     };
                 }
             },
@@ -948,7 +985,7 @@
             }
         };
 
-        const animations = { // This object should be defined outside systems if systems.loading.init calls animations.hero
+        const animations = {
             hero() {
                 const heroSection = document.querySelector('#hero .section-content');
                 if (!heroSection) return;
@@ -958,7 +995,7 @@
                         opacity: [0, 1],
                         translateY: [50, 0],
                         duration: 1000,
-                        delay: state.reduceMotion ? 0 : 300 // Slight delay after loading screen
+                        delay: state.reduceMotion ? 0 : 300
                     })
                     .add({
                         targets: '#hero .hero-title',
@@ -1003,7 +1040,7 @@
                     return;
                 }
 
-                portalEl.innerHTML = ''; // Clear previous rings
+                portalEl.innerHTML = '';
                 
                 const colors = ['#ff80cc', '#80ccff', '#43e97b', '#f093fb'];
                 for (let i = 0; i < 7; i++) {
@@ -1047,7 +1084,6 @@
             }
         };
 
-        // Initialize all systems
         systems.loading.init();
         systems.cursor.init();
         systems.particles.init();
