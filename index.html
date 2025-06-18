@@ -218,14 +218,14 @@
             align-items: center;
             justify-content: center;
             padding: 8rem 2rem 4rem;
-            overflow: hidden;
+            overflow: hidden; /* Important for some reveal effects */
         }
         .section-content {
             max-width: 1400px;
             width: 100%;
             text-align: center;
-            opacity: 0;
-            transform: translateY(50px);
+            opacity: 0; /* Base opacity for section content, animated by JS */
+            transform: translateY(50px); /* Base transform for section content */
         }
         .hero-title {
             font-size: clamp(2.5rem, 8vw, 4.5rem);
@@ -247,19 +247,19 @@
         }
 
         /* --- Enhanced Japanese-Themed Buttons (CTA & Contact) --- */
-        .cta-group, .contact-grid { /* Apply similar flex layout to contact grid */
+        .cta-group, .contact-grid {
             display: flex;
             gap: 1.5rem;
             justify-content: center;
             flex-wrap: wrap;
             margin-top: 3rem;
         }
-        .cta-button, .contact-action-button { /* Shared base style */
-            display: inline-flex; /* Use flex for icon + text alignment */
+        .cta-button, .contact-action-button {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem; /* Space between icon and text */
-            padding: 1.2rem 2.5rem; /* Adjusted padding */
+            gap: 0.75rem;
+            padding: 1.2rem 2.5rem;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
@@ -270,9 +270,9 @@
             color: white;
             background-color: transparent;
             clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-            overflow: hidden; /* Important for slash effect */
+            overflow: hidden;
         }
-        .cta-button::before { /* Slide-in background for CTA */
+        .cta-button::before {
             content: '';
             position: absolute;
             top: 0;
@@ -285,7 +285,7 @@
             transform: translateX(-101%);
             transition: transform 0.4s ease-in-out;
         }
-        .cta-button::after { /* Arrow for CTA */
+        .cta-button::after {
             content: '▶';
             position: absolute;
             right: 1rem;
@@ -294,99 +294,30 @@
             opacity: 0;
             transition: all 0.3s ease;
         }
-        .cta-button:hover::before {
-            transform: translateX(0);
-        }
-        .cta-button:hover::after {
-            opacity: 1;
-            transform: translateY(-50%) translateX(5px);
-        }
-        .cta-button:hover {
-            border-color: #ff80cc;
-            box-shadow: 0 0 20px rgba(255, 128, 204, 0.5);
-        }
-        .cta-button.secondary {
-            border-color: rgba(255, 128, 204, 0.5);
-            color: #ff80cc;
-        }
-        .cta-button.secondary:hover {
-            color: white;
-            border-color: transparent;
-        }
+        .cta-button:hover::before { transform: translateX(0); }
+        .cta-button:hover::after { opacity: 1; transform: translateY(-50%) translateX(5px); }
+        .cta-button:hover { border-color: #ff80cc; box-shadow: 0 0 20px rgba(255, 128, 204, 0.5); }
+        .cta-button.secondary { border-color: rgba(255, 128, 204, 0.5); color: #ff80cc; }
+        .cta-button.secondary:hover { color: white; border-color: transparent; }
         
-        /* Contact Action Button Specifics & Slash Effect */
-        .contact-action-button:hover {
-            border-color: #80ccff; /* Blue border on hover for contact */
-            box-shadow: 0 0 15px rgba(128, 204, 255, 0.4);
-            color: #80ccff; /* Text color change */
-        }
-        .contact-action-button .contact-action-icon {
-            font-size: 1.3em; /* Slightly larger icon */
-            line-height: 1;
-        }
-        .contact-action-button .slash {
-            position: absolute;
-            background-color: transparent; /* Initial: Invisible */
-            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            width: 0;
-            height: 130%; /* Make slashes longer than button height for diagonal appearance */
-            opacity: 0;
-            z-index: 0; /* Behind text/icon */
-        }
-        .contact-action-button .slash.one {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(45deg);
-        }
-        .contact-action-button .slash.two {
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            transition-delay: 0.05s; /* Stagger the slashes */
-        }
-        .contact-action-button:hover .slash {
-            width: 3px; /* Thickness of the slash */
-            opacity: 1;
-        }
-        .contact-action-button:hover .slash.one {
-             background-color: #ff80cc; /* Light Pink */
-        }
-        .contact-action-button:hover .slash.two {
-             background-color: #80ccff; /* Blue */
-        }
+        .contact-action-button:hover { border-color: #80ccff; box-shadow: 0 0 15px rgba(128, 204, 255, 0.4); color: #80ccff; }
+        .contact-action-button .contact-action-icon { font-size: 1.3em; line-height: 1; }
+        .contact-action-button .slash { position: absolute; background-color: transparent; transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); width: 0; height: 130%; opacity: 0; z-index: 0; }
+        .contact-action-button .slash.one { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); }
+        .contact-action-button .slash.two { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); transition-delay: 0.05s; }
+        .contact-action-button:hover .slash { width: 3px; opacity: 1; }
+        .contact-action-button:hover .slash.one { background-color: #ff80cc; }
+        .contact-action-button:hover .slash.two { background-color: #80ccff; }
 
 
-        /* --- Features Section with Portal Effects --- */
-        .features-portal-container {
-            position: relative;
-            width: 100%;
-            max-width: 1200px;
-            margin: 3rem auto;
-            height: clamp(200px, 50vmin, 300px);
-        }
-        .features-portal {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: clamp(200px, 50vmin, 300px);
-            height: clamp(200px, 50vmin, 300px);
-            opacity: 0;
-        }
-        .feature-ring {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            border: 2px solid;
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-        }
+        /* --- Features Section --- */
+        /* Removed .features-portal-container, .features-portal, .feature-ring CSS */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-top: 4rem;
-            opacity: 0;
+            /* opacity: 1; /* Grid container itself is visible */
         }
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
@@ -394,12 +325,21 @@
             border-radius: 15px;
             padding: 2rem;
             text-align: center;
-            transition: all 0.3s ease;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
             overflow: hidden;
+            /* Initial state for individual animation */
+            opacity: 0;
+            transform: translateY(40px); /* Start slightly down */
+            will-change: opacity, transform;
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Fallback if JS fails, also smooths initial state */
         }
-        .feature-card::before {
+        .feature-card.is-visible { /* Class added by JS to trigger animation */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .feature-card::before { /* Existing hover shine effect */
             content: '';
             position: absolute;
             top: 0;
@@ -409,139 +349,39 @@
             background: linear-gradient(90deg, transparent, rgba(255, 128, 204, 0.2), transparent);
             transition: left 0.5s ease;
         }
-        .feature-card:hover::before {
-            left: 100%;
-        }
+        .feature-card:hover::before { left: 100%; }
         .feature-card:hover {
-            transform: translateY(-10px);
+            /* Keep hover transform, but ensure it doesn't conflict with reveal */
+            /* transform: translateY(-10px); We'll handle this carefully */
             box-shadow: 0 20px 40px rgba(255, 128, 204, 0.2);
         }
-        .feature-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #ff80cc;
+         .feature-card.is-visible:hover { /* Apply hover effect only after visible */
+            transform: translateY(-10px) !important; /* Ensure hover up-shift takes precedence */
         }
-        .feature-title {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-            color: #80ccff;
-        }
-        .feature-description {
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.6;
-        }
+
+        .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #ff80cc; }
+        .feature-title { font-size: 1.5rem; margin-bottom: 1rem; color: #80ccff; }
+        .feature-description { color: rgba(255, 255, 255, 0.8); line-height: 1.6; }
 
         /* --- Guidelines Modal --- */
-        .guidelines-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(10px);
-            z-index: 10001;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-        }
-        .guidelines-content {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
-            border-radius: 20px;
-            padding: 3rem;
-            max-width: 600px;
-            width: 100%;
-            max-height: 80vh;
-            overflow-y: auto;
-            position: relative;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-        }
-        .guidelines-title {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-            text-align: center;
-            color: #fff;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
-        .guidelines-section {
-            margin-bottom: 2rem;
-        }
-        .guidelines-section h3 {
-            color: #ffb3d9;
-            margin-bottom: 0.5rem;
-            font-size: 1.2rem;
-        }
-        .guidelines-section ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        .guidelines-section li {
-            margin-bottom: 0.5rem;
-            padding-left: 1.5rem;
-            position: relative;
-        }
-        .guidelines-section li::before {
-            content: '▶';
-            position: absolute;
-            left: 0;
-            color: #80ccff;
-        }
-        .guidelines-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-top: 2rem;
-        }
-        .guidelines-button {
-            padding: 1rem 2rem;
-            border: none;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1rem;
-        }
-        .guidelines-accept {
-            background: linear-gradient(45deg, #43e97b, #38f9d7);
-            color: white;
-        }
-        .guidelines-accept:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3);
-        }
-        .guidelines-decline {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            color: white;
-        }
-        .guidelines-decline:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3);
-        }
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 2px;
-            margin: 1rem 0;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #80ccff, #ff80cc);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
+        .guidelines-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 2rem; }
+        .guidelines-content { background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)); border-radius: 20px; padding: 3rem; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; border: 2px solid rgba(255, 255, 255, 0.2); }
+        .guidelines-title { font-size: 2rem; margin-bottom: 1.5rem; text-align: center; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+        .guidelines-section { margin-bottom: 2rem; }
+        .guidelines-section h3 { color: #ffb3d9; margin-bottom: 0.5rem; font-size: 1.2rem; }
+        .guidelines-section ul { list-style: none; padding-left: 0; }
+        .guidelines-section li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; }
+        .guidelines-section li::before { content: '▶'; position: absolute; left: 0; color: #80ccff; }
+        .guidelines-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
+        .guidelines-button { padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; }
+        .guidelines-accept { background: linear-gradient(45deg, #43e97b, #38f9d7); color: white; }
+        .guidelines-accept:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3); }
+        .guidelines-decline { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; }
+        .guidelines-decline:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3); }
+        .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 1rem 0; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #80ccff, #ff80cc); width: 0%; transition: width 0.3s ease; }
 
-        .scroll-progress {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 0%;
-            height: 3px;
-            background: linear-gradient(90deg, #ff80cc, #80ccff);
-            z-index: 1001;
-        }
+        .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #ff80cc, #80ccff); z-index: 1001; }
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
@@ -552,22 +392,11 @@
             .logo { font-size: 1.5rem; }
             .nav-links { gap: 0.5rem; }
             .nav-link { padding: 0.5rem; font-size: 0.9rem; }
-            
-            .cta-group, .contact-grid { /* Ensure contact grid also stacks on mobile */
-                flex-direction: column; 
-                align-items: center;
-                gap: 1rem;
-                width: 100%;
-                max-width: 350px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .cta-button, .contact-action-button { /* Full width for these buttons on mobile */
-                 width: 100%; 
-                 text-align: center; 
-            }
+            .cta-group, .contact-grid { flex-direction: column; align-items: center; gap: 1rem; width: 100%; max-width: 350px; margin-left: auto; margin-right: auto; }
+            .cta-button, .contact-action-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
             .guidelines-content { padding: 2rem; margin: 1rem; }
+             .features-grid { grid-template-columns: 1fr; /* Stack cards on mobile */ }
         }
     </style>
 </head>
@@ -582,11 +411,9 @@
     <div class="world-background world-1"></div>
     <div class="particle-system"></div>
 
-    <!-- Guidelines Modal -->
     <div class="guidelines-modal" id="guidelinesModal">
         <div class="guidelines-content">
-            <h2 class="guidelines-title">🌸 Isekai Express Guidelines 🌸</h2>
-            <div class="progress-bar"><div class="progress-fill" id="readingProgress"></div></div>
+            <h2 class="guidelines-title">🌸 Isekai Express Guidelines 🌸</h2><div class="progress-bar"><div class="progress-fill" id="readingProgress"></div></div>
             <div class="guidelines-section"><h3>🚛 Professional Standards</h3><ul><li>Maintain realistic driving behavior at all times</li><li>Follow traffic rules and speed limits</li><li>Complete deliveries on schedule</li><li>Report any issues promptly to management</li></ul></div>
             <div class="guidelines-section"><h3>🎌 Community Respect</h3><ul><li>Be respectful to all members regardless of anime preferences</li><li>Use appropriate language in all communications</li><li>Help new drivers learn the ropes</li><li>Participate positively in events and discussions</li></ul></div>
             <div class="guidelines-section"><h3>⚡ Event Participation</h3><ul><li>Join anime-themed convoys when available</li><li>Customize your truck with approved anime liveries</li><li>Attend weekly meetups and special events</li><li>Share your favorite anime recommendations!</li></ul></div>
@@ -615,10 +442,10 @@
         </section>
 
         <section id="features" data-world="2">
-            <div class="section-content">
+            <div class="section-content"> <!-- This will be animated by the main section observer -->
                 <h2 class="hero-title">Our Services</h2>
                 <p class="hero-subtitle">We offer a premium, structured experience for serious drivers who love anime culture.</p>
-                <div class="features-portal-container"><div class="features-portal" id="featuresPortal"></div></div>
+                <!-- Removed features-portal-container and features-portal -->
                 <div class="features-grid">
                     <div class="feature-card"><div class="feature-icon">🚛</div><h3 class="feature-title">Professional Operations</h3><p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p></div>
                     <div class="feature-card"><div class="feature-icon">🎌</div><h3 class="feature-title">Anime-Themed Events</h3><p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p></div>
@@ -635,18 +462,8 @@
                 <h2 class="hero-title">Start Your Isekai Adventure</h2>
                 <p class="hero-subtitle">Connect with us today and begin your journey into a different world of professional trucking.</p>
                 <div class="contact-grid">
-                    <a href="mailto:expressisekai@gmail.com" class="contact-action-button" rel="noopener noreferrer">
-                        <span class="contact-action-icon">✉️</span>
-                        <span class="contact-action-text">Email Us</span>
-                        <span class="slash one"></span>
-                        <span class="slash two"></span>
-                    </a>
-                    <a href="https://discord.gg/uE96rbK95j" class="contact-action-button" target="_blank" rel="noopener noreferrer">
-                        <span class="contact-action-icon">💬</span>
-                        <span class="contact-action-text">Join Discord</span>
-                        <span class="slash one"></span>
-                        <span class="slash two"></span>
-                    </a>
+                    <a href="mailto:expressisekai@gmail.com" class="contact-action-button" rel="noopener noreferrer"><span class="contact-action-icon">✉️</span><span class="contact-action-text">Email Us</span><span class="slash one"></span><span class="slash two"></span></a>
+                    <a href="https://discord.gg/uE96rbK95j" class="contact-action-button" target="_blank" rel="noopener noreferrer"><span class="contact-action-icon">💬</span><span class="contact-action-text">Join Discord</span><span class="slash one"></span><span class="slash two"></span></a>
                 </div>
             </div>
         </section>
@@ -663,207 +480,104 @@
         };
 
         const systems = {
-            loading: {
-                overlay: document.querySelector('.loading-overlay'),
-                init() {
-                    if (state.reduceMotion) {
-                        if(this.overlay) this.overlay.style.display = 'none';
-                        const headerEl = document.querySelector('header');
-                        if (headerEl) headerEl.style.transform = 'translateY(0)';
-                        animations.hero(); // Directly animate hero if no loading
-                        return;
-                    }
-                    if (!this.overlay) return;
+            loading: { /* ... (loading system code remains the same) ... */ },
+            cursor: { /* ... (cursor system code remains the same) ... */ },
+            particles: { /* ... (particles system code remains the same) ... */ },
+            background: { /* ... (background system code remains the same) ... */ },
+            guidelinesModal: { /* ... (guidelinesModal system code remains the same) ... */ }
+        };
 
-                    const planetContainerEl = document.createElement('div');
-                    planetContainerEl.classList.add('planet-container');
-
-                    const planetSilhouetteEl = document.createElement('div');
-                    planetSilhouetteEl.classList.add('planet-silhouette');
-                    planetContainerEl.appendChild(planetSilhouetteEl);
-                    
-                    const loadingTextEl = this.overlay.querySelector('.loading-text');
-                    const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle');
-
-                    if (loadingTextEl) {
-                        this.overlay.insertBefore(planetContainerEl, loadingTextEl);
-                    } else {
-                        this.overlay.appendChild(planetContainerEl);
-                    }
-
-                    let textIntro1, textIntro2;
-                    if (loadingTextEl) {
-                        textIntro1 = anime({
-                            targets: loadingTextEl,
-                            opacity: [0, 1, 0.9, 1, 0.9, 1, 0],
-                            translateY: [10, 0, -5, 0, 5, 0, -10],
-                            duration: 3000, loop: true, easing: 'easeInOutSine'
-                        });
-                    }
-                    if (loadingSubtitleEl) {
-                         textIntro2 = anime({
-                            targets: loadingSubtitleEl,
-                            opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0],
-                            translateY: [10, 0, -5, 0, 5, 0, -10],
-                            duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine'
-                        });
-                    }
-
-
-                    window.onload = () => {
-                        setTimeout(() => {
-                            if(textIntro1) textIntro1.pause();
-                            if(textIntro2) textIntro2.pause();
-                            anime.set([loadingTextEl, loadingSubtitleEl].filter(el => el), { opacity: 1, translateY: 0 });
-
-                            const exitTimeline = anime.timeline({});
-                            exitTimeline
-                            .add({
-                                targets: [loadingTextEl, loadingSubtitleEl].filter(el => el),
-                                opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic',
-                            })
-                            .add({
-                                targets: planetContainerEl,
-                                scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo',
-                            }, '-=300') 
-                            .add({
-                                targets: this.overlay,
-                                opacity: 0, duration: 400, easing: 'easeOutQuad',
-                                complete: () => {
-                                    if (this.overlay) this.overlay.style.display = 'none';
-                                    const headerEl = document.querySelector('header');
-                                    if(headerEl) {
-                                        anime({
-                                            targets: headerEl,
-                                            translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo'
-                                        });
-                                    }
-                                    animations.hero();
-                                }
-                            }, '-=200'); 
-                        }, 1200); 
-                    };
+         // Simplified loading system from previous correct version
+        systems.loading = {
+            overlay: document.querySelector('.loading-overlay'),
+            init() {
+                if (state.reduceMotion) {
+                    if(this.overlay) this.overlay.style.display = 'none';
+                    const headerEl = document.querySelector('header');
+                    if (headerEl) headerEl.style.transform = 'translateY(0)';
+                    animations.hero(); 
+                    return;
                 }
-            },
-            cursor: {
-                el: document.querySelector('.custom-cursor'),
-                init() {
-                    if (state.reduceMotion || isMobile || !this.el) return;
-                    document.body.style.cursor = 'none';
-                    let mouseX = 0, mouseY = 0;
-                    let cursorX = 0, cursorY = 0;
+                if (!this.overlay) return;
 
-                    window.addEventListener('mousemove', e => {
-                        mouseX = e.clientX;
-                        mouseY = e.clientY;
-                    });
+                const planetContainerEl = document.createElement('div');
+                planetContainerEl.classList.add('planet-container');
+                const planetSilhouetteEl = document.createElement('div');
+                planetSilhouetteEl.classList.add('planet-silhouette');
+                planetContainerEl.appendChild(planetSilhouetteEl);
+                
+                const loadingTextEl = this.overlay.querySelector('.loading-text');
+                const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle');
 
-                    const updateCursor = () => {
-                        const dx = mouseX - cursorX;
-                        const dy = mouseY - cursorY;
-                        cursorX += dx * 0.1;
-                        cursorY += dy * 0.1;
-                        if(this.el) this.el.style.transform = `translate3d(${cursorX - 10}px, ${cursorY - 10}px, 0)`;
-                        requestAnimationFrame(updateCursor);
-                    };
-                    updateCursor();
+                if (loadingTextEl) this.overlay.insertBefore(planetContainerEl, loadingTextEl);
+                else this.overlay.appendChild(planetContainerEl);
 
-                    document.querySelectorAll('a, button, .logo, .feature-card, .contact-action-button').forEach(item => {
-                        item.addEventListener('mouseenter', () => this.el.classList.add('enlarged'));
-                        item.addEventListener('mouseleave', () => this.el.classList.remove('enlarged'));
-                    });
-                }
-            },
-            particles: {
-                el: document.querySelector('.particle-system'),
-                init() {
-                    if (state.reduceMotion || !this.el) return;
-                    const numParticles = isMobile ? 20 : 50;
-                    const colors = ['#ff80cc', '#80ccff', '#ffb3d9', '#b3d9ff'];
-                    for (let i = 0; i < numParticles; i++) {
-                        const particle = document.createElement('div');
-                        particle.classList.add('particle');
-                        particle.style.background = colors[Math.floor(Math.random() * colors.length)];
-                        particle.style.width = `${Math.random() * 5 + 2}px`;
-                        particle.style.height = particle.style.width;
-                        particle.style.left = `${Math.random() * 100}%`;
-                        particle.style.top = `${Math.random() * 100}%`;
-                        this.el.appendChild(particle);
-                        this.animateParticle(particle);
-                    }
-                },
-                animateParticle(p) {
-                    anime({
-                        targets: p,
-                        translateX: () => anime.random(-100, 100) + 'px',
-                        translateY: () => anime.random(-100, 100) + 'px',
-                        scale: [1, anime.random(0.5, 1.5), 1],
-                        opacity: [0, anime.random(0.2, 0.8), 0],
-                        duration: () => anime.random(3000, 8000),
-                        easing: 'easeInOutSine', loop: true, direction: 'alternate'
-                    });
-                }
-            },
-            background: {
-                el: document.querySelector('.world-background'),
-                init() { if (!this.el) return; }
-            },
-            guidelinesModal: {
-                modal: document.getElementById('guidelinesModal'),
-                content: document.querySelector('.guidelines-content'),
-                acceptBtn: document.getElementById('acceptGuidelines'),
-                declineBtn: document.getElementById('declineGuidelines'),
-                joinBtn: document.getElementById('joinButton'),
-                progressFill: document.getElementById('readingProgress'),
-                init() {
-                    if (!this.modal || !this.content || !this.acceptBtn || !this.declineBtn || !this.joinBtn || !this.progressFill) return;
-                    this.joinBtn.addEventListener('click', (e) => { e.preventDefault(); this.open(); });
-                    this.declineBtn.addEventListener('click', () => this.close());
-                    this.acceptBtn.addEventListener('click', () => { if (state.guidelinesRead) { this.close(); window.open('https://discord.gg/uE96rbK95j', '_blank'); } });
-                    this.content.addEventListener('scroll', () => this.updateProgress());
-                },
-                open() {
-                    this.modal.style.display = 'flex'; state.guidelinesRead = false; this.acceptBtn.disabled = true; this.acceptBtn.textContent = 'Accept & Join (Read All First)'; this.updateProgress(); 
-                    anime({ targets: this.modal, opacity: [0, 1], duration: 500, easing: 'easeOutQuad' });
-                    anime({ targets: this.content, scale: [0.8, 1], opacity: [0, 1], translateY: [50, 0], duration: 500, easing: 'easeOutExpo', delay: 100 });
-                },
-                close() {
-                    anime({ targets: this.content, scale: [1, 0.8], opacity: [1, 0], translateY: [0, 50], duration: 300, easing: 'easeInExpo' });
-                    anime({ targets: this.modal, opacity: [1, 0], duration: 400, easing: 'easeInQuad', delay: 50, complete: () => { this.modal.style.display = 'none'; } });
-                },
-                updateProgress() {
-                    const scrollableHeight = this.content.scrollHeight - this.content.clientHeight;
-                    state.readingProgress = scrollableHeight <= 0 ? 100 : (this.content.scrollTop / scrollableHeight) * 100;
-                    this.progressFill.style.width = `${Math.min(state.readingProgress, 100)}%`;
-                    if (state.readingProgress >= 99) { state.guidelinesRead = true; this.acceptBtn.disabled = false; this.acceptBtn.textContent = 'Accept & Join Now!'; }
-                }
+                let textIntro1, textIntro2;
+                if (loadingTextEl) textIntro1 = anime({ targets: loadingTextEl, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' });
+                if (loadingSubtitleEl) textIntro2 = anime({ targets: loadingSubtitleEl, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' });
+
+                window.onload = () => {
+                    setTimeout(() => {
+                        if(textIntro1) textIntro1.pause();
+                        if(textIntro2) textIntro2.pause();
+                        anime.set([loadingTextEl, loadingSubtitleEl].filter(el => el), { opacity: 1, translateY: 0 });
+
+                        anime.timeline({})
+                        .add({ targets: [loadingTextEl, loadingSubtitleEl].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' })
+                        .add({ targets: planetContainerEl, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') 
+                        .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', 
+                            complete: () => {
+                                if (this.overlay) this.overlay.style.display = 'none';
+                                const headerEl = document.querySelector('header');
+                                if(headerEl) anime({ targets: headerEl, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' });
+                                animations.hero();
+                            }
+                        }, '-=200'); 
+                    }, 1200); 
+                };
             }
         };
+         systems.cursor = { // Simplified cursor from previous correct version
+            el: document.querySelector('.custom-cursor'),
+            init() {
+                if (state.reduceMotion || isMobile || !this.el) return;
+                document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0;
+                window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;});
+                const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC();
+                document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));});
+            }
+        };
+        systems.particles = { // Simplified particles from previous correct version
+            el: document.querySelector('.particle-system'),
+            init() {
+                if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff'];
+                for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);}
+            },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});}
+        };
+        systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }};
+        systems.guidelinesModal = { // Simplified guidelines from previous correct version
+            modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'),
+            init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());},
+            open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});},
+            close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});},
+            updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}}
+        };
+
 
         const animations = {
-            hero() {
-                const heroSection = document.querySelector('#hero .section-content');
-                if (!heroSection) return;
-                anime.timeline({ easing: 'easeOutExpo' })
-                    .add({ targets: heroSection, opacity: [0, 1], translateY: [50, 0], duration: 1000, delay: state.reduceMotion ? 0 : 300 })
-                    .add({ targets: '#hero .hero-title', opacity: [0, 1], translateY: [20, 0], duration: 800 }, '-=600')
-                    .add({ targets: '#hero .hero-subtitle', opacity: [0, 1], translateY: [20, 0], duration: 800 }, '-=600')
-                    .add({ targets: '#hero .cta-button', opacity: [0, 1], translateY: [20, 0], duration: 600, delay: anime.stagger(150) }, '-=500');
-            },
-            section(el) { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1200, easing: 'easeOutExpo' }); },
-            featuresPortal() {
-                const portalEl = document.getElementById('featuresPortal');
-                const featuresGrid = document.querySelector('#features .features-grid');
-                if (!portalEl || !featuresGrid ) { if(featuresGrid) featuresGrid.style.opacity = 1; return; }
-                if (state.reduceMotion) { if(featuresGrid) featuresGrid.style.opacity = 1; if(portalEl) portalEl.style.display = 'none'; return; }
-                portalEl.innerHTML = '';
-                const colors = ['#ff80cc', '#80ccff', '#43e97b', '#f093fb'];
-                for (let i = 0; i < 7; i++) { const ring = document.createElement('div'); ring.classList.add('feature-ring'); ring.style.borderColor = colors[i % colors.length]; portalEl.appendChild(ring); }
-                anime.timeline({ easing: 'easeOutExpo', begin: () => { portalEl.style.opacity = 1; } })
-                .add({ targets: portalEl.querySelectorAll('.feature-ring'), width: ['0%', '100%'], height: ['0%', '100%'], opacity: [0.8, 0], borderWidth: [5, 1], rotate: anime.stagger([-180, 180]), duration: 1500, delay: anime.stagger(80) })
-                .add({ targets: portalEl, scale: [1, 1.5], opacity: [1, 0], duration: 800, easing: 'easeInQuad', complete: () => { portalEl.style.opacity = 0; anime({ targets: featuresGrid, opacity: [0, 1], translateY: [30, 0], duration: 1000, easing: 'easeOutExpo' }); } }, '-=500');
-            }
+            hero() { /* ... (hero animation code remains the same) ... */ },
+            section(el) { /* ... (section animation code remains the same) ... */ },
+            // Removed featuresPortal animation
         };
+        animations.hero = () => { // Simplified hero from previous correct version
+            const hS=document.querySelector('#hero .section-content');if(!hS)return;
+            anime.timeline({easing:'easeOutExpo'}).add({targets:hS,opacity:[0,1],translateY:[50,0],duration:1000,delay:state.reduceMotion?0:300})
+            .add({targets:'#hero .hero-title',opacity:[0,1],translateY:[20,0],duration:800},'-=600')
+            .add({targets:'#hero .hero-subtitle',opacity:[0,1],translateY:[20,0],duration:800},'-=600')
+            .add({targets:'#hero .cta-button',opacity:[0,1],translateY:[20,0],duration:600,delay:anime.stagger(150)},'-=500');
+        };
+        animations.section = (el) => { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1200, easing: 'easeOutExpo' }); };
+
 
         systems.loading.init();
         systems.cursor.init();
@@ -872,27 +586,89 @@
         systems.guidelinesModal.init();
 
         const scrollProgressBar = document.querySelector('.scroll-progress');
-        if (scrollProgressBar) { window.addEventListener('scroll', () => { const scrollTop = document.documentElement.scrollTop; const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight; const scrollPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0; scrollProgressBar.style.width = scrollPercent + '%'; }); }
+        if (scrollProgressBar) { window.addEventListener('scroll', () => { const sT=document.documentElement.scrollTop;const sH=document.documentElement.scrollHeight-document.documentElement.clientHeight;const sP=sH>0?(sT/sH)*100:0;scrollProgressBar.style.width=sP+'%';});}
         
+        // Main section observer
         const sections = document.querySelectorAll('section');
         const worldBg = systems.background.el;
-        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.3 };
-        const observerCallback = (entries, observer) => {
+        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.2 }; // Trigger a bit earlier for section content
+
+        const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const sectionContent = entry.target.querySelector('.section-content');
-                    if (sectionContent && sectionContent.style.opacity !== '1') { animations.section(sectionContent); }
-                    if (entry.target.id === 'features') { const featuresGrid = entry.target.querySelector('.features-grid'); if (featuresGrid && featuresGrid.style.opacity !== '1') { animations.featuresPortal(); } }
-                    if (worldBg) { const world = entry.target.dataset.world; if (world) { worldBg.className = `world-background world-${world}`; } }
+                    // Animate section title/subtitle if not already done
+                    if (sectionContent && sectionContent.style.opacity !== '1') {
+                         animations.section(sectionContent); // Animates opacity and translateY
+                    }
+                    
+                    if (worldBg) {
+                        const world = entry.target.dataset.world;
+                        if (world) worldBg.className = `world-background world-${world}`;
+                    }
                     const navLinks = document.querySelectorAll('.nav-link');
-                    navLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === `#${entry.target.id}`) { link.classList.add('active'); } });
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${entry.target.id}`) {
+                            link.classList.add('active');
+                        }
+                    });
+
+                    // If it's the features section, initialize observer for its cards
+                    if (entry.target.id === 'features' && !entry.target.dataset.cardsObserved) {
+                        observeFeatureCards(entry.target);
+                        entry.target.dataset.cardsObserved = 'true'; // Mark as observed
+                    }
+                     observer.unobserve(entry.target); // Unobserve section after its main content is animated
                 }
             });
         };
-        const observer = new IntersectionObserver(observerCallback, observerOptions);
-        sections.forEach(section => observer.observe(section));
-        document.querySelectorAll('.nav-link').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const targetId = this.getAttribute('href'); const targetElement = document.querySelector(targetId); if (targetElement) { targetElement.scrollIntoView({ behavior: 'smooth' }); } }); });
-        if (window.location.hash) { const activeLink = document.querySelector(`.nav-link[href="${window.location.hash}"]`); if (activeLink) activeLink.classList.add('active'); } else { const homeLink = document.querySelector('.nav-link[href="#hero"]'); if (homeLink) homeLink.classList.add('active'); }
+        const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
+        sections.forEach(section => sectionObserver.observe(section));
+
+        // Observer for individual feature cards
+        const featureCardObserverOptions = { root: null, rootMargin: '0px', threshold: 0.2 }; // Reveal card when 20% visible
+        
+        const featureCardObserverCallback = (entries, observer) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    if (state.reduceMotion) {
+                        entry.target.classList.add('is-visible'); // Just make it visible
+                    } else {
+                        anime({
+                            targets: entry.target,
+                            translateY: [40, 0],
+                            opacity: [0, 1],
+                            duration: 700,
+                            easing: 'easeOutExpo',
+                            delay: index * 100, // Stagger effect for cards appearing close together
+                            complete: () => {
+                                entry.target.classList.add('is-visible'); // Add for CSS hover and state
+                            }
+                        });
+                    }
+                    observer.unobserve(entry.target); // Animate each card only once
+                }
+            });
+        };
+        const featureCardObserver = new IntersectionObserver(featureCardObserverCallback, featureCardObserverOptions);
+
+        function observeFeatureCards(featureSectionElement) {
+            const featureCards = featureSectionElement.querySelectorAll('.feature-card');
+            featureCards.forEach(card => {
+                if (state.reduceMotion) { // If reduce motion, make them visible directly without observing for animation
+                     card.style.opacity = '1';
+                     card.style.transform = 'translateY(0)';
+                     card.classList.add('is-visible');
+                } else {
+                    featureCardObserver.observe(card);
+                }
+            });
+        }
+
+
+        document.querySelectorAll('.nav-link').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const tId=this.getAttribute('href');const tE=document.querySelector(tId); if(tE){tE.scrollIntoView({behavior:'smooth'});}});});
+        if(window.location.hash){const aL=document.querySelector(`.nav-link[href="${window.location.hash}"]`);if(aL)aL.classList.add('active');}else{const hL=document.querySelector('.nav-link[href="#hero"]');if(hL)hL.classList.add('active');}
     });
     </script>
 </body>
