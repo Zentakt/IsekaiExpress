@@ -59,8 +59,9 @@
         }
         .portal-container {
             position: relative;
-            width: 400px;
-            height: 400px;
+            /* MODIFIED for responsiveness */
+            width: clamp(280px, 70vmin, 400px);
+            height: clamp(280px, 70vmin, 400px);
         }
         .portal-ring {
             position: absolute;
@@ -289,32 +290,35 @@
         .features-portal-container {
             position: relative;
             width: 100%;
-            max-width: 1200px;
+            max-width: 1200px; /* Or adjust based on portal size preferences */
             margin: 3rem auto;
+            /* MODIFIED: Added height to properly center the absolute child portal */
+            height: clamp(200px, 50vmin, 300px);
         }
-        .features-portal { /* This div will be the target for anime.js */
+        .features-portal {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 300px; /* Initial size, anime.js will control it */
-            height: 300px;
-            opacity: 0; /* Starts invisible */
+            /* MODIFIED for responsiveness */
+            width: clamp(200px, 50vmin, 300px);
+            height: clamp(200px, 50vmin, 300px);
+            opacity: 0;
         }
-        .feature-ring { /* Individual rings for the portal effect */
+        .feature-ring {
             position: absolute;
             top: 50%;
             left: 50%;
             border: 2px solid;
             border-radius: 50%;
-            transform: translate(-50%, -50%); /* Center rings */
+            transform: translate(-50%, -50%);
         }
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
-            margin-top: 4rem;
-            opacity: 0; /* Will be faded in after portal */
+            margin-top: 4rem; /* Consider adjusting if .features-portal-container height changes flow */
+            opacity: 0;
         }
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
@@ -412,7 +416,7 @@
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             z-index: 10001;
-            display: none; /* Changed from flex to none, JS will control */
+            display: none;
             align-items: center;
             justify-content: center;
             padding: 2rem;
@@ -519,7 +523,7 @@
             body { cursor: auto; }
             .custom-cursor { display: none; }
             header { padding: 1rem; }
-            .header-content { flex-direction: row; } /* Keep logo and nav inline */
+            .header-content { flex-direction: row; }
             .logo { font-size: 1.5rem; }
             .nav-links { gap: 0.5rem; }
             .nav-link { padding: 0.5rem; font-size: 0.9rem; }
@@ -529,13 +533,14 @@
                 align-items: center;
                 gap: 1rem;
                 width: 100%;
-                max-width: 350px; /* Limit width of buttons on mobile */
+                max-width: 350px;
                 margin-left: auto;
                 margin-right: auto;
             }
             .cta-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
-            .portal-container { width: 300px; height: 300px; }
+            /* MODIFIED: Removed specific .portal-container sizing as clamp() should handle it */
+            /* .portal-container { width: 300px; height: 300px; } */
             .guidelines-content { padding: 2rem; margin: 1rem; }
         }
     </style>
@@ -729,7 +734,6 @@
                     }
                     if (!this.portalContainer) return;
                     
-                    // Create enhanced portal rings
                     const colors = ['#80ccff', '#ff80cc', '#ffb3d9', '#b3d9ff', '#e6ccff', '#ccffe6', '#ffe6cc'];
                     for (let i = 0; i < 10; i++) {
                         const ring = document.createElement('div');
@@ -745,8 +749,8 @@
 
                     portalTimeline.add({
                         targets: '.portal-ring',
-                        width: [0, '120%'],
-                        height: [0, '120%'],
+                        width: [0, '120%'], // Relative to .portal-container
+                        height: [0, '120%'], // Relative to .portal-container
                         opacity: [1, 0],
                         borderWidth: [8, 1],
                         rotate: [0, 360],
@@ -755,7 +759,6 @@
                         delay: anime.stagger(100)
                     });
 
-                    // Add text animations
                     anime({
                         targets: '.loading-text',
                         opacity: [0, 1, 0],
@@ -791,7 +794,7 @@
                                 duration: 800,
                                 easing: 'easeInExpo',
                                 complete: () => {
-                                    if(this.overlay) {
+                                    if(this.overlay) { // Check if overlay exists
                                         anime({
                                             targets: this.overlay,
                                             opacity: 0,
@@ -808,10 +811,18 @@
                                                 animations.hero();
                                             }
                                         });
+                                    } else { // Fallback if overlay was already removed (e.g. reduce motion)
+                                         anime({
+                                            targets: 'header',
+                                            translateY: ['-100%', '0%'],
+                                            duration: 800,
+                                            easing: 'easeOutExpo'
+                                        });
+                                        animations.hero();
                                     }
                                 }
                             });
-                        }, 2500); // Minimum loading time
+                        }, 2500); 
                     };
                 }
             },
@@ -880,7 +891,6 @@
                 el: document.querySelector('.world-background'),
                 init() {
                     if (!this.el) return;
-                    // Background changes handled by Intersection Observer
                 }
             },
             guidelinesModal: {
@@ -901,7 +911,6 @@
                     this.acceptBtn.addEventListener('click', () => {
                         if (state.guidelinesRead) {
                             this.close();
-                            // Redirect to Discord or application form
                             window.open('https://discord.gg/uE96rbK95j', '_blank');
                         }
                     });
@@ -913,7 +922,7 @@
                     state.guidelinesRead = false;
                     this.acceptBtn.disabled = true;
                     this.acceptBtn.textContent = 'Accept & Join (Read All First)';
-                    this.updateProgress(); // Initial progress check
+                    this.updateProgress(); 
                     anime({
                         targets: this.modal,
                         opacity: [0, 1],
@@ -952,10 +961,14 @@
                 },
                 updateProgress() {
                     const scrollableHeight = this.content.scrollHeight - this.content.clientHeight;
-                    state.readingProgress = (this.content.scrollTop / scrollableHeight) * 100;
+                    if (scrollableHeight <= 0) { // Content is not scrollable or not enough to scroll
+                        state.readingProgress = 100;
+                    } else {
+                        state.readingProgress = (this.content.scrollTop / scrollableHeight) * 100;
+                    }
                     this.progressFill.style.width = `${Math.min(state.readingProgress, 100)}%`;
 
-                    if (state.readingProgress >= 99) { // A little leeway
+                    if (state.readingProgress >= 99) { 
                         state.guidelinesRead = true;
                         this.acceptBtn.disabled = false;
                         this.acceptBtn.textContent = 'Accept & Join Now!';
@@ -1009,19 +1022,23 @@
             featuresPortal() {
                 const portalEl = document.getElementById('featuresPortal');
                 const featuresGrid = document.querySelector('#features .features-grid');
-                if (!portalEl || !featuresGrid || state.reduceMotion) {
-                    if(featuresGrid) featuresGrid.style.opacity = 1; // Show grid if no portal
+                if (!portalEl || !featuresGrid ) { // Removed state.reduceMotion check here to allow grid to show even if portalEl is missing
+                    if(featuresGrid) featuresGrid.style.opacity = 1; 
+                    return;
+                }
+                 if (state.reduceMotion) { // If reduce motion, just show the grid
+                    if(featuresGrid) featuresGrid.style.opacity = 1;
+                    if(portalEl) portalEl.style.display = 'none'; // Hide portal if reduce motion
                     return;
                 }
 
-                // Clear any previous rings
+
                 portalEl.innerHTML = '';
                 
-                // Create portal rings for features section
                 const colors = ['#ff80cc', '#80ccff', '#43e97b', '#f093fb'];
                 for (let i = 0; i < 7; i++) {
                     const ring = document.createElement('div');
-                    ring.classList.add('feature-ring'); // Use specific class if needed
+                    ring.classList.add('feature-ring'); 
                     ring.style.borderColor = colors[i % colors.length];
                     portalEl.appendChild(ring);
                 }
@@ -1032,8 +1049,8 @@
                 })
                 .add({
                     targets: portalEl.querySelectorAll('.feature-ring'),
-                    width: ['0%', '100%'],
-                    height: ['0%', '100%'],
+                    width: ['0%', '100%'], // Relative to #featuresPortal
+                    height: ['0%', '100%'], // Relative to #featuresPortal
                     opacity: [0.8, 0],
                     borderWidth: [5, 1],
                     rotate: anime.stagger([-180, 180]),
@@ -1047,65 +1064,61 @@
                     duration: 800,
                     easing: 'easeInQuad',
                     complete: () => {
-                        portalEl.style.opacity = 0; // Ensure it's hidden
+                        portalEl.style.opacity = 0; 
                         anime({
                             targets: featuresGrid,
                             opacity: [0, 1],
                             translateY: [30, 0],
                             duration: 1000,
                             easing: 'easeOutExpo',
-                            delay: anime.stagger(100, { grid: [3, 2], from: 'center' })
+                            // Removed stagger for grid items appearing all at once after portal
                         });
                     }
                 }, '-=500');
             }
         };
 
-        // Initialize systems
         systems.loading.init();
         systems.cursor.init();
         systems.particles.init();
         systems.background.init();
         systems.guidelinesModal.init();
 
-        // Scroll progress bar
         const scrollProgressBar = document.querySelector('.scroll-progress');
         if (scrollProgressBar) {
             window.addEventListener('scroll', () => {
                 const scrollTop = document.documentElement.scrollTop;
                 const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-                const scrollPercent = (scrollTop / scrollHeight) * 100;
+                const scrollPercent = scrollHeight > 0 ? (scrollTop / scrollHeight) * 100 : 0;
                 scrollProgressBar.style.width = scrollPercent + '%';
             });
         }
         
-        // Intersection Observer for section animations and background changes
         const sections = document.querySelectorAll('section');
         const worldBg = systems.background.el;
 
         const observerOptions = {
             root: null,
             rootMargin: '0px',
-            threshold: 0.3 // When 30% of the section is visible
+            threshold: 0.3 
         };
 
         const observerCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const sectionContent = entry.target.querySelector('.section-content');
-                    if (sectionContent && sectionContent.style.opacity !== '1') {
+                    if (sectionContent && sectionContent.style.opacity !== '1') { // Animate only if not already visible
                          animations.section(sectionContent);
                     }
 
-                    // Special animation for features portal
                     if (entry.target.id === 'features') {
                         const featuresGrid = entry.target.querySelector('.features-grid');
-                        if (featuresGrid && featuresGrid.style.opacity !== '1') {
+                        // Trigger portal only if grid is not yet visible
+                        if (featuresGrid && featuresGrid.style.opacity !== '1') { 
                             animations.featuresPortal();
                         }
                     }
                     
-                    // Change background
                     if (worldBg) {
                         const world = entry.target.dataset.world;
                         if (world) {
@@ -1113,7 +1126,6 @@
                         }
                     }
 
-                    // Update active nav link
                     const navLinks = document.querySelectorAll('.nav-link');
                     navLinks.forEach(link => {
                         link.classList.remove('active');
@@ -1128,17 +1140,19 @@
         const observer = new IntersectionObserver(observerCallback, observerOptions);
         sections.forEach(section => observer.observe(section));
 
-        // Smooth scroll for nav links & set active for initial view
         document.querySelectorAll('.nav-link').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    targetElement.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
 
-        // Set initial active link if page loads on a specific hash
         if (window.location.hash) {
             const activeLink = document.querySelector(`.nav-link[href="${window.location.hash}"]`);
             if (activeLink) activeLink.classList.add('active');
