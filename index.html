@@ -218,14 +218,14 @@
             align-items: center;
             justify-content: center;
             padding: 8rem 2rem 4rem;
-            overflow: hidden; /* Important for some reveal effects */
+            overflow: hidden; 
         }
         .section-content {
             max-width: 1400px;
             width: 100%;
             text-align: center;
-            opacity: 0; /* Base opacity for section content, animated by JS */
-            transform: translateY(50px); /* Base transform for section content */
+            opacity: 0; 
+            transform: translateY(50px); 
         }
         .hero-title {
             font-size: clamp(2.5rem, 8vw, 4.5rem);
@@ -311,13 +311,12 @@
 
 
         /* --- Features Section --- */
-        /* Removed .features-portal-container, .features-portal, .feature-ring CSS */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
             margin-top: 4rem;
-            /* opacity: 1; /* Grid container itself is visible */
+            perspective: 1200px; /* Enable 3D space for children cards */
         }
         .feature-card {
             background: rgba(255, 255, 255, 0.1);
@@ -327,19 +326,23 @@
             text-align: center;
             border: 1px solid rgba(255, 255, 255, 0.2);
             position: relative;
-            overflow: hidden;
-            /* Initial state for individual animation */
+            overflow: hidden; /* Keep this if you have ::before shine effects */
+            
+            /* Initial state for 3D "unfold" animation */
             opacity: 0;
-            transform: translateY(40px); /* Start slightly down */
+            transform: rotateX(-80deg) translateY(60px) translateZ(-150px);
+            transform-origin: top center; /* Rotate from the top edge */
             will-change: opacity, transform;
-            transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Fallback if JS fails, also smooths initial state */
+            /* Basic CSS transition as fallback / initial smoothing */
+            /* transition: opacity 0.8s ease-out, transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); */
         }
-        .feature-card.is-visible { /* Class added by JS to trigger animation */
-            opacity: 1;
-            transform: translateY(0);
+        .feature-card.is-visible { 
+            /* This class is mainly a flag now, animation done by Anime.js */
+            /* opacity: 1; */
+            /* transform: rotateX(0deg) translateY(0px) translateZ(0px); */
         }
 
-        .feature-card::before { /* Existing hover shine effect */
+        .feature-card::before {
             content: '';
             position: absolute;
             top: 0;
@@ -350,14 +353,14 @@
             transition: left 0.5s ease;
         }
         .feature-card:hover::before { left: 100%; }
-        .feature-card:hover {
-            /* Keep hover transform, but ensure it doesn't conflict with reveal */
-            /* transform: translateY(-10px); We'll handle this carefully */
+        
+        .feature-card:hover { /* Hover effect for *after* it's visible */
             box-shadow: 0 20px 40px rgba(255, 128, 204, 0.2);
         }
-         .feature-card.is-visible:hover { /* Apply hover effect only after visible */
-            transform: translateY(-10px) !important; /* Ensure hover up-shift takes precedence */
+        .feature-card.is-visible:hover { /* Only apply hover transform if visible */
+             transform: translateY(-10px) rotateX(0deg) translateZ(0px) !important; /* Slight lift */
         }
+
 
         .feature-icon { font-size: 3rem; margin-bottom: 1rem; color: #ff80cc; }
         .feature-title { font-size: 1.5rem; margin-bottom: 1rem; color: #80ccff; }
@@ -396,7 +399,9 @@
             .cta-button, .contact-action-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
             .guidelines-content { padding: 2rem; margin: 1rem; }
-             .features-grid { grid-template-columns: 1fr; /* Stack cards on mobile */ }
+            .features-grid { grid-template-columns: 1fr; perspective: none; /* Disable perspective on mobile if it causes issues or isn't desired */ }
+            .feature-card { transform: rotateX(0deg) translateY(0px) translateZ(0px); opacity: 1; /* Simpler reveal for mobile, or could keep 3D */ }
+
         }
     </style>
 </head>
@@ -442,10 +447,9 @@
         </section>
 
         <section id="features" data-world="2">
-            <div class="section-content"> <!-- This will be animated by the main section observer -->
+            <div class="section-content"> 
                 <h2 class="hero-title">Our Services</h2>
                 <p class="hero-subtitle">We offer a premium, structured experience for serious drivers who love anime culture.</p>
-                <!-- Removed features-portal-container and features-portal -->
                 <div class="features-grid">
                     <div class="feature-card"><div class="feature-icon">🚛</div><h3 class="feature-title">Professional Operations</h3><p class="feature-description">Structured delivery schedules, realistic gameplay, and professional management systems that mirror real trucking companies.</p></div>
                     <div class="feature-card"><div class="feature-icon">🎌</div><h3 class="feature-title">Anime-Themed Events</h3><p class="feature-description">Regular anime-themed convoys, seasonal events, and custom liveries featuring your favorite characters and series.</p></div>
@@ -479,104 +483,24 @@
             readingProgress: 0
         };
 
-        const systems = {
-            loading: { /* ... (loading system code remains the same) ... */ },
-            cursor: { /* ... (cursor system code remains the same) ... */ },
-            particles: { /* ... (particles system code remains the same) ... */ },
-            background: { /* ... (background system code remains the same) ... */ },
-            guidelinesModal: { /* ... (guidelinesModal system code remains the same) ... */ }
-        };
-
-         // Simplified loading system from previous correct version
-        systems.loading = {
-            overlay: document.querySelector('.loading-overlay'),
-            init() {
-                if (state.reduceMotion) {
-                    if(this.overlay) this.overlay.style.display = 'none';
-                    const headerEl = document.querySelector('header');
-                    if (headerEl) headerEl.style.transform = 'translateY(0)';
-                    animations.hero(); 
-                    return;
-                }
-                if (!this.overlay) return;
-
-                const planetContainerEl = document.createElement('div');
-                planetContainerEl.classList.add('planet-container');
-                const planetSilhouetteEl = document.createElement('div');
-                planetSilhouetteEl.classList.add('planet-silhouette');
-                planetContainerEl.appendChild(planetSilhouetteEl);
-                
-                const loadingTextEl = this.overlay.querySelector('.loading-text');
-                const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle');
-
-                if (loadingTextEl) this.overlay.insertBefore(planetContainerEl, loadingTextEl);
-                else this.overlay.appendChild(planetContainerEl);
-
-                let textIntro1, textIntro2;
-                if (loadingTextEl) textIntro1 = anime({ targets: loadingTextEl, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' });
-                if (loadingSubtitleEl) textIntro2 = anime({ targets: loadingSubtitleEl, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' });
-
-                window.onload = () => {
-                    setTimeout(() => {
-                        if(textIntro1) textIntro1.pause();
-                        if(textIntro2) textIntro2.pause();
-                        anime.set([loadingTextEl, loadingSubtitleEl].filter(el => el), { opacity: 1, translateY: 0 });
-
-                        anime.timeline({})
-                        .add({ targets: [loadingTextEl, loadingSubtitleEl].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' })
-                        .add({ targets: planetContainerEl, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') 
-                        .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', 
-                            complete: () => {
-                                if (this.overlay) this.overlay.style.display = 'none';
-                                const headerEl = document.querySelector('header');
-                                if(headerEl) anime({ targets: headerEl, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' });
-                                animations.hero();
-                            }
-                        }, '-=200'); 
-                    }, 1200); 
-                };
-            }
-        };
-         systems.cursor = { // Simplified cursor from previous correct version
-            el: document.querySelector('.custom-cursor'),
-            init() {
-                if (state.reduceMotion || isMobile || !this.el) return;
-                document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0;
-                window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;});
-                const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC();
-                document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));});
-            }
-        };
-        systems.particles = { // Simplified particles from previous correct version
-            el: document.querySelector('.particle-system'),
-            init() {
-                if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff'];
-                for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);}
-            },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});}
-        };
+        const systems = { /* ... All systems code (loading, cursor, particles, background, guidelinesModal) from previous step ... */ };
+        // --- Paste all system definitions from the previous correct step here ---
+        systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const planetContainerEl = document.createElement('div'); planetContainerEl.classList.add('planet-container'); const planetSilhouetteEl = document.createElement('div'); planetSilhouetteEl.classList.add('planet-silhouette'); planetContainerEl.appendChild(planetSilhouetteEl); const loadingTextEl = this.overlay.querySelector('.loading-text'); const loadingSubtitleEl = this.overlay.querySelector('.loading-subtitle'); if (loadingTextEl) this.overlay.insertBefore(planetContainerEl, loadingTextEl); else this.overlay.appendChild(planetContainerEl); let textIntro1, textIntro2; if (loadingTextEl) textIntro1 = anime({ targets: loadingTextEl, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (loadingSubtitleEl) textIntro2 = anime({ targets: loadingSubtitleEl, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(textIntro1) textIntro1.pause(); if(textIntro2) textIntro2.pause(); anime.set([loadingTextEl, loadingSubtitleEl].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [loadingTextEl, loadingSubtitleEl].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: planetContainerEl, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if(headerEl) anime({ targets: headerEl, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } };
+        systems.cursor = { el: document.querySelector('.custom-cursor'), init() { if (state.reduceMotion || isMobile || !this.el) return; document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0; window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;}); const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC(); document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));}); } };
+        systems.particles = { el: document.querySelector('.particle-system'), init() { if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff']; for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);} },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});} };
         systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }};
-        systems.guidelinesModal = { // Simplified guidelines from previous correct version
-            modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'),
-            init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());},
-            open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});},
-            close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});},
-            updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}}
-        };
+        systems.guidelinesModal = { modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'), init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());}, open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});}, close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});}, updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}} };
+        // --- End of pasted system definitions ---
 
 
         const animations = {
-            hero() { /* ... (hero animation code remains the same) ... */ },
-            section(el) { /* ... (section animation code remains the same) ... */ },
-            // Removed featuresPortal animation
+             hero() { /* ... (hero animation code remains the same) ... */ },
+             section(el) { /* ... (section animation code remains the same) ... */ },
         };
-        animations.hero = () => { // Simplified hero from previous correct version
-            const hS=document.querySelector('#hero .section-content');if(!hS)return;
-            anime.timeline({easing:'easeOutExpo'}).add({targets:hS,opacity:[0,1],translateY:[50,0],duration:1000,delay:state.reduceMotion?0:300})
-            .add({targets:'#hero .hero-title',opacity:[0,1],translateY:[20,0],duration:800},'-=600')
-            .add({targets:'#hero .hero-subtitle',opacity:[0,1],translateY:[20,0],duration:800},'-=600')
-            .add({targets:'#hero .cta-button',opacity:[0,1],translateY:[20,0],duration:600,delay:anime.stagger(150)},'-=500');
-        };
-        animations.section = (el) => { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1200, easing: 'easeOutExpo' }); };
+        // --- Paste hero and section animation definitions from the previous correct step here ---
+        animations.hero = () => { const hS=document.querySelector('#hero .section-content');if(!hS)return; anime.timeline({easing:'easeOutExpo'}).add({targets:hS,opacity:[0,1],translateY:[50,0],duration:1000,delay:state.reduceMotion?0:300}) .add({targets:'#hero .hero-title',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .hero-subtitle',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .cta-button',opacity:[0,1],translateY:[20,0],duration:600,delay:anime.stagger(150)},'-=500'); };
+        animations.section = (el) => { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1000, easing: 'easeOutExpo', delay: 200 }); }; // Slightly reduced duration for main sections
+        // --- End of pasted animation definitions ---
 
 
         systems.loading.init();
@@ -588,18 +512,17 @@
         const scrollProgressBar = document.querySelector('.scroll-progress');
         if (scrollProgressBar) { window.addEventListener('scroll', () => { const sT=document.documentElement.scrollTop;const sH=document.documentElement.scrollHeight-document.documentElement.clientHeight;const sP=sH>0?(sT/sH)*100:0;scrollProgressBar.style.width=sP+'%';});}
         
-        // Main section observer
         const sections = document.querySelectorAll('section');
         const worldBg = systems.background.el;
-        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.2 }; // Trigger a bit earlier for section content
+        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.2 }; 
 
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const sectionContent = entry.target.querySelector('.section-content');
-                    // Animate section title/subtitle if not already done
-                    if (sectionContent && sectionContent.style.opacity !== '1') {
-                         animations.section(sectionContent); // Animates opacity and translateY
+                    if (sectionContent && !sectionContent.classList.contains('is-visible')) {
+                         animations.section(sectionContent); 
+                         sectionContent.classList.add('is-visible'); // Mark as animated
                     }
                     
                     if (worldBg) {
@@ -614,40 +537,43 @@
                         }
                     });
 
-                    // If it's the features section, initialize observer for its cards
                     if (entry.target.id === 'features' && !entry.target.dataset.cardsObserved) {
                         observeFeatureCards(entry.target);
-                        entry.target.dataset.cardsObserved = 'true'; // Mark as observed
+                        entry.target.dataset.cardsObserved = 'true';
                     }
-                     observer.unobserve(entry.target); // Unobserve section after its main content is animated
                 }
             });
         };
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
         sections.forEach(section => sectionObserver.observe(section));
 
-        // Observer for individual feature cards
-        const featureCardObserverOptions = { root: null, rootMargin: '0px', threshold: 0.2 }; // Reveal card when 20% visible
+        const featureCardObserverOptions = { root: null, rootMargin: isMobile ? '-50px 0px -50px 0px' : '-100px 0px -100px 0px' , threshold: 0.1 }; // Adjusted rootMargin
         
         const featureCardObserverCallback = (entries, observer) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
+                    if (entry.target.classList.contains('is-visible')) return; // Already animated
+
                     if (state.reduceMotion) {
-                        entry.target.classList.add('is-visible'); // Just make it visible
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'rotateX(0deg) translateY(0px) translateZ(0px)';
+                        entry.target.classList.add('is-visible');
                     } else {
                         anime({
                             targets: entry.target,
-                            translateY: [40, 0],
                             opacity: [0, 1],
-                            duration: 700,
-                            easing: 'easeOutExpo',
-                            delay: index * 100, // Stagger effect for cards appearing close together
+                            translateY: [60, 0],    // Start from further down
+                            translateZ: [-150, 0],  // Bring it forward
+                            rotateX: [-80, 0],      // Rotate it into view
+                            duration: 800,         // Slightly longer for more pronounced effect
+                            easing: 'easeOutElastic(1, .8)', // More bouncy/elastic
+                            delay: isMobile ? index * 100 : index * 150, // Stagger
                             complete: () => {
-                                entry.target.classList.add('is-visible'); // Add for CSS hover and state
+                                entry.target.classList.add('is-visible');
                             }
                         });
                     }
-                    observer.unobserve(entry.target); // Animate each card only once
+                    observer.unobserve(entry.target);
                 }
             });
         };
@@ -656,16 +582,15 @@
         function observeFeatureCards(featureSectionElement) {
             const featureCards = featureSectionElement.querySelectorAll('.feature-card');
             featureCards.forEach(card => {
-                if (state.reduceMotion) { // If reduce motion, make them visible directly without observing for animation
+                if (state.reduceMotion) {
                      card.style.opacity = '1';
-                     card.style.transform = 'translateY(0)';
+                     card.style.transform = 'rotateX(0deg) translateY(0px) translateZ(0px)';
                      card.classList.add('is-visible');
                 } else {
                     featureCardObserver.observe(card);
                 }
             });
         }
-
 
         document.querySelectorAll('.nav-link').forEach(anchor => { anchor.addEventListener('click', function (e) { e.preventDefault(); const tId=this.getAttribute('href');const tE=document.querySelector(tId); if(tE){tE.scrollIntoView({behavior:'smooth'});}});});
         if(window.location.hash){const aL=document.querySelector(`.nav-link[href="${window.location.hash}"]`);if(aL)aL.classList.add('active');}else{const hL=document.querySelector('.nav-link[href="#hero"]');if(hL)hL.classList.add('active');}
