@@ -24,253 +24,55 @@
                 transition-duration: 0.01ms !important;
             }
             body { cursor: auto; }
-            .custom-cursor, .particle-system, .loading-overlay { display: none !important; }
+            .custom-cursor, .particle-system, .loading-overlay, .feature-card-inner::before, .feature-card-inner::after { display: none !important; }
+            .feature-card { opacity: 1 !important; transform: none !important; }
+            .feature-content-wrapper { opacity: 1 !important; transform: none !important; }
         }
 
-        /* --- Advanced Cursor System --- */
-        .custom-cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            background: #ff80cc;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: exclusion;
-            transform: translateZ(0);
-            will-change: transform;
-            transition: width 0.3s ease, height 0.3s ease, opacity 0.3s ease;
-        }
-        .custom-cursor.enlarged { width: 40px; height: 40px; opacity: 0.5; }
-
-        /* --- Enhanced Planet Loading Effect --- */
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at center, #1a0a2e 0%, #0a0a0a 100%);
-            z-index: 10000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        .planet-container {
-            position: relative;
-            width: clamp(90px, 23vmin, 160px);
-            height: clamp(90px, 23vmin, 160px);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .planet-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            padding: 4px; 
-            background: conic-gradient(from 0deg, #80ccff, #ff80cc, #80ccff);
-            animation: spinOutline 2.5s linear infinite;
-            -webkit-mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            mask:
-                linear-gradient(#fff 0 0) content-box,
-                linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-        }
-
-        @keyframes spinOutline {
-            to { transform: rotate(1turn); }
-        }
-
-        .planet-silhouette {
-            width: clamp(80px, 20vmin, 150px);
-            height: clamp(80px, 20vmin, 150px);
-            background-color: #0c001f;
-            border-radius: 50%;
-            box-shadow: 0 0 10px 3px rgba(128, 204, 255, 0.2);
-        }
-
-        .loading-text {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #80ccff;
-            text-shadow: 0 0 10px #80ccff;
-            margin-top: 1.5rem;
-            text-align: center;
-        }
-        .loading-subtitle {
-            font-size: 1rem;
-            color: #ff80cc;
-            opacity: 0.8;
-            margin-top: 0.75rem;
-            text-align: center;
-        }
-
-        /* --- Dynamic Background & Particles --- */
-        .world-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            z-index: -1;
-            transition: background 1.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform: translateZ(0);
-            will-change: background;
-        }
-        .world-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-        .world-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-        .world-3 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
-
-        .particle-system {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            pointer-events: none;
-            z-index: 1;
-            transform: translateZ(0);
-        }
-        .particle {
-            position: absolute;
-            border-radius: 50%;
-            pointer-events: none;
-            transform: translateZ(0);
-            will-change: transform, opacity;
-        }
-
-        /* --- Header & Navigation --- */
-        header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            padding: 1rem 2rem;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-            transform: translateY(-100%) translateZ(0);
-            will-change: transform;
-        }
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .logo {
-            font-size: 2rem;
-            font-weight: bold;
-            background: linear-gradient(45deg, #ff80cc, #80ccff, #ffb3d9, #b3d9ff);
-            background-size: 400% 400%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: gradientShift 4s ease-in-out infinite;
-            cursor: pointer;
-        }
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-        .nav-link {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            position: relative;
-            overflow: hidden;
-        }
-        .nav-link:hover, .nav-link.active {
-            color: #ff80cc;
-            background: rgba(255, 128, 204, 0.1);
-        }
-
-        /* --- Sections & Content --- */
-        section {
-            min-height: 100vh;
-            position: relative;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 8rem 2rem 4rem;
-            overflow: visible; 
-        }
-        .section-content {
-            max-width: 1400px;
-            width: 100%;
-            text-align: center;
-            opacity: 0; 
-            transform: translateY(50px); 
-        }
-        .hero-title {
-            font-size: clamp(2.5rem, 8vw, 4.5rem);
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(45deg, #fff, #ffb3d9, #b3d9ff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.1;
-        }
-        .hero-subtitle {
-            font-size: clamp(1rem, 3vw, 1.5rem);
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            line-height: 1.6;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        /* --- Enhanced Japanese-Themed Buttons (CTA & Contact) --- */
-        .cta-group, .contact-grid { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; margin-top: 3rem; }
-        .cta-button, .contact-action-button { display: inline-flex; align-items: center; justify-content: center; gap: 0.75rem; padding: 1.2rem 2.5rem; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; position: relative; cursor: pointer; border: 2px solid rgba(255, 255, 255, 0.4); color: white; background-color: transparent; clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)); overflow: hidden; }
-        .cta-button::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(45deg, #ff80cc, #80ccff); clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px)); z-index: -1; transform: translateX(-101%); transition: transform 0.4s ease-in-out; }
-        .cta-button::after { content: '▶'; position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); opacity: 0; transition: all 0.3s ease; }
-        .cta-button:hover::before { transform: translateX(0); } .cta-button:hover::after { opacity: 1; transform: translateY(-50%) translateX(5px); } .cta-button:hover { border-color: #ff80cc; box-shadow: 0 0 20px rgba(255, 128, 204, 0.5); } .cta-button.secondary { border-color: rgba(255, 128, 204, 0.5); color: #ff80cc; } .cta-button.secondary:hover { color: white; border-color: transparent; }
-        .contact-action-button:hover { border-color: #80ccff; box-shadow: 0 0 15px rgba(128, 204, 255, 0.4); color: #80ccff; } .contact-action-button .contact-action-icon { font-size: 1.3em; line-height: 1; } .contact-action-button .slash { position: absolute; background-color: transparent; transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55); width: 0; height: 130%; opacity: 0; z-index: 0; } .contact-action-button .slash.one { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(45deg); } .contact-action-button .slash.two { top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); transition-delay: 0.05s; } .contact-action-button:hover .slash { width: 3px; opacity: 1; } .contact-action-button:hover .slash.one { background-color: #ff80cc; } .contact-action-button:hover .slash.two { background-color: #80ccff; }
+        /* --- Cursor, Loading, Background, Particles, Header, CTA, Contact, Guidelines, Scroll Progress (minified from previous) --- */
+        .custom-cursor{position:fixed;width:20px;height:20px;background:#ff80cc;border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:exclusion;transform:translateZ(0);will-change:transform;transition:width .3s ease,height .3s ease,opacity .3s ease}.custom-cursor.enlarged{width:40px;height:40px;opacity:.5}
+        .loading-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:radial-gradient(circle at center,#1a0a2e 0%,#0a0a0a 100%);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column}
+        .planet-container{position:relative;width:clamp(90px,23vmin,160px);height:clamp(90px,23vmin,160px);margin-bottom:2rem;display:flex;align-items:center;justify-content:center}
+        .planet-container::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;border-radius:50%;padding:4px;background:conic-gradient(from 0deg,#80ccff,#ff80cc,#80ccff);animation:spinOutline 2.5s linear infinite;-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude}@keyframes spinOutline{to{transform:rotate(1turn)}}
+        .planet-silhouette{width:clamp(80px,20vmin,150px);height:clamp(80px,20vmin,150px);background-color:#0c001f;border-radius:50%;box-shadow:0 0 10px 3px rgba(128,204,255,.2)}
+        .loading-text{font-size:1.5rem;font-weight:700;color:#80ccff;text-shadow:0 0 10px #80ccff;margin-top:1.5rem;text-align:center}
+        .loading-subtitle{font-size:1rem;color:#ff80cc;opacity:.8;margin-top:.75rem;text-align:center}
+        .world-background{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:-1;transition:background 1.5s cubic-bezier(.4,0,.2,1);transform:translateZ(0);will-change:background}.world-1{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%)}.world-2{background:linear-gradient(135deg,#f093fb 0%,#f5576c 100%)}.world-3{background:linear-gradient(135deg,#43e97b 0%,#38f9d7 100%)}
+        .particle-system{position:fixed;top:0;left:0;width:100%;height:100vh;pointer-events:none;z-index:1;transform:translateZ(0)}.particle{position:absolute;border-radius:50%;pointer-events:none;transform:translateZ(0);will-change:transform,opacity}
+        header{position:fixed;top:0;left:0;right:0;z-index:1000;padding:1rem 2rem;background:rgba(0,0,0,.5);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.1);transition:all .3s ease;transform:translateY(-100%) translateZ(0);will-change:transform}.header-content{max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+        .logo{font-size:2rem;font-weight:700;background:linear-gradient(45deg,#ff80cc,#80ccff,#ffb3d9,#b3d9ff);background-size:400% 400%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:gradientShift 4s ease-in-out infinite;cursor:pointer}@keyframes gradientShift{0%,to{background-position:0 50%}50%{background-position:100% 50%}}
+        .nav-links{display:flex;gap:2rem;list-style:none}.nav-link{color:#fff;text-decoration:none;font-weight:500;transition:all .3s ease;padding:.5rem 1rem;border-radius:25px;position:relative;overflow:hidden}.nav-link:hover,.nav-link.active{color:#ff80cc;background:rgba(255,128,204,.1)}
+        section{min-height:100vh;position:relative;z-index:10;display:flex;align-items:center;justify-content:center;padding:8rem 2rem 4rem;overflow:visible}.section-content{max-width:1400px;width:100%;text-align:center;opacity:0;transform:translateY(50px)}
+        .hero-title{font-size:clamp(2.5rem,8vw,4.5rem);font-weight:700;margin-bottom:1.5rem;background:linear-gradient(45deg,#fff,#ffb3d9,#b3d9ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1.1}
+        .hero-subtitle{font-size:clamp(1rem,3vw,1.5rem);margin-bottom:2rem;opacity:.9;line-height:1.6;max-width:800px;margin-left:auto;margin-right:auto}
+        .cta-group,.contact-grid{display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-top:3rem}
+        .cta-button,.contact-action-button{display:inline-flex;align-items:center;justify-content:center;gap:.75rem;padding:1.2rem 2.5rem;text-decoration:none;font-weight:600;font-size:1.1rem;transition:all .3s ease;position:relative;cursor:pointer;border:2px solid rgba(255,255,255,.4);color:#fff;background-color:transparent;clip-path:polygon(0 0,calc(100% - 15px) 0,100% 15px,100% 100%,15px 100%,0 calc(100% - 15px));overflow:hidden}
+        .cta-button::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(45deg,#ff80cc,#80ccff);clip-path:polygon(0 0,calc(100% - 15px) 0,100% 15px,100% 100%,15px 100%,0 calc(100% - 15px));z-index:-1;transform:translateX(-101%);transition:transform .4s ease-in-out}.cta-button::after{content:'▶';position:absolute;right:1rem;top:50%;transform:translateY(-50%);opacity:0;transition:all .3s ease}.cta-button:hover::before{transform:translateX(0)}.cta-button:hover::after{opacity:1;transform:translateY(-50%) translateX(5px)}.cta-button:hover{border-color:#ff80cc;box-shadow:0 0 20px rgba(255,128,204,.5)}.cta-button.secondary{border-color:rgba(255,128,204,.5);color:#ff80cc}.cta-button.secondary:hover{color:#fff;border-color:transparent}
+        .contact-action-button:hover{border-color:#80ccff;box-shadow:0 0 15px rgba(128,204,255,.4);color:#80ccff}.contact-action-button .contact-action-icon{font-size:1.3em;line-height:1}.contact-action-button .slash{position:absolute;background-color:transparent;transition:all .2s cubic-bezier(.68,-.55,.265,1.55);width:0;height:130%;opacity:0;z-index:0}.contact-action-button .slash.one{top:50%;left:50%;transform:translate(-50%,-50%) rotate(45deg)}.contact-action-button .slash.two{top:50%;left:50%;transform:translate(-50%,-50%) rotate(-45deg);transition-delay:.05s}.contact-action-button:hover .slash{width:3px;opacity:1}.contact-action-button:hover .slash.one{background-color:#ff80cc}.contact-action-button:hover .slash.two{background-color:#80ccff}
+        .guidelines-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);backdrop-filter:blur(10px);z-index:10001;display:none;align-items:center;justify-content:center;padding:2rem}.guidelines-content{background:linear-gradient(135deg,rgba(102,126,234,.9),rgba(118,75,162,.9));border-radius:20px;padding:3rem;max-width:600px;width:100%;max-height:80vh;overflow-y:auto;position:relative;border:2px solid rgba(255,255,255,.2)}.guidelines-title{font-size:2rem;margin-bottom:1.5rem;text-align:center;color:#fff;text-shadow:0 0 10px rgba(255,255,255,.5)}.guidelines-section{margin-bottom:2rem}.guidelines-section h3{color:#ffb3d9;margin-bottom:.5rem;font-size:1.2rem}.guidelines-section ul{list-style:none;padding-left:0}.guidelines-section li{margin-bottom:.5rem;padding-left:1.5rem;position:relative}.guidelines-section li::before{content:'▶';position:absolute;left:0;color:#80ccff}.guidelines-actions{display:flex;gap:1rem;justify-content:center;margin-top:2rem}.guidelines-button{padding:1rem 2rem;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all .3s ease;font-size:1rem}.guidelines-accept{background:linear-gradient(45deg,#43e97b,#38f9d7);color:#fff}.guidelines-accept:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(67,233,123,.3)}.guidelines-decline{background:linear-gradient(45deg,#f093fb,#f5576c);color:#fff}.guidelines-decline:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(240,147,251,.3)}.progress-bar{width:100%;height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin:1rem 0;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,#80ccff,#ff80cc);width:0%;transition:width .3s ease}
+        .scroll-progress{position:fixed;top:0;left:0;width:0%;height:3px;background:linear-gradient(90deg,#ff80cc,#80ccff);z-index:1001}
 
         /* --- Features Section - KPRverse Inspired Reveal --- */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem; 
+            grid-template-columns: 1fr; /* Each card takes full width for sequential display */
+            gap: 10vh; /* Vertical spacing between potential card areas */
             margin-top: 4rem;
-            perspective: 1500px; 
+            perspective: 2000px; /* Stronger perspective for more depth */
+             min-height: 300vh; /* Ensure enough scroll space for multiple items to trigger */
         }
 
         .feature-card {
             position: relative; 
             transform-style: preserve-3d; 
-            min-height: 280px; 
+            min-height: 320px; /* Ensure card has some height */
+            width: clamp(300px, 90%, 550px); /* Control card width */
+            margin: 0 auto; /* Center the card horizontally */
+            
+            /* Initial state for "portal summoning" */
             opacity: 0; 
-            transform: translateY(100px) rotateX(-30deg) scale(0.9); 
+            transform: translateY(150px) translateZ(-600px) rotateY(60deg) scale(0.7);
             will-change: opacity, transform;
-            transition: opacity 0.5s ease, transform 0.5s ease; 
         }
         
         .feature-card-inner { 
@@ -279,12 +81,13 @@
             height: 100%;
             padding: 2rem;
             border-radius: 15px;
-            background: rgba(26, 10, 46, 0.7); 
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(128, 204, 255, 0.3); 
+            background: rgba(20, 0, 35, 0.65); /* Darker, more solid portal */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 128, 204, 0.3); /* Pinkish border */
             transform-style: preserve-3d;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* For mouse parallax */
+             overflow: hidden; /* For glitch effects */
         }
         
         .feature-card-inner::before,
@@ -292,63 +95,50 @@
             content: '';
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            background: inherit; 
+            background: rgba(10, 0, 20, 0.2); /* Glitch layer color */
             border-radius: 15px;
-            opacity: 0.8;
-            z-index: -1; 
+            opacity: 0; /* Initially hidden, animated by JS or CSS later if needed */
+            z-index: 1; /* Above main background but below content */
+             pointer-events: none;
         }
+        .feature-card.is-glitching .feature-card-inner::before { opacity: 0.7; animation: glitch-anim-1 3s infinite steps(4, end) alternate; }
+        .feature-card.is-glitching .feature-card-inner::after { opacity: 0.7; animation: glitch-anim-2 2.5s infinite steps(4, end) alternate-reverse .2s; }
 
-        .feature-card-inner::before {
-            animation: glitch-anim-1 2.5s infinite linear alternate-reverse;
-        }
-        .feature-card-inner::after {
-            animation: glitch-anim-2 2s infinite linear alternate-reverse;
-        }
 
         @keyframes glitch-anim-1 {
-            0% { clip-path: inset(30% 0 40% 0); transform: translateX(-3px) translateY(2px); }
-            25% { clip-path: inset(10% 0 55% 0); transform: translateX(2px) translateY(-1px); }
-            50% { clip-path: inset(50% 0 20% 0); transform: translateX(-4px) translateY(3px); }
-            75% { clip-path: inset(20% 0 40% 0); transform: translateX(3px) translateY(-2px); }
-            100% { clip-path: inset(40% 0 30% 0); transform: translateX(-1px) translateY(1px); }
+            0% { clip-path: inset(10% 0 80% 0); transform: translateX(-5px) translateY(3px); }
+            20% { clip-path: inset(75% 0 5% 0); transform: translateX(3px) translateY(-2px) skewX(5deg); }
+            40% { clip-path: inset(5% 0 60% 0); transform: translateX(-6px) translateY(4px); }
+            60% { clip-path: inset(40% 0 40% 0); transform: translateX(4px) translateY(-3px) skewY(-4deg); }
+            80% { clip-path: inset(65% 0 10% 0); transform: translateX(-2px) translateY(1px); }
+            100% { clip-path: inset(30% 0 50% 0); transform: translateX(5px) translateY(-4px) skewX(-7deg); }
         }
         @keyframes glitch-anim-2 {
-            0% { clip-path: inset(0 50% 0 20%); transform: translateY(-4px) translateX(2px) skewX(10deg); }
-            25% { clip-path: inset(20% 20% 0 50%); transform: translateY(3px) translateX(-3px) skewX(-8deg); }
-            50% { clip-path: inset(0 40% 0 30%); transform: translateY(-2px) translateX(4px) skewX(5deg); }
-            75% { clip-path: inset(30% 50% 0 20%); transform: translateY(2px) translateX(-1px) skewX(-12deg); }
-            100% { clip-path: inset(0 30% 0 40%); transform: translateY(-3px) translateX(3px) skewX(7deg); }
+            0% { clip-path: inset(0 70% 0 10%); transform: translateY(-6px) translateX(3px) skewY(8deg); }
+            20% { clip-path: inset(20% 10% 0 60%); transform: translateY(4px) translateX(-2px); }
+            40% { clip-path: inset(0 50% 0 30%); transform: translateY(-3px) translateX(5px) skewX(-6deg); }
+            60% { clip-path: inset(35% 30% 0 50%); transform: translateY(5px) translateX(-4px); }
+            80% { clip-path: inset(0 60% 0 20%); transform: translateY(-2px) translateX(1px) skewY(3deg); }
+            100% { clip-path: inset(25% 20% 0 70%); transform: translateY(-4px) translateX(6px); }
         }
 
         .feature-content-wrapper {
             position: relative; 
-            z-index: 1;
+            z-index: 2; /* Above glitch layers */
             opacity: 0; 
-            transform: translateY(20px) scale(0.95);
-            transition: opacity 0.5s ease-out 0.3s, transform 0.5s ease-out 0.3s; 
+            transform: translateY(30px) scale(0.9);
+            text-align: center;
         }
         
-        .feature-card.is-visible .feature-content-wrapper {
-            opacity: 1;
-            transform: translateY(0px) scale(1);
-        }
-        
-        .feature-card.is-visible .feature-card-inner:hover {
-            transform: rotateX(5deg) rotateY(-5deg) scale(1.03);
-            box-shadow: 0 15px 40px rgba(128, 204, 255, 0.2);
+        .feature-card.is-visible .feature-card-inner:hover { /* For mouse parallax */
+            /* transform handled by JS for parallax */
+             box-shadow: 0 20px 45px rgba(255, 128, 204, 0.3);
         }
 
-        .feature-icon { font-size: 2.5rem; margin-bottom: 1rem; color: #ff80cc; transform: translateZ(20px); }
-        .feature-title { font-size: 1.4rem; margin-bottom: 0.75rem; color: #80ccff; transform: translateZ(10px); }
-        .feature-description { color: rgba(255, 255, 255, 0.85); line-height: 1.6; font-size:0.95rem; }
+        .feature-icon { font-size: 2.8rem; margin-bottom: 1rem; color: #ff80cc; transform: translateZ(30px); }
+        .feature-title { font-size: 1.6rem; margin-bottom: 0.85rem; color: #80ccff; transform: translateZ(20px); text-shadow: 0 0 8px rgba(128,204,255,0.5); }
+        .feature-description { color: rgba(255, 255, 255, 0.9); line-height: 1.65; font-size:1rem; transform: translateZ(10px); }
 
-
-        /* --- Guidelines Modal --- */
-        .guidelines-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); backdrop-filter: blur(10px); z-index: 10001; display: none; align-items: center; justify-content: center; padding: 2rem; }
-        .guidelines-content { background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9)); border-radius: 20px; padding: 3rem; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; position: relative; border: 2px solid rgba(255, 255, 255, 0.2); }
-        .guidelines-title { font-size: 2rem; margin-bottom: 1.5rem; text-align: center; color: #fff; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
-        .guidelines-section { margin-bottom: 2rem; } .guidelines-section h3 { color: #ffb3d9; margin-bottom: 0.5rem; font-size: 1.2rem; } .guidelines-section ul { list-style: none; padding-left: 0; } .guidelines-section li { margin-bottom: 0.5rem; padding-left: 1.5rem; position: relative; } .guidelines-section li::before { content: '▶'; position: absolute; left: 0; color: #80ccff; } .guidelines-actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; } .guidelines-button { padding: 1rem 2rem; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; font-size: 1rem; } .guidelines-accept { background: linear-gradient(45deg, #43e97b, #38f9d7); color: white; } .guidelines-accept:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(67, 233, 123, 0.3); } .guidelines-decline { background: linear-gradient(45deg, #f093fb, #f5576c); color: white; } .guidelines-decline:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(240, 147, 251, 0.3); } .progress-bar { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.2); border-radius: 2px; margin: 1rem 0; overflow: hidden; } .progress-fill { height: 100%; background: linear-gradient(90deg, #80ccff, #ff80cc); width: 0%; transition: width 0.3s ease; }
-        .scroll-progress { position: fixed; top: 0; left: 0; width: 0%; height: 3px; background: linear-gradient(90deg, #ff80cc, #80ccff); z-index: 1001; }
 
         /* --- Mobile Responsiveness --- */
         @media (max-width: 768px) {
@@ -358,16 +148,18 @@
             .cta-button, .contact-action-button { width: 100%; text-align: center; }
             section { padding: 6rem 1rem 4rem; }
             .guidelines-content { padding: 2rem; margin: 1rem; }
-            .features-grid { grid-template-columns: 1fr; perspective: none; }
+            .features-grid { grid-template-columns: 1fr; perspective: none; gap: 5vh; min-height: auto; }
             .feature-card { 
-                opacity: 0; transform: translateY(30px); /* Simpler initial state for mobile */
+                opacity: 0; transform: translateY(50px) scale(0.95); /* Simpler initial for mobile */
+                min-height: auto;
+                margin-bottom: 2rem;
             }
-            .feature-card.is-visible-animated { /* Simpler reveal animation for mobile via JS */
+             .feature-card-inner { transform: none !important; }
+            .feature-card-inner::before, .feature-card-inner::after { display: none; } /* Hide glitch on mobile */
+            .feature-card.is-visible-animated {
                 opacity: 1 !important; 
-                transform: translateY(0px) !important;
+                transform: translateY(0px) scale(1) !important;
             }
-             .feature-card-inner { transform: none !important; /* Disable hover tilt on mobile */ }
-            .feature-card-inner::before, .feature-card-inner::after { display: none; }
         }
     </style>
 </head>
@@ -482,23 +274,16 @@
         const state = { 
             reduceMotion: motionQuery.matches,
             guidelinesRead: false,
-            readingProgress: 0
+            readingProgress: 0,
+            isFeatureAnimating: false // Flag to ensure only one feature animates at a time
         };
 
-        const systems = { /* All systems code (loading, cursor, particles, background, guidelinesModal) */ };
-        // --- Minified system definitions from previous step ---
-        systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const pCE = document.createElement('div'); pCE.classList.add('planet-container'); const pSE = document.createElement('div'); pSE.classList.add('planet-silhouette'); pCE.appendChild(pSE); const lTE = this.overlay.querySelector('.loading-text'); const lSE = this.overlay.querySelector('.loading-subtitle'); if (lTE) this.overlay.insertBefore(pCE, lTE); else this.overlay.appendChild(pCE); let tI1, tI2; if (lTE) tI1 = anime({ targets: lTE, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (lSE) tI2 = anime({ targets: lSE, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(tI1) tI1.pause(); if(tI2) tI2.pause(); anime.set([lTE, lSE].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [lTE, lSE].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: pCE, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const hE = document.querySelector('header'); if(hE) anime({ targets: hE, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } };
-        systems.cursor = { el: document.querySelector('.custom-cursor'), init() { if (state.reduceMotion || isMobile || !this.el) return; document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0; window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;}); const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC(); document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));}); } };
-        systems.particles = { el: document.querySelector('.particle-system'), init() { if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff']; for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);} },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});} };
-        systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }};
-        systems.guidelinesModal = { modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'), init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());}, open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});}, close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});}, updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}} };
-        // --- End of minified system definitions ---
-
-        const animations = { /* ... hero and section animation definitions ... */ };
-        // --- Minified animation definitions ---
+        // --- Minified System Definitions (Loading, Cursor, Particles, Background, Guidelines) ---
+        const systems = {}; systems.loading = { overlay: document.querySelector('.loading-overlay'), init() { if (state.reduceMotion) { if(this.overlay) this.overlay.style.display = 'none'; const headerEl = document.querySelector('header'); if (headerEl) headerEl.style.transform = 'translateY(0)'; animations.hero(); return; } if (!this.overlay) return; const pCE = document.createElement('div'); pCE.classList.add('planet-container'); const pSE = document.createElement('div'); pSE.classList.add('planet-silhouette'); pCE.appendChild(pSE); const lTE = this.overlay.querySelector('.loading-text'); const lSE = this.overlay.querySelector('.loading-subtitle'); if (lTE) this.overlay.insertBefore(pCE, lTE); else this.overlay.appendChild(pCE); let tI1, tI2; if (lTE) tI1 = anime({ targets: lTE, opacity: [0, 1, 0.9, 1, 0.9, 1, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, easing: 'easeInOutSine' }); if (lSE) tI2 = anime({ targets: lSE, opacity: [0, 0.8, 0.7, 0.8, 0.7, 0.8, 0], translateY: [10, 0, -5, 0, 5, 0, -10], duration: 3000, loop: true, delay: 300, easing: 'easeInOutSine' }); window.onload = () => { setTimeout(() => { if(tI1) tI1.pause(); if(tI2) tI2.pause(); anime.set([lTE, lSE].filter(el => el), { opacity: 1, translateY: 0 }); anime.timeline({}) .add({ targets: [lTE, lSE].filter(el => el), opacity: 0, translateY: -25, duration: 500, easing: 'easeInCubic' }) .add({ targets: pCE, scale: [1, 40], opacity: [1, 0], duration: 1000, easing: 'easeInExpo' }, '-=300') .add({ targets: this.overlay, opacity: 0, duration: 400, easing: 'easeOutQuad', complete: () => { if (this.overlay) this.overlay.style.display = 'none'; const hE = document.querySelector('header'); if(hE) anime({ targets: hE, translateY: ['-100%', '0%'], duration: 800, easing: 'easeOutExpo' }); animations.hero(); } }, '-=200'); }, 1200); }; } }; systems.cursor = { el: document.querySelector('.custom-cursor'), init() { if (state.reduceMotion || isMobile || !this.el) return; document.body.style.cursor = 'none'; let mX=0,mY=0,cX=0,cY=0; window.addEventListener('mousemove',e=>{mX=e.clientX;mY=e.clientY;}); const uC=()=>{const dX=mX-cX;const dY=mY-cY;cX+=dX*0.1;cY+=dY*0.1;if(this.el)this.el.style.transform=`translate3d(${cX-10}px,${cY-10}px,0)`;requestAnimationFrame(uC);};uC(); document.querySelectorAll('a,button,.logo,.feature-card,.contact-action-button').forEach(i=>{i.addEventListener('mouseenter',()=>this.el.classList.add('enlarged'));i.addEventListener('mouseleave',()=>this.el.classList.remove('enlarged'));}); } }; systems.particles = { el: document.querySelector('.particle-system'), init() { if(state.reduceMotion||!this.el)return;const nP=isMobile?20:50;const c=['#ff80cc','#80ccff','#ffb3d9','#b3d9ff']; for(let i=0;i<nP;i++){const p=document.createElement('div');p.classList.add('particle');p.style.background=c[Math.floor(Math.random()*c.length)];p.style.width=`${Math.random()*5+2}px`;p.style.height=p.style.width;p.style.left=`${Math.random()*100}%`;p.style.top=`${Math.random()*100}%`;this.el.appendChild(p);this.aP(p);} },aP(p){anime({targets:p,translateX:()=>anime.random(-100,100)+'px',translateY:()=>anime.random(-100,100)+'px',scale:[1,anime.random(0.5,1.5),1],opacity:[0,anime.random(0.2,0.8),0],duration:()=>anime.random(3000,8000),easing:'easeInOutSine',loop:true,direction:'alternate'});} }; systems.background = { el: document.querySelector('.world-background'), init() { if (!this.el) return; }}; systems.guidelinesModal = { modal:document.getElementById('guidelinesModal'),content:document.querySelector('.guidelines-content'),acceptBtn:document.getElementById('acceptGuidelines'),declineBtn:document.getElementById('declineGuidelines'),joinBtn:document.getElementById('joinButton'),progressFill:document.getElementById('readingProgress'), init(){if(!this.modal||!this.content||!this.acceptBtn||!this.declineBtn||!this.joinBtn||!this.progressFill)return;this.joinBtn.addEventListener('click',e=>{e.preventDefault();this.open();});this.declineBtn.addEventListener('click',()=>this.close());this.acceptBtn.addEventListener('click',()=>{if(state.guidelinesRead){this.close();window.open('https://discord.gg/uE96rbK95j','_blank');}});this.content.addEventListener('scroll',()=>this.updateProgress());}, open(){this.modal.style.display='flex';state.guidelinesRead=false;this.acceptBtn.disabled=true;this.acceptBtn.textContent='Accept & Join (Read All First)';this.updateProgress();anime({targets:this.modal,opacity:[0,1],duration:500,easing:'easeOutQuad'});anime({targets:this.content,scale:[0.8,1],opacity:[0,1],translateY:[50,0],duration:500,easing:'easeOutExpo',delay:100});}, close(){anime({targets:this.content,scale:[1,0.8],opacity:[1,0],translateY:[0,50],duration:300,easing:'easeInExpo'});anime({targets:this.modal,opacity:[1,0],duration:400,easing:'easeInQuad',delay:50,complete:()=>{this.modal.style.display='none';}});}, updateProgress(){const sH=this.content.scrollHeight-this.content.clientHeight;state.readingProgress=sH<=0?100:(this.content.scrollTop/sH)*100;this.progressFill.style.width=`${Math.min(state.readingProgress,100)}%`;if(state.readingProgress>=99){state.guidelinesRead=true;this.acceptBtn.disabled=false;this.acceptBtn.textContent='Accept & Join Now!';}} };
+        
+        const animations = {};
         animations.hero = () => { const hS=document.querySelector('#hero .section-content');if(!hS)return; anime.timeline({easing:'easeOutExpo'}).add({targets:hS,opacity:[0,1],translateY:[50,0],duration:1000,delay:state.reduceMotion?0:300}) .add({targets:'#hero .hero-title',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .hero-subtitle',opacity:[0,1],translateY:[20,0],duration:800},'-=600') .add({targets:'#hero .cta-button',opacity:[0,1],translateY:[20,0],duration:600,delay:anime.stagger(150)},'-=500'); };
         animations.section = (el) => { if (!el) return; anime({ targets: el, opacity: [0, 1], translateY: [50, 0], duration: 1000, easing: 'easeOutExpo', delay: 100 }); }; 
-        // --- End of minified animation definitions ---
 
         systems.loading.init();
         systems.cursor.init();
@@ -511,7 +296,7 @@
         
         const sections = document.querySelectorAll('section');
         const worldBg = systems.background.el;
-        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.15 }; 
+        const sectionObserverOptions = { root: null, rootMargin: '0px', threshold: 0.1 }; 
 
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
@@ -526,80 +311,151 @@
                     navLinks.forEach(link => { link.classList.remove('active'); if (link.getAttribute('href') === `#${entry.target.id}`) { link.classList.add('active'); } });
                     if (entry.target.id === 'features' && !entry.target.dataset.cardsObserved) {
                         observeFeatureCards(entry.target);
-                        entry.target.dataset.cardsObserved = 'true';
+                        entry.target.dataset.cardsObserved = 'true'; // Ensure this observer runs only once for features section setup
                     }
+                } else {
+                    // Optional: Logic for when section scrolls out of view
+                    // For feature cards, we might want them to reset if we implement a strict "one at a time fully visible"
                 }
             });
         };
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
         sections.forEach(section => sectionObserver.observe(section));
 
-        const featureCardObserverOptions = { root: null, rootMargin: isMobile ? '0px' : '-150px 0px -150px 0px' , threshold: 0.2 }; // More threshold for triggering
+        // Observer for individual feature cards
+        const featureCardObserverOptions = { 
+            root: null, 
+            rootMargin: isMobile ? '-20% 0px -20% 0px' : '-35% 0px -35% 0px', // Trigger when card is more centered
+            threshold: 0.2  // At least 20% of the card is visible in the rootMargin-adjusted viewport
+        }; 
         
+        let currentCardTimeline = null; // To manage ongoing animation
+
         const featureCardObserverCallback = (entries, observer) => {
             entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    if (entry.target.classList.contains('is-visible-animated')) return; 
+                const card = entry.target;
+                const cardInner = card.querySelector('.feature-card-inner');
+                const contentWrapper = card.querySelector('.feature-content-wrapper');
 
-                    if (state.reduceMotion || isMobile) { // Apply simpler mobile animation
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0px)';
-                        entry.target.classList.add('is-visible-animated'); // Mark as done
-                        const contentWrapper = entry.target.querySelector('.feature-content-wrapper');
-                        if(contentWrapper) {
-                             contentWrapper.style.opacity = '1';
-                             contentWrapper.style.transform = 'translateY(0px) scale(1)';
-                        }
-                    } else { // Desktop 3D animation
+                if (entry.isIntersecting) {
+                    if (card.classList.contains('is-animating') || card.classList.contains('is-fully-visible')) return;
+                    
+                    card.classList.add('is-animating');
+                    state.isFeatureAnimating = true;
+
+                    // Simplified mobile animation
+                    if (isMobile || state.reduceMotion) {
                         anime({
-                            targets: entry.target,
+                            targets: card,
                             opacity: [0, 1],
-                            translateY: { value: [100, 0], easing: 'easeOutExpo' },    
-                            rotateX: { value: [-30, 0], easing: 'easeOutExpo' }, 
-                            scale: { value: [0.9, 1], easing: 'easeOutExpo' },
-                            duration: 1000, // Duration for the card itself        
-                            easing: 'easeOutExpo', 
-                            delay: index * 200, // Stagger for each card
-                            begin: () => {
-                                const innerCard = entry.target.querySelector('.feature-card-inner');
-                                if (innerCard && !entry.target.mouseMoveListenerAttached) {
-                                    entry.target.mouseMoveListener = (e) => {
-                                        const rect = innerCard.getBoundingClientRect(); // Use innerCard rect
-                                        const x = e.clientX - rect.left - rect.width / 2;
-                                        const y = e.clientY - rect.top - rect.height / 2;
-                                        const rY = (x / rect.width) * 8; 
-                                        const rX = -(y / rect.height) * 8; 
-                                        innerCard.style.transition = 'transform 0.1s linear'; // Smooth quick follow
-                                        innerCard.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg) scale(1.02)`;
-                                    };
-                                    entry.target.mouseLeaveListener = () => {
-                                        innerCard.style.transition = 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)'; // Smooth return
-                                        innerCard.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
-                                    };
-                                    entry.target.addEventListener('mousemove', entry.target.mouseMoveListener);
-                                    entry.target.addEventListener('mouseleave', entry.target.mouseLeaveListener);
-                                    entry.target.mouseMoveListenerAttached = true; 
-                                }
-                            },
+                            translateY: [50, 0],
+                            scale: [0.95, 1],
+                            duration: 800,
+                            easing: 'easeOutExpo',
                             complete: () => {
-                                entry.target.classList.add('is-visible'); 
-                                entry.target.classList.add('is-visible-animated');
-                                const contentWrapper = entry.target.querySelector('.feature-content-wrapper');
-                                if(contentWrapper) {
-                                     anime({ 
-                                        targets: contentWrapper,
-                                        opacity: [0, 1],
-                                        translateY: [20, 0],
-                                        scale: [0.95, 1],
-                                        duration: 700, // Content animation
-                                        easing: 'easeOutExpo',
-                                        delay:150 
-                                     });
-                                }
+                                card.classList.add('is-fully-visible');
+                                card.classList.remove('is-animating');
+                                state.isFeatureAnimating = false;
+                                anime({ targets: contentWrapper, opacity: [0,1], translateY:[20,0], scale:[0.9,1], duration:600, easing:'easeOutExpo', delay:100});
                             }
                         });
+                        observer.unobserve(card); // Animate once
+                        return;
                     }
-                    observer.unobserve(entry.target);
+
+                    // Desktop 3D Portal Animation
+                    currentCardTimeline = anime.timeline({
+                        easing: 'easeOutExpo',
+                        complete: () => {
+                            card.classList.add('is-fully-visible');
+                            card.classList.remove('is-animating');
+                            state.isFeatureAnimating = false;
+                            card.classList.add('is-glitching'); // Start glitch after reveal
+
+                            // Add mouse parallax after reveal
+                            if (!isMobile && !card.mouseMoveListenerAttached) {
+                                card.mouseMoveListener = (e) => {
+                                    const rect = cardInner.getBoundingClientRect();
+                                    const x = e.clientX - rect.left - rect.width / 2;
+                                    const y = e.clientY - rect.top - rect.height / 2;
+                                    const rY = (x / rect.width) * 7; 
+                                    const rX = -(y / rect.height) * 7; 
+                                    cardInner.style.transition = 'transform 0.1s linear';
+                                    cardInner.style.transform = `rotateX(${rX}deg) rotateY(${rY}deg) scale(1.03)`;
+                                };
+                                card.mouseLeaveListener = () => {
+                                    cardInner.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+                                    cardInner.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
+                                };
+                                card.addEventListener('mousemove', card.mouseMoveListener, { passive: true });
+                                card.addEventListener('mouseleave', card.mouseLeaveListener);
+                                card.mouseMoveListenerAttached = true; 
+                            }
+                        }
+                    });
+
+                    currentCardTimeline
+                        .add({ // 1. Summon Portal
+                            targets: card,
+                            opacity: [0, 1],
+                            translateY: [150, 0],
+                            translateZ: [-600, 0],
+                            rotateY: [60, 0],
+                            scale: [0.7, 1],
+                            duration: 1000,
+                        })
+                        .add({ // 2. Spin Portal (inner element for stability)
+                            targets: cardInner,
+                            rotateY: [0, 360],
+                            duration: 1200,
+                            easing: 'easeInOutSine',
+                        }, '-=300') // Overlap with summon
+                        .add({ // 3. Slight Expansion/Pulse
+                            targets: cardInner,
+                            scale: [1, 1.05, 1],
+                            duration: 600,
+                            easing: 'easeOutElastic(1, .8)',
+                        }, '-=400')
+                        .add({ // 4. Reveal Content
+                            targets: contentWrapper,
+                            opacity: [0, 1],
+                            translateY: [30, 0],
+                            scale: [0.9, 1],
+                            duration: 800,
+                            easing: 'easeOutExpo',
+                        }, '-=500'); // Content starts revealing as portal settles
+
+                    observer.unobserve(card); // Animate each card only once on entry
+                
+                } else { // Card is NOT intersecting (scrolled out of active zone)
+                    if (card.classList.contains('is-fully-visible') && !card.classList.contains('is-animating-out')) {
+                        card.classList.add('is-animating-out');
+                        card.classList.remove('is-glitching'); // Stop glitch on scroll out
+
+                        // Remove mouse listeners
+                        if (card.mouseMoveListenerAttached) {
+                            card.removeEventListener('mousemove', card.mouseMoveListener);
+                            card.removeEventListener('mouseleave', card.mouseLeaveListener);
+                            card.mouseMoveListenerAttached = false;
+                        }
+                        
+                        // Optional: Animation to hide the card again if strict "one at a time" is desired
+                        // For now, let it stay, the next card will draw attention.
+                        // anime({
+                        //     targets: card,
+                        //     opacity: 0,
+                        //     translateY: 100, // Move it down and out
+                        //     rotateX: 30,    // Tilt it away
+                        //     scale: 0.8,
+                        //     duration: 600,
+                        //     easing: 'easeInExpo',
+                        //     complete: () => {
+                        //         card.classList.remove('is-fully-visible', 'is-animating-out');
+                        //        // Re-observe if you want it to animate again if scrolled back to
+                        //        // observer.observe(card); 
+                        //     }
+                        // });
+                    }
                 }
             });
         };
@@ -608,21 +464,7 @@
         function observeFeatureCards(featureSectionElement) {
             const featureCards = featureSectionElement.querySelectorAll('.feature-card');
             featureCards.forEach(card => {
-                // For mobile, the simplified animation is handled in the observer callback
-                // If not mobile and no reduce motion, observe for 3D animation
-                if (!(state.reduceMotion || isMobile)) {
-                     featureCardObserver.observe(card);
-                } else { // Directly apply final styles for mobile/reduced motion
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0px)';
-                    card.classList.add('is-visible');
-                    card.classList.add('is-visible-animated');
-                    const contentWrapper = card.querySelector('.feature-content-wrapper');
-                    if(contentWrapper) {
-                        contentWrapper.style.opacity = '1';
-                        contentWrapper.style.transform = 'translateY(0px) scale(1)';
-                    }
-                }
+                 featureCardObserver.observe(card);
             });
         }
 
