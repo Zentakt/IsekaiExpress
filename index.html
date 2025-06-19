@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isekai Express - Anime VTC | Euro Truck Simulator 2</title>
+    <title>Isekai Express - Unite Anime Lovers | ETS2 VTC</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         * {
@@ -17,10 +17,13 @@
             --electric-blue: #3B82F6;
             --neon-pink: #EC4899;
             --golden-accent: #F59E0B;
-            --dark-bg: #0F0F23;
+            --sakura-pink: #FFB7C5;
+            --cyber-cyan: #00FFFF;
+            --dark-bg: #0A0A0F;
             --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #FFB7C5 0%, #EC4899 50%, #8B5CF6 100%);
         }
 
         body {
@@ -31,7 +34,7 @@
             cursor: none;
         }
 
-        /* Custom Cursor */
+        /* Advanced Custom Cursor */
         .cursor {
             position: fixed;
             width: 20px;
@@ -41,7 +44,7 @@
             pointer-events: none;
             z-index: 9999;
             mix-blend-mode: difference;
-            transition: transform 0.1s ease;
+            transition: all 0.1s ease;
         }
 
         .cursor-follower {
@@ -52,67 +55,192 @@
             border-radius: 50%;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.5;
-            transition: all 0.3s ease;
+            opacity: 0.7;
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        /* Loading Screen */
+        .cursor-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: var(--sakura-pink);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9997;
+            opacity: 0;
+            animation: trailFade 0.5s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0); }
+        }
+
+        /* Enhanced Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--dark-bg);
+            background: radial-gradient(circle at center, #1a1a2e 0%, #0f0f1e 50%, #000000 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            transition: opacity 1s ease;
+            transition: all 1.5s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
         .loading-content {
             text-align: center;
+            position: relative;
+        }
+
+        .loading-character {
+            width: 200px;
+            height: 300px;
+            margin: 0 auto 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .character-silhouette {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, var(--neon-pink), var(--electric-blue), var(--golden-accent));
+            clip-path: polygon(30% 0%, 70% 0%, 85% 25%, 95% 50%, 90% 75%, 75% 100%, 25% 100%, 10% 75%, 5% 50%, 15% 25%);
+            animation: characterGlow 2s ease-in-out infinite alternate;
+            position: relative;
+        }
+
+        .character-silhouette::before {
+            content: '';
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: var(--cyber-cyan);
+            border-radius: 50%;
+            animation: eyeGlow 1.5s ease-in-out infinite;
+        }
+
+        @keyframes characterGlow {
+            0% { 
+                filter: drop-shadow(0 0 30px var(--neon-pink)) brightness(1);
+                transform: scale(1);
+            }
+            100% { 
+                filter: drop-shadow(0 0 50px var(--electric-blue)) brightness(1.2);
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes eyeGlow {
+            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
+            50% { opacity: 0.3; transform: translateX(-50%) scale(0.8); }
+        }
+
+        .loading-text {
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
         }
 
         .loading-logo {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            background: var(--gradient-1);
+            background: var(--gradient-4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: glow 2s ease-in-out infinite alternate;
+            animation: logoReveal 2s ease-out forwards;
+            position: relative;
         }
 
-        .loading-bar {
-            width: 300px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            margin: 2rem auto;
-            overflow: hidden;
-        }
-
-        .loading-progress {
-            height: 100%;
+        .loading-logo::before {
+            content: 'イセカイエクスプレス';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1rem;
             background: var(--gradient-3);
-            border-radius: 2px;
-            animation: loading 3s ease-in-out;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            animation: japaneseTextReveal 2s ease-out 1s forwards;
         }
 
-        @keyframes loading {
-            0% { width: 0%; }
-            100% { width: 100%; }
+        @keyframes logoReveal {
+            0% { 
+                opacity: 0;
+                transform: translateY(30px) rotateX(90deg);
+                filter: blur(10px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+                filter: blur(0px);
+            }
         }
 
-        @keyframes glow {
-            0% { text-shadow: 0 0 20px var(--electric-blue); }
-            100% { text-shadow: 0 0 30px var(--neon-pink), 0 0 40px var(--neon-pink); }
+        @keyframes japaneseTextReveal {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            100% { opacity: 0.8; transform: translateX(-50%) translateY(0); }
         }
 
-        /* Floating Navigation */
+        .sound-visualizer {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin: 2rem 0;
+        }
+
+        .sound-bar {
+            width: 6px;
+            background: var(--gradient-3);
+            border-radius: 3px;
+            animation: soundWave 1.5s ease-in-out infinite;
+        }
+
+        .sound-bar:nth-child(1) { height: 40px; animation-delay: 0s; }
+        .sound-bar:nth-child(2) { height: 60px; animation-delay: 0.1s; }
+        .sound-bar:nth-child(3) { height: 80px; animation-delay: 0.2s; }
+        .sound-bar:nth-child(4) { height: 50px; animation-delay: 0.3s; }
+        .sound-bar:nth-child(5) { height: 70px; animation-delay: 0.4s; }
+        .sound-bar:nth-child(6) { height: 45px; animation-delay: 0.5s; }
+        .sound-bar:nth-child(7) { height: 65px; animation-delay: 0.6s; }
+
+        @keyframes soundWave {
+            0%, 100% { transform: scaleY(0.3); opacity: 0.7; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+
+        .glitch-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            opacity: 0;
+            animation: glitchReveal 0.5s ease-out 4s forwards;
+        }
+
+        @keyframes glitchReveal {
+            0% { opacity: 0; }
+            20% { opacity: 1; transform: translateX(-5px); }
+            40% { opacity: 0; transform: translateX(5px); }
+            60% { opacity: 1; transform: translateX(-2px); }
+            80% { opacity: 0; transform: translateX(2px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Floating Navigation Enhanced */
         .floating-nav {
             position: fixed;
             top: 50%;
@@ -130,13 +258,15 @@
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.3);
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
+            backdrop-filter: blur(10px);
         }
 
         .nav-dot.active {
             background: var(--neon-pink);
-            box-shadow: 0 0 20px var(--neon-pink);
+            box-shadow: 0 0 30px var(--neon-pink), inset 0 0 10px rgba(255,255,255,0.3);
+            transform: scale(1.5);
         }
 
         .nav-dot::after {
@@ -147,15 +277,16 @@
             transform: translateY(-50%);
             width: 0;
             height: 2px;
-            background: var(--neon-pink);
-            transition: width 0.3s ease;
+            background: linear-gradient(90deg, var(--neon-pink), var(--electric-blue));
+            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            border-radius: 1px;
         }
 
         .nav-dot:hover::after {
-            width: 100px;
+            width: 120px;
         }
 
-        /* Hero Section */
+        /* Hero Section with Portal Opening */
         .hero {
             height: 100vh;
             position: relative;
@@ -165,105 +296,174 @@
             overflow: hidden;
         }
 
-        .hero-bg {
+        .dimensional-rift {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-1);
-            opacity: 0.8;
-        }
-
-        .particles {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        .particle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--golden-accent);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
-        }
-
-        .portal {
-            position: absolute;
-            width: 400px;
-            height: 400px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
             border-radius: 50%;
             background: conic-gradient(from 0deg, var(--electric-blue), var(--neon-pink), var(--golden-accent), var(--electric-blue));
-            animation: rotate 20s linear infinite;
-            opacity: 0.3;
+            animation: riftOpen 3s ease-out 1s forwards;
+            opacity: 0;
         }
 
-        .portal::before {
+        @keyframes riftOpen {
+            0% { 
+                width: 0; 
+                height: 0; 
+                opacity: 0;
+                filter: blur(20px);
+            }
+            50% {
+                width: 200px;
+                height: 200px;
+                opacity: 0.8;
+                filter: blur(10px);
+            }
+            100% { 
+                width: 800px; 
+                height: 600px; 
+                opacity: 0.3;
+                filter: blur(0px);
+            }
+        }
+
+        .dimensional-rift::before {
             content: '';
             position: absolute;
             top: 20px;
             left: 20px;
             right: 20px;
             bottom: 20px;
-            background: var(--dark-bg);
+            background: radial-gradient(circle, transparent 40%, var(--dark-bg) 70%);
             border-radius: 50%;
         }
 
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .hero-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .speed-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-cyan), transparent);
+            animation: speedLineMove 2s linear infinite;
+        }
+
+        @keyframes speedLineMove {
+            0% { 
+                left: -100%;
+                width: 0;
+                opacity: 0;
+            }
+            50% {
+                width: 200px;
+                opacity: 1;
+            }
+            100% { 
+                left: 100%;
+                width: 0;
+                opacity: 0;
+            }
         }
 
         .hero-content {
             text-align: center;
             z-index: 10;
-            max-width: 800px;
+            max-width: 900px;
             padding: 2rem;
+            position: relative;
         }
 
         .hero-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: clamp(3rem, 8vw, 6rem);
+            font-size: clamp(3rem, 8vw, 7rem);
             font-weight: 900;
             margin-bottom: 1rem;
-            background: var(--gradient-2);
+            background: var(--gradient-4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: titleGlow 3s ease-in-out infinite alternate;
+            animation: heroTitleReveal 2s ease-out 2s both;
+            position: relative;
+        }
+
+        .hero-title::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            animation: titleMask 2s ease-out 2s forwards;
+        }
+
+        @keyframes heroTitleReveal {
+            0% { 
+                opacity: 0;
+                transform: translateY(50px) scale(0.8);
+                filter: blur(20px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0px);
+            }
+        }
+
+        @keyframes titleMask {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(100%); }
         }
 
         .hero-subtitle {
-            font-size: clamp(1.2rem, 3vw, 1.8rem);
-            margin-bottom: 2rem;
-            opacity: 0.9;
-            animation: fadeInUp 1s ease-out 0.5s both;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: subtitleGlow 2s ease-out 3s both;
+            background: linear-gradient(45deg, #FFB7C5, #EC4899, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
+        @keyframes subtitleGlow {
+            0% { 
+                opacity: 0;
+                transform: translateY(30px);
+                filter: blur(10px);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0px);
+            }
+        }
+
+        /* Enhanced CTA Button */
         .cta-button {
             display: inline-block;
-            padding: 1rem 2.5rem;
-            background: var(--gradient-3);
+            padding: 1.5rem 3rem;
+            background: linear-gradient(45deg, var(--neon-pink), var(--electric-blue));
             color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.3s ease;
-            animation: fadeInUp 1s ease-out 1s both;
+            letter-spacing: 2px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: ctaReveal 1s ease-out 4s both;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
         }
 
         .cta-button::before {
@@ -273,8 +473,8 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            transition: left 0.5s;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            transition: left 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .cta-button:hover::before {
@@ -282,46 +482,203 @@
         }
 
         .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(236, 72, 153, 0.6);
+            filter: brightness(1.2);
         }
 
-        @keyframes titleGlow {
-            0% { filter: drop-shadow(0 0 20px var(--electric-blue)); }
-            100% { filter: drop-shadow(0 0 30px var(--neon-pink)); }
+        @keyframes ctaReveal {
+            0% { 
+                opacity: 0;
+                transform: translateY(30px) rotateX(90deg);
+            }
+            100% { 
+                opacity: 1;
+                transform: translateY(0) rotateX(0deg);
+            }
         }
 
-        @keyframes fadeInUp {
-            0% { opacity: 0; transform: translateY(30px); }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Sections */
+        /* Section Base Styles */
         .section {
             min-height: 100vh;
             padding: 5rem 2rem;
             display: flex;
             align-items: center;
             position: relative;
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s ease;
+            overflow: hidden;
         }
 
-        .section.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .section-bg {
+        .morphing-bg {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             opacity: 0.1;
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(45deg, var(--primary-purple), var(--electric-blue), var(--neon-pink));
+            background-size: 400% 400%;
+            animation: morphingGradient 10s ease-in-out infinite;
+        }
+
+        @keyframes morphingGradient {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 50% 100%; }
+            75% { background-position: 50% 0%; }
+        }
+
+        /* About Section - Cherry Blossom Effect */
+        .about {
+            background: linear-gradient(135deg, rgba(255, 183, 197, 0.05), rgba(236, 72, 153, 0.05));
+        }
+
+        .sakura-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .sakura-petal {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--sakura-pink);
+            border-radius: 50% 0 50% 0;
+            animation: sakuraFall 8s linear infinite;
+            opacity: 0.7;
+        }
+
+        @keyframes sakuraFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Routes Section - Animated Network */
+        .routes {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(0, 242, 254, 0.05));
+        }
+
+        .route-network {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.3;
+        }
+
+        .network-line {
+            position: absolute;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--electric-blue), transparent);
+            animation: networkPulse 3s ease-in-out infinite;
+        }
+
+        .network-node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: var(--cyber-cyan);
+            border-radius: 50%;
+            animation: nodePulse 2s ease-in-out infinite;
+            box-shadow: 0 0 15px var(--cyber-cyan);
+        }
+
+        @keyframes networkPulse {
+            0%, 100% { opacity: 0.3; transform: scaleX(0.5); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+
+        @keyframes nodePulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        /* Fleet Section - Holographic Effect */
+        .fleet {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(139, 92, 246, 0.05));
+        }
+
+        .hologram-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .hologram-line {
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyber-cyan), transparent);
+            animation: hologramScan 4s linear infinite;
+        }
+
+        @keyframes hologramScan {
+            0% { top: 0%; opacity: 0; }
+            50% { opacity: 1; }
+            100% { top: 100%; opacity: 0; }
+        }
+
+        /* Join Section - Matrix Effect */
+        .join {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.05), rgba(0, 255, 255, 0.05));
+        }
+
+        .matrix-rain {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .matrix-column {
+            position: absolute;
+            top: -100%;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: var(--cyber-cyan);
+            opacity: 0.3;
+            animation: matrixFall 8s linear infinite;
+            line-height: 1.2;
+        }
+
+        @keyframes matrixFall {
+            0% { 
+                top: -100%;
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.3;
+            }
+            90% {
+                opacity: 0.3;
+            }
+            100% { 
+                top: 100%;
+                opacity: 0;
+            }
         }
 
         .container {
@@ -338,20 +695,29 @@
             font-weight: 700;
             margin-bottom: 3rem;
             text-align: center;
-            background: var(--gradient-1);
+            background: var(--gradient-4);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            position: relative;
         }
 
-        /* About Section */
-        .about {
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(236, 72, 153, 0.1));
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: var(--gradient-3);
+            border-radius: 2px;
         }
 
+        /* Enhanced Cards */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
             margin-top: 3rem;
         }
@@ -359,11 +725,11 @@
         .stat-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
-            padding: 2rem;
+            padding: 2.5rem;
             text-align: center;
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             position: relative;
             overflow: hidden;
         }
@@ -375,9 +741,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: var(--gradient-2);
+            background: var(--gradient-4);
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.4s ease;
         }
 
         .stat-card:hover::before {
@@ -385,238 +751,243 @@
         }
 
         .stat-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transform: translateY(-15px) rotateX(5deg);
+            box-shadow: 0 30px 60px rgba(236, 72, 153, 0.3);
         }
 
         .stat-number {
             font-family: 'Orbitron', sans-serif;
-            font-size: 3rem;
+            font-size: 3.5rem;
             font-weight: 900;
             color: var(--neon-pink);
             display: block;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 0 20px currentColor;
         }
 
         .stat-label {
-            font-size: 1.1rem;
-            opacity: 0.8;
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 500;
         }
 
-        /* Routes Section */
-        .routes {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(0, 242, 254, 0.1));
-        }
-
-        .route-map {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 3rem;
-            margin-top: 3rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .route-path {
-            width: 100%;
-            height: 300px;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300"><path d="M50 150 Q200 50 400 150 T750 150" stroke="%23EC4899" stroke-width="3" fill="none" stroke-dasharray="10,5"><animate attributeName="stroke-dashoffset" values="0;-15" dur="1s" repeatCount="indefinite"/></path></svg>') no-repeat center;
-            background-size: contain;
-        }
-
-        .route-cities {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .city {
-            background: var(--gradient-3);
-            padding: 0.5rem 1rem;
-            border-radius: 25px;
-            font-size: 0.9rem;
-            font-weight: bold;
-            animation: pulse 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
-        }
-
-        /* Fleet Section */
-        .fleet {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.1));
-        }
-
-        .truck-showcase {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .truck-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 2rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .truck-card:hover {
-            transform: rotateY(10deg) rotateX(5deg);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
-        }
-
-        .truck-image {
-            width: 100%;
-            height: 200px;
-            background: var(--gradient-1);
-            border-radius: 15px;
-            margin-bottom: 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .truck-image::before {
-            content: '🚛';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 4rem;
-            animation: drive 3s ease-in-out infinite;
-        }
-
-        @keyframes drive {
-            0%, 100% { transform: translate(-50%, -50%) translateX(0); }
-            50% { transform: translate(-50%, -50%) translateX(20px); }
-        }
-
-        .truck-name {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-            color: var(--golden-accent);
-        }
-
-        /* Join Section */
-        .join {
-            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
-        }
-
-        .join-form {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 3rem;
-            margin-top: 3rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 600px;
+        /* Story Content */
+        .story-content {
+            text-align: center;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            opacity: 0.95;
+            margin-bottom: 3rem;
+            max-width: 800px;
             margin-left: auto;
             margin-right: auto;
         }
 
-        .form-group {
-            margin-bottom: 2rem;
+        .story-highlight {
+            background: var(--gradient-4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
         }
 
-        .form-label {
+        /* Community Features */
+        .community-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .community-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .community-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--neon-pink), transparent);
+            animation: cardGlow 4s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .community-card:hover::before {
+            opacity: 0.1;
+        }
+
+        @keyframes cardGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .community-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
             display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
+            text-align: center;
+        }
+
+        .community-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
             color: var(--golden-accent);
+            text-align: center;
+        }
+
+        .community-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        /* Enhanced Form */
+        .join-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 25px;
+            padding: 4rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .join-form::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            animation: formShimmer 6s linear infinite;
+        }
+
+        @keyframes formShimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(0deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(360deg); }
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+            position: relative;
         }
 
         .form-input {
             width: 100%;
-            padding: 1rem;
+            padding: 1.5rem;
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 10px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
             color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
+            font-size: 1.1rem;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--neon-pink);
-            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+            box-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
+            transform: scale(1.02);
         }
 
         .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(255, 255, 255, 0.6);
         }
 
-        .submit-button {
+        .form-label {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background: var(--dark-bg);
+            padding: 0 10px;
+            font-size: 0.9rem;
+            color: var(--electric-blue);
+            font-weight: 600;
+        }
+
+        .submit-btn {
             width: 100%;
-            padding: 1rem;
-            background: var(--gradient-2);
+            padding: 1.5rem;
+            background: var(--gradient-4);
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
             color: white;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .submit-button:hover {
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translate(-50%, -50%);
+        }
+
+        .submit-btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .submit-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.4);
         }
 
-        /* Footer */
-        .footer {
-            background: rgba(0, 0, 0, 0.8);
-            padding: 3rem 2rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-
-        .footer-link {
-            color: var(--electric-blue);
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-
-        .footer-link:hover {
-            color: var(--neon-pink);
+        /* Interactive Magnetic Effect */
+        .magnetic {
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         /* Responsive Design */
         @media (max-width: 768px) {
             .floating-nav {
-                display: none;
+                right: 15px;
+                gap: 0.8rem;
+            }
+
+            .nav-dot {
+                width: 10px;
+                height: 10px;
             }
 
             .hero-title {
-                font-size: 3rem;
+                font-size: 2.5rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1.2rem;
             }
 
             .section {
@@ -625,53 +996,113 @@
 
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 1.5rem;
             }
 
-            .truck-showcase {
+            .community-grid {
                 grid-template-columns: 1fr;
             }
 
-            .route-cities {
-                justify-content: center;
+            .join-form {
+                padding: 2rem;
+                margin: 0 1rem;
             }
 
-            .truck-card:hover {
-                transform: none;
+            .loading-logo {
+                font-size: 2.5rem;
+            }
+
+            .character-silhouette {
+                width: 150px;
+                height: 200px;
             }
         }
 
         /* Scroll Animations */
         .fade-in-up {
             opacity: 0;
-            transform: translateY(30px);
-            transition: all 0.8s ease;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .fade-in-up.visible {
+        .fade-in-up.animate {
             opacity: 1;
             transform: translateY(0);
         }
 
         .fade-in-left {
             opacity: 0;
-            transform: translateX(-30px);
-            transition: all 0.8s ease;
+            transform: translateX(-50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .fade-in-left.visible {
+        .fade-in-left.animate {
             opacity: 1;
             transform: translateX(0);
         }
 
         .fade-in-right {
             opacity: 0;
-            transform: translateX(30px);
-            transition: all 0.8s ease;
+            transform: translateX(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
-        .fade-in-right.visible {
+        .fade-in-right.animate {
             opacity: 1;
             transform: translateX(0);
+        }
+
+        /* Advanced Particle System */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: var(--cyber-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0.7;
+            animation: particleFloat 6s linear infinite;
+        }
+
+        @keyframes particleFloat {
+            0% {
+                transform: translateY(100vh) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.7;
+            }
+            90% {
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) translateX(100px);
+                opacity: 0;
+            }
+        }
+
+        /* Mouse Trail Enhancement */
+        .trail-particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: var(--sakura-pink);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9995;
+            opacity: 0;
+            animation: trailParticle 1s ease-out forwards;
+        }
+
+        @keyframes trailParticle {
+            0% { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+            100% { 
+                opacity: 0; 
+                transform: scale(0) translateY(-20px); 
+            }
         }
     </style>
 </head>
@@ -680,15 +1111,26 @@
     <div class="cursor"></div>
     <div class="cursor-follower"></div>
 
-    <!-- Loading Screen -->
+    <!-- Enhanced Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
-            <div class="loading-logo">ISEKAI EXPRESS</div>
-            <div class="loading-bar">
-                <div class="loading-progress"></div>
+            <div class="loading-character">
+                <div class="character-silhouette"></div>
             </div>
-            <p>Loading your journey...</p>
+            <div class="loading-text">
+                <h1 class="loading-logo">ISEKAI EXPRESS</h1>
+            </div>
+            <div class="sound-visualizer">
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+                <div class="sound-bar"></div>
+            </div>
         </div>
+        <div class="glitch-effect"></div>
     </div>
 
     <!-- Floating Navigation -->
@@ -702,250 +1144,349 @@
 
     <!-- Hero Section -->
     <section class="hero" id="hero">
-        <div class="hero-bg"></div>
-        <div class="particles" id="particles"></div>
-        <div class="portal"></div>
+        <div class="dimensional-rift"></div>
+        <div class="hero-particles" id="heroParticles"></div>
         <div class="hero-content">
             <h1 class="hero-title">ISEKAI EXPRESS</h1>
-            <p class="hero-subtitle">Transport to Another World of Trucking Excellence</p>
-            <a href="#about" class="cta-button">Begin Your Journey</a>
+            <p class="hero-subtitle">Where Anime Dreams Meet ETS2 Adventures</p>
+            <a href="#join" class="cta-button magnetic">Join Our World</a>
         </div>
     </section>
 
     <!-- About Section -->
-    <section class="section about" id="about">
+    <section class="about section" id="about">
+        <div class="morphing-bg"></div>
+        <div class="sakura-container" id="sakuraContainer"></div>
         <div class="container">
-            <h2 class="section-title fade-in-up">About Our VTC</h2>
-            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
-                Welcome to Isekai Express, where anime meets the open road. Our Virtual Trucking Company brings together passionate drivers from across the globe who share a love for anime culture and Euro Truck Simulator 2.
-            </p>
+            <h2 class="section-title fade-in-up">Our Story</h2>
+            <div class="story-content fade-in-up">
+                <p>In a world where trucking meets anime passion, <span class="story-highlight">Isekai Express</span> was born from the dreams of otaku who found themselves transported into the virtual highways of Euro Truck Simulator 2.</p>
+                <br>
+                <p>We're not just another VTC - we're a <span class="story-highlight">community of anime lovers</span> who believe that every delivery is an adventure, every route is a new episode, and every member is a protagonist in their own isekai story.</p>
+            </div>
             <div class="stats-grid">
-                <div class="stat-card fade-in-up">
+                <div class="stat-card fade-in-left magnetic">
                     <span class="stat-number">500+</span>
-                    <span class="stat-label">Active Drivers</span>
+                    <span class="stat-label">Anime Lovers United</span>
                 </div>
-                <div class="stat-card fade-in-up">
-                    <span class="stat-number">50K+</span>
-                    <span class="stat-label">Miles Delivered</span>
-                </div>
-                <div class="stat-card fade-in-up">
+                <div class="stat-card fade-in-up magnetic">
                     <span class="stat-number">25+</span>
-                    <span class="stat-label">Countries</span>
+                    <span class="stat-label">Countries Connected</span>
                 </div>
-                <div class="stat-card fade-in-up">
-                    <span class="stat-number">24/7</span>
-                    <span class="stat-label">Community Support</span>
+                <div class="stat-card fade-in-right magnetic">
+                    <span class="stat-number">∞</span>
+                    <span class="stat-label">Adventures Waiting</span>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Routes Section -->
-    <section class="section routes" id="routes">
+    <section class="routes section" id="routes">
+        <div class="morphing-bg"></div>
+        <div class="route-network" id="routeNetwork"></div>
         <div class="container">
             <h2 class="section-title fade-in-up">Epic Routes</h2>
-            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
-                Discover breathtaking routes across Europe, each journey carefully crafted to provide the ultimate driving experience through scenic landscapes and bustling cities.
-            </p>
-            <div class="route-map fade-in-up">
-                <div class="route-path"></div>
-                <div class="route-cities">
-                    <div class="city">Berlin</div>
-                    <div class="city">Paris</div>
-                    <div class="city">Rome</div>
-                    <div class="city">Madrid</div>
-                    <div class="city">London</div>
-                    <div class="city">Amsterdam</div>
+            <div class="community-grid">
+                <div class="community-card fade-in-left magnetic">
+                    <span class="community-icon">🌸</span>
+                    <h3 class="community-title">Sakura Express</h3>
+                    <p class="community-description">Journey through Europe's most beautiful landscapes while discussing your favorite slice-of-life anime. Perfect for those who love peaceful adventures.</p>
+                </div>
+                <div class="community-card fade-in-up magnetic">
+                    <span class="community-icon">⚡</span>
+                    <h3 class="community-title">Shonen Speedway</h3>
+                    <p class="community-description">High-speed deliveries for action anime fans! Race against time while debating who would win in epic anime battles.</p>
+                </div>
+                <div class="community-card fade-in-right magnetic">
+                    <span class="community-icon">🎭</span>
+                    <h3 class="community-title">Otaku Odyssey</h3>
+                    <p class="community-description">Long-haul routes perfect for deep anime discussions. Share recommendations and dive into plot theories during extended convoy journeys.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Fleet Section -->
-    <section class="section fleet" id="fleet">
+    <section class="fleet section" id="fleet">
+        <div class="morphing-bg"></div>
+        <div class="hologram-container" id="hologramContainer"></div>
         <div class="container">
-            <h2 class="section-title fade-in-up">Our Fleet</h2>
-            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
-                Experience the power and precision of our carefully maintained fleet, each truck customized with anime-inspired designs and top-tier performance modifications.
-            </p>
-            <div class="truck-showcase">
-                <div class="truck-card fade-in-left">
-                    <div class="truck-image"></div>
-                    <h3 class="truck-name">Sakura Hauler</h3>
-                    <p>Premium Volvo FH16 with cherry blossom livery and enhanced engine performance.</p>
+            <h2 class="section-title fade-in-up">Legendary Fleet</h2>
+            <div class="community-grid">
+                <div class="community-card fade-in-left magnetic">
+                    <span class="community-icon">🚛</span>
+                    <h3 class="community-title">Mecha Haulers</h3>
+                    <p class="community-description">Customized trucks inspired by iconic mecha anime. Each vehicle tells a story and represents the pilot's favorite series.</p>
                 </div>
-                <div class="truck-card fade-in-up">
-                    <div class="truck-image"></div>
-                    <h3 class="truck-name">Dragon Express</h3>
-                    <p>Powerful Scania R-Series featuring dragon-themed artwork and luxury interior.</p>
+                <div class="community-card fade-in-up magnetic">
+                    <span class="community-icon">✨</span>
+                    <h3 class="community-title">Magical Girl Carriers</h3>
+                    <p class="community-description">Elegant designs with kawaii aesthetics. These trucks bring a touch of magic to every delivery across Europe.</p>
                 </div>
-                <div class="truck-card fade-in-right">
-                    <div class="truck-image"></div>
-                    <h3 class="truck-name">Neon Rider</h3>
-                    <p>Sleek Mercedes-Benz Actros with cyberpunk aesthetics and LED lighting system.</p>
+                <div class="community-card fade-in-right magnetic">
+                    <span class="community-icon">🗾</span>
+                    <h3 class="community-title">Anime Liveries</h3>
+                    <p class="community-description">Express your otaku pride with custom anime-themed truck designs. Show off your favorite characters on every route!</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Join Section -->
-    <section class="section join" id="join">
+    <section class="join section" id="join">
+        <div class="morphing-bg"></div>
+        <div class="matrix-rain" id="matrixRain"></div>
         <div class="container">
-            <h2 class="section-title fade-in-up">Join Our Adventure</h2>
-            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
-                Ready to embark on your isekai journey? Join our community of anime-loving truckers and experience the ultimate fusion of culture and simulation.
-            </p>
+            <h2 class="section-title fade-in-up">Join Our World</h2>
+            <div class="story-content fade-in-up">
+                <p>Ready to begin your <span class="story-highlight">isekai adventure</span>? Join a community where your love for anime and trucking creates unforgettable experiences.</p>
+            </div>
             <form class="join-form fade-in-up">
                 <div class="form-group">
-                    <label class="form-label">Steam Name</label>
-                    <input type="text" class="form-input" placeholder="Enter your Steam display name" required>
+                    <label class="form-label">Anime Name</label>
+                    <input type="text" class="form-input magnetic" placeholder="What should your fellow otaku call you?" required>
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Discord Username</label>
-                    <input type="text" class="form-input" placeholder="username#1234" required>
+                    <label class="form-label">Discord Tag</label>
+                    <input type="text" class="form-input magnetic" placeholder="YourName#1234" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">Favorite Anime</label>
-                    <input type="text" class="form-input" placeholder="Tell us your favorite anime series">
+                    <input type="text" class="form-input magnetic" placeholder="Tell us your current obsession!" required>
                 </div>
                 <div class="form-group">
                     <label class="form-label">ETS2 Experience</label>
-                    <select class="form-input">
-                        <option>Select your experience level</option>
-                        <option>Beginner (0-100 hours)</option>
-                        <option>Intermediate (100-500 hours)</option>
-                        <option>Advanced (500+ hours)</option>
-                        <option>Professional (1000+ hours)</option>
+                    <select class="form-input magnetic" required>
+                        <option value="">Select your level</option>
+                        <option value="beginner">New Adventurer (0-100 hours)</option>
+                        <option value="intermediate">Seasoned Driver (100-500 hours)</option>
+                        <option value="expert">Veteran Trucker (500+ hours)</option>
+                        <option value="legend">Isekai Legend (1000+ hours)</option>
                     </select>
                 </div>
-                <button type="submit" class="submit-button">Start Your Isekai Journey</button>
+                <button type="submit" class="submit-btn magnetic">Begin My Isekai Journey</button>
             </form>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-links">
-                <a href="#" class="footer-link">Discord</a>
-                <a href="#" class="footer-link">Steam Group</a>
-                <a href="#" class="footer-link">TruckersMP</a>
-                <a href="#" class="footer-link">Events</a>
-                <a href="#" class="footer-link">Gallery</a>
-                <a href="#" class="footer-link">Contact</a>
-            </div>
-            <p style="opacity: 0.7;">&copy; 2025 Isekai Express VTC. All rights reserved. | Delivering dreams across dimensions.</p>
-            <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.5;">
-                <p>🌸 Powered by Anime • Driven by Passion • United by the Road 🌸</p>
-            </div>
-        </div>
-    </footer>
-
+    <!-- JavaScript for Enhanced Interactions -->
     <script>
-        // ===== LOADING SCREEN =====
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                const loadingScreen = document.getElementById('loadingScreen');
-                loadingScreen.style.opacity = '0';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 1000);
-            }, 3000);
-        });
-
-        // ===== CUSTOM CURSOR =====
+        // Enhanced Cursor System
         const cursor = document.querySelector('.cursor');
         const cursorFollower = document.querySelector('.cursor-follower');
         let mouseX = 0, mouseY = 0;
         let followerX = 0, followerY = 0;
+        let trails = [];
 
+        // Smooth cursor following
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            cursor.style.left = mouseX - 10 + 'px';
-            cursor.style.top = mouseY - 10 + 'px';
+            
+            cursor.style.transform = `translate(${mouseX - 10}px, ${mouseY - 10}px)`;
+            
+            // Create trail particles
+            if (Math.random() > 0.8) {
+                createTrailParticle(mouseX, mouseY);
+            }
         });
 
         // Smooth follower animation
         function animateFollower() {
             followerX += (mouseX - followerX) * 0.1;
             followerY += (mouseY - followerY) * 0.1;
-            cursorFollower.style.left = followerX - 20 + 'px';
-            cursorFollower.style.top = followerY - 20 + 'px';
+            
+            cursorFollower.style.transform = `translate(${followerX - 20}px, ${followerY - 20}px)`;
             requestAnimationFrame(animateFollower);
         }
         animateFollower();
 
-        // Cursor interactions
-        const interactiveElements = document.querySelectorAll('a, button, .nav-dot, .stat-card, .truck-card');
-        interactiveElements.forEach(el => {
+        // Trail particle system
+        function createTrailParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'trail-particle';
+            particle.style.left = x + 'px';
+            particle.style.top = y + 'px';
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                document.body.removeChild(particle);
+            }, 1000);
+        }
+
+        // Magnetic effect for interactive elements
+        document.querySelectorAll('.magnetic').forEach(el => {
             el.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'scale(1.5)';
-                cursorFollower.style.transform = 'scale(1.5)';
-                cursorFollower.style.borderColor = '#EC4899';
+                cursor.style.transform += ' scale(1.5)';
+                cursor.style.backgroundColor = 'var(--golden-accent)';
             });
+            
             el.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'scale(1)';
-                cursorFollower.style.transform = 'scale(1)';
-                cursorFollower.style.borderColor = '#3B82F6';
+                cursor.style.transform = cursor.style.transform.replace(' scale(1.5)', '');
+                cursor.style.backgroundColor = 'var(--neon-pink)';
+            });
+            
+            el.addEventListener('mousemove', (e) => {
+                const rect = el.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                el.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                el.style.transform = '';
             });
         });
 
-        // ===== FLOATING NAVIGATION =====
-        const sections = document.querySelectorAll('section');
+        // Enhanced Loading Screen
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.transform = 'scale(1.1)';
+                
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1500);
+            }, 4500);
+        });
+
+        // Floating Navigation
         const navDots = document.querySelectorAll('.nav-dot');
-        
-        // Smooth scroll navigation
+        const sections = document.querySelectorAll('.section, .hero');
+
         navDots.forEach((dot, index) => {
             dot.addEventListener('click', () => {
-                const targetSection = dot.getAttribute('data-section');
-                const section = document.getElementById(targetSection);
-                section.scrollIntoView({ behavior: 'smooth' });
+                sections[index].scrollIntoView({ behavior: 'smooth' });
             });
         });
 
-        // Update active navigation on scroll
+        // Update active nav dot on scroll
         window.addEventListener('scroll', () => {
-            let currentSection = '';
+            let current = '';
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
                 const sectionHeight = section.clientHeight;
-                if (scrollY >= sectionTop - sectionHeight / 3) {
-                    currentSection = section.getAttribute('id');
+                if (scrollY >= (sectionTop - sectionHeight / 3)) {
+                    current = section.getAttribute('id');
                 }
             });
 
             navDots.forEach(dot => {
                 dot.classList.remove('active');
-                if (dot.getAttribute('data-section') === currentSection) {
+                if (dot.getAttribute('data-section') === current) {
                     dot.classList.add('active');
                 }
             });
         });
 
-        // ===== PARTICLE SYSTEM =====
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            const particleCount = 50;
+        // Speed Lines Generation
+        function createSpeedLine() {
+            const speedLine = document.createElement('div');
+            speedLine.className = 'speed-line';
+            speedLine.style.top = Math.random() * 100 + '%';
+            speedLine.style.animationDelay = Math.random() * 2 + 's';
             
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.top = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 6 + 's';
-                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
-                
-                // Random colors
-                const colors = ['#F59E0B', '#EC4899', '#3B82F6', '#10B981'];
-                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                
-                particlesContainer.appendChild(particle);
+            document.getElementById('heroParticles').appendChild(speedLine);
+            
+            setTimeout(() => {
+                speedLine.remove();
+            }, 2000);
+        }
+
+        // Generate speed lines periodically
+        setInterval(createSpeedLine, 500);
+
+        // Sakura Petal Generation
+        function createSakuraPetal() {
+            const petal = document.createElement('div');
+            petal.className = 'sakura-petal';
+            petal.style.left = Math.random() * 100 + '%';
+            petal.style.animationDelay = Math.random() * 8 + 's';
+            petal.style.animationDuration = (8 + Math.random() * 4) + 's';
+            
+            document.getElementById('sakuraContainer').appendChild(petal);
+            
+            setTimeout(() => {
+                petal.remove();
+            }, 12000);
+        }
+
+        // Generate sakura petals
+        setInterval(createSakuraPetal, 1000);
+
+        // Network Generation for Routes Section
+        function generateNetwork() {
+            const network = document.getElementById('routeNetwork');
+            const lines = 8;
+            const nodes = 12;
+            
+            // Generate network lines
+            for (let i = 0; i < lines; i++) {
+                const line = document.createElement('div');
+                line.className = 'network-line';
+                line.style.top = (20 + i * 10) + '%';
+                line.style.left = '10%';
+                line.style.width = '80%';
+                line.style.animationDelay = (i * 0.5) + 's';
+                network.appendChild(line);
+            }
+            
+            // Generate network nodes
+            for (let i = 0; i < nodes; i++) {
+                const node = document.createElement('div');
+                node.className = 'network-node';
+                node.style.top = Math.random() * 80 + 10 + '%';
+                node.style.left = Math.random() * 80 + 10 + '%';
+                node.style.animationDelay = Math.random() * 2 + 's';
+                network.appendChild(node);
             }
         }
-        createParticles();
 
-        // ===== SCROLL ANIMATIONS =====
+        generateNetwork();
+
+        // Hologram Scanner
+        function createHologramLine() {
+            const line = document.createElement('div');
+            line.className = 'hologram-line';
+            line.style.animationDelay = Math.random() * 4 + 's';
+            
+            document.getElementById('hologramContainer').appendChild(line);
+            
+            setTimeout(() => {
+                line.remove();
+            }, 4000);
+        }
+
+        setInterval(createHologramLine, 2000);
+
+        // Matrix Rain Effect
+        function createMatrixColumn() {
+            const characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
+            const column = document.createElement('div');
+            column.className = 'matrix-column';
+            column.style.left = Math.random() * 100 + '%';
+            column.style.animationDelay = Math.random() * 8 + 's';
+            column.style.animationDuration = (8 + Math.random() * 4) + 's';
+            
+            let text = '';
+            for (let i = 0; i < 20; i++) {
+                text += characters.charAt(Math.floor(Math.random() * characters.length)) + '<br>';
+            }
+            column.innerHTML = text;
+            
+            document.getElementById('matrixRain').appendChild(column);
+            
+            setTimeout(() => {
+                column.remove();
+            }, 12000);
+        }
+
+        setInterval(createMatrixColumn, 300);
+
+        // Scroll Animation Observer
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -954,298 +1495,61 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
+                    entry.target.classList.add('animate');
                 }
             });
         }, observerOptions);
 
-        // Observe all animated elements
-        const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right, .section');
-        animatedElements.forEach(el => observer.observe(el));
-
-        // ===== PARALLAX EFFECTS =====
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const parallaxElements = document.querySelectorAll('.hero-bg, .portal');
-            
-            parallaxElements.forEach(element => {
-                const speed = element.classList.contains('portal') ? 0.5 : 0.3;
-                element.style.transform = `translateY(${scrolled * speed}px)`;
-            });
+        // Observe all animation elements
+        document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right').forEach(el => {
+            observer.observe(el);
         });
 
-        // ===== ANIMATED COUNTERS =====
-        function animateCounters() {
-            const counters = document.querySelectorAll('.stat-number');
-            
-            counters.forEach(counter => {
-                const target = parseInt(counter.textContent.replace(/\D/g, ''));
-                const suffix = counter.textContent.replace(/[0-9]/g, '');
-                let current = 0;
-                const duration = 2000;
-                const increment = target / (duration / 16);
-                
-                const updateCounter = () => {
-                    if (current < target) {
-                        current += increment;
-                        counter.textContent = Math.floor(current) + suffix;
-                        requestAnimationFrame(updateCounter);
-                    } else {
-                        counter.textContent = target + suffix;
-                    }
-                };
-                
-                // Start animation when element is visible
-                const counterObserver = new IntersectionObserver((entries) => {
-                    if (entries[0].isIntersecting) {
-                        updateCounter();
-                        counterObserver.disconnect();
-                    }
-                });
-                
-                counterObserver.observe(counter);
-            });
-        }
-        animateCounters();
-
-        // ===== 3D TRUCK CARD EFFECTS =====
-        const truckCards = document.querySelectorAll('.truck-card');
-        
-        truckCards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                if (window.innerWidth > 768) { // Only on desktop
-                    const rect = card.getBoundingClientRect();
-                    const x = e.clientX - rect.left;
-                    const y = e.clientY - rect.top;
-                    const centerX = rect.width / 2;
-                    const centerY = rect.height / 2;
-                    const rotateX = (y - centerY) / 10;
-                    const rotateY = (centerX - x) / 10;
-                    
-                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
-                }
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
-            });
-        });
-
-        // ===== FORM INTERACTIONS =====
+        // Form Enhancement
         const form = document.querySelector('.join-form');
-        const inputs = form.querySelectorAll('.form-input');
-        
-        inputs.forEach(input => {
-            input.addEventListener('focus', () => {
-                input.style.transform = 'scale(1.02)';
-            });
-            
-            input.addEventListener('blur', () => {
-                input.style.transform = 'scale(1)';
-            });
-        });
-
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             
-            // Create success animation
-            const button = form.querySelector('.submit-button');
-            const originalText = button.textContent;
-            
-            button.textContent = 'Joining the Adventure...';
-            button.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+            const btn = form.querySelector('.submit-btn');
+            btn.innerHTML = 'Portal Opening...';
+            btn.style.background = 'var(--gradient-3)';
             
             setTimeout(() => {
-                button.textContent = 'Welcome to Isekai Express! 🌸';
-                button.style.background = 'linear-gradient(135deg, #10B981, #34D399)';
-                
-                // Create confetti effect
-                createConfetti();
+                btn.innerHTML = 'Welcome to Isekai Express! 🎌';
+                btn.style.background = 'var(--gradient-2)';
                 
                 setTimeout(() => {
-                    button.textContent = originalText;
-                    button.style.background = '';
                     form.reset();
+                    btn.innerHTML = 'Begin My Isekai Journey';
+                    btn.style.background = 'var(--gradient-4)';
                 }, 3000);
             }, 2000);
         });
 
-        // ===== CONFETTI EFFECT =====
-        function createConfetti() {
-            const colors = ['#EC4899', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'];
-            const confettiCount = 50;
+        // Ambient Particles
+        function createAmbientParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
+            particle.style.animationDelay = Math.random() * 2 + 's';
             
-            for (let i = 0; i < confettiCount; i++) {
-                const confetti = document.createElement('div');
-                confetti.style.position = 'fixed';
-                confetti.style.width = '10px';
-                confetti.style.height = '10px';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.top = '-10px';
-                confetti.style.zIndex = '10000';
-                confetti.style.pointerEvents = 'none';
-                confetti.style.borderRadius = '50%';
-                
-                document.body.appendChild(confetti);
-                
-                // Animate confetti
-                const animation = confetti.animate([
-                    {
-                        transform: 'translateY(0) rotate(0deg)',
-                        opacity: 1
-                    },
-                    {
-                        transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`,
-                        opacity: 0
-                    }
-                ], {
-                    duration: Math.random() * 3000 + 2000,
-                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-                });
-                
-                animation.addEventListener('finish', () => {
-                    confetti.remove();
-                });
-            }
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                particle.remove();
+            }, 10000);
         }
 
-        // ===== ROUTE ANIMATION =====
-        function animateRoute() {
-            const cities = document.querySelectorAll('.city');
-            
-            cities.forEach((city, index) => {
-                city.style.animationDelay = `${index * 0.5}s`;
-                
-                city.addEventListener('mouseenter', () => {
-                    city.style.transform = 'scale(1.1) translateY(-5px)';
-                    city.style.boxShadow = '0 10px 25px rgba(236, 72, 153, 0.4)';
-                });
-                
-                city.addEventListener('mouseleave', () => {
-                    city.style.transform = 'scale(1) translateY(0)';
-                    city.style.boxShadow = 'none';
-                });
+        setInterval(createAmbientParticle, 2000);
+
+        // Performance optimization: Reduce particles on mobile
+        if (window.innerWidth < 768) {
+            // Reduce particle generation intervals for mobile
+            document.querySelectorAll('[id*="Container"]').forEach(container => {
+                container.style.display = 'none';
             });
         }
-        animateRoute();
-
-        // ===== SMOOTH SCROLL FOR CTA BUTTON =====
-        document.querySelector('.cta-button').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('about').scrollIntoView({ 
-                behavior: 'smooth',
-                block: 'start'
-            });
-        });
-
-        // ===== KEYBOARD NAVIGATION =====
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
-                e.preventDefault();
-                const currentActive = document.querySelector('.nav-dot.active');
-                const currentIndex = Array.from(navDots).indexOf(currentActive);
-                const nextIndex = (currentIndex + 1) % navDots.length;
-                navDots[nextIndex].click();
-            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
-                e.preventDefault();
-                const currentActive = document.querySelector('.nav-dot.active');
-                const currentIndex = Array.from(navDots).indexOf(currentActive);
-                const prevIndex = currentIndex === 0 ? navDots.length - 1 : currentIndex - 1;
-                navDots[prevIndex].click();
-            }
-        });
-
-        // ===== PERFORMANCE OPTIMIZATION =====
-        // Reduce motion for users who prefer it
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.style.setProperty('--animation-duration', '0.01s');
-            const animations = document.querySelectorAll('*');
-            animations.forEach(el => {
-                el.style.animationDuration = '0.01s';
-                el.style.animationDelay = '0s';
-                el.style.transitionDuration = '0.01s';
-            });
-        }
-
-        // ===== EASTER EGG - KONAMI CODE =====
-        let konamiCode = [];
-        const konamiSequence = [
-            'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
-            'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
-            'KeyB', 'KeyA'
-        ];
-
-        document.addEventListener('keydown', (e) => {
-            konamiCode.push(e.code);
-            
-            if (konamiCode.length > konamiSequence.length) {
-                konamiCode.shift();
-            }
-            
-            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
-                // Activate anime mode!
-                document.body.style.filter = 'hue-rotate(180deg) saturate(1.5)';
-                createConfetti();
-                
-                // Show special message
-                const message = document.createElement('div');
-                message.innerHTML = '🌸 ANIME MODE ACTIVATED! 🌸<br>You found the secret!';
-                message.style.cssText = `
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                    background: linear-gradient(135deg, #EC4899, #8B5CF6);
-                    color: white;
-                    padding: 2rem;
-                    border-radius: 20px;
-                    font-family: 'Orbitron', sans-serif;
-                    font-weight: bold;
-                    text-align: center;
-                    z-index: 10001;
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-                    animation: fadeInUp 0.5s ease;
-                `;
-                
-                document.body.appendChild(message);
-                
-                setTimeout(() => {
-                    message.remove();
-                    document.body.style.filter = '';
-                }, 5000);
-                
-                konamiCode = [];
-            }
-        });
-
-        // ===== INITIALIZE ON DOM LOAD =====
-        document.addEventListener('DOMContentLoaded', () => {
-            // Add stagger animation to stats
-            const statCards = document.querySelectorAll('.stat-card');
-            statCards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.2}s`;
-            });
-
-            // Add stagger animation to truck cards
-            const truckCardElements = document.querySelectorAll('.truck-card');
-            truckCardElements.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.3}s`;
-            });
-        });
-
-        // ===== RESPONSIVE OPTIMIZATIONS =====
-        function handleResize() {
-            if (window.innerWidth <= 768) {
-                // Disable 3D effects on mobile
-                truckCards.forEach(card => {
-                    card.style.transform = 'none';
-                });
-            }
-        }
-
-        window.addEventListener('resize', handleResize);
-        handleResize(); // Initial call
     </script>
 </body>
 </html>
