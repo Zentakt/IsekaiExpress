@@ -3,495 +3,1249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Isekai Express - Anime-infused virtual trucking in ETS2">
-    <title>Isekai Express - Reality Shift Protocol</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
-    
-    <script id="vertexShader" type="x-shader/x-vertex">
-        varying vec2 vUv; varying float vNoise; uniform float time; uniform float amplitude;
-        vec3 permute(vec3 x){return mod(((x*34.0)+1.0)*x,289.0);}
-        float snoise(vec2 v){const vec4 C=vec4(0.211324865405187,0.366025403784439,-0.577350269189626,0.024390243902439);vec2 i=floor(v+dot(v,C.yy));vec2 x0=v-i+dot(i,C.xx);vec2 i1=(x0.x>x0.y)?vec2(1.0,0.0):vec2(0.0,1.0);vec4 x12=x0.xyxy+C.xxzz;x12.xy-=i1;i=mod(i,289.0);vec3 p=permute(permute(i.y+vec3(0.0,i1.y,1.0))+i.x+vec3(0.0,i1.x,1.0));vec3 m=max(0.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.0);m=m*m;m=m*m;vec3 x=2.0*fract(p*C.www)-1.0;vec3 h=abs(x)-0.5;vec3 ox=floor(x+0.5);vec3 a0=x-ox;m*=1.79284291400159-0.85373472095314*(a0*a0+h*h);vec3 g;g.x=a0.x*x0.x+h.x*x0.y;g.yz=a0.yz*x12.xz+h.yz*x12.yw;return 130.0*dot(m,g);}
-        void main(){vUv=uv;vec3 pos=position;float noiseFreq=1.2;float noiseAmp=amplitude*0.1;vec2 noisePos=vec2(pos.x*noiseFreq+time*0.4,pos.y*noiseFreq+time*0.3);float noise=snoise(noisePos);pos.z+=noise*noiseAmp;vNoise=noise;gl_Position=projectionMatrix*modelViewMatrix*vec4(pos,1.0);}
-    </script>
-    <script id="fragmentShader" type="x-shader/x-fragment">
-        uniform float time; uniform vec2 resolution; uniform vec3 color1; uniform vec3 color2; uniform vec3 color3; uniform float intensity; varying vec2 vUv; varying float vNoise;
-        void main(){vec2 uv=vUv;float wave1=sin(uv.x*3.14159+time*0.5)*0.5+0.5;float wave2=cos(uv.y*3.14159+time*0.3)*0.5+0.5;vec3 color=mix(color1,color2,wave1);color=mix(color,color3,wave2);color=mix(color,vec3(1.0),pow(abs(vNoise),2.0)*0.2);float shimmer=sin(time*2.0+uv.x*10.0+uv.y*10.0)*0.1+0.9;color*=shimmer;color*=intensity;gl_FragColor=vec4(color,0.8);}
-    </script>
-    
+    <title>Isekai Express - Anime VTC | Euro Truck Simulator 2</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Zen+Dots&display=swap');
-        
-        :root {
-            --primary: #ff00c8; --secondary: #00f2ff; --accent: #f8ff38; 
-            --dark: #0f0518; --light: #f0f8ff; --contrast-dark: #2a0e40;
-            --gradient-1: linear-gradient(135deg,var(--primary),var(--secondary));
-            --gradient-2: linear-gradient(45deg,var(--accent),var(--secondary));
-            --gradient-3: linear-gradient(90deg,var(--primary),var(--secondary),var(--accent));
-            --font-main: 'Rajdhani',sans-serif; --font-display: 'Orbitron',sans-serif; --font-anime: 'Zen Dots',cursive;
-            --primary-rgb: 255,0,200; --secondary-rgb: 0,242,255; --accent-rgb: 248,255,56;
-            --dark-rgb: 15,5,24; --light-rgb: 240,248,255;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        * { margin:0;padding:0;box-sizing:border-box; }
-        body {
-            background:var(--dark); color:var(--light); font-family:var(--font-main);
-            overflow-x:hidden;
-            opacity:0; 
-            transition:opacity .8s ease-out .2s; 
-            cursor:none;
-        }
-        ::-webkit-scrollbar{width:10px} ::-webkit-scrollbar-track{background:var(--contrast-dark)} ::-webkit-scrollbar-thumb{background:var(--gradient-1);border-radius:5px;border:1px solid rgba(var(--dark-rgb),.5)} ::-webkit-scrollbar-thumb:hover{background:var(--gradient-2);box-shadow:0 0 10px var(--accent)}
-        #webgl-background{position:fixed;top:0;left:0;width:100%;height:100%;z-index:-2;opacity:.4}
-        
-        .loader-container {
-            position:fixed; top:0; left:0; width:100vw; height:100vh;
-            background:radial-gradient(ellipse at center,var(--dark) 30%,#030105 100%);
-            display:flex; 
-            flex-direction:column; align-items:center; justify-content:center;
-            z-index:10000;
-            opacity:1; 
-            perspective:1200px;
-            transition:opacity 1s ease-in-out; 
-            pointer-events:auto; 
-        }
-        .loader-container.hidden { opacity:0 !important; pointer-events:none; }
-        .loader-symbol-gate{width:clamp(180px,30vw,280px);height:clamp(180px,30vw,280px);position:relative;margin-bottom:30px;transform-style:preserve-3d;animation:gatePulsate 3s ease-in-out infinite,rotateGateComplex 40s linear infinite}
-        @keyframes rotateGateComplex{0%{transform:rotateX(10deg) rotateY(0) rotateZ(0) scale(1)}25%{transform:rotateX(15deg) rotateY(90deg) rotateZ(-5deg) scale(1.05)}50%{transform:rotateX(10deg) rotateY(180deg) rotateZ(0) scale(1)}75%{transform:rotateX(5deg) rotateY(270deg) rotateZ(5deg) scale(.95)}100%{transform:rotateX(10deg) rotateY(360deg) rotateZ(0) scale(1)}}
-        @keyframes gatePulsate{0%,100%{filter:drop-shadow(0 0 5px var(--secondary)) drop-shadow(0 0 15px var(--secondary));opacity:.9}50%{filter:drop-shadow(0 0 15px var(--primary)) drop-shadow(0 0 30px var(--primary));opacity:1}}
-        .gate-ring{position:absolute;top:50%;left:50%;border-style:dashed;border-color:transparent;border-radius:50%;transform-style:preserve-3d;opacity:0}
-        .gate-ring-1{width:100%;height:100%;border-width:3px;border-top-color:var(--primary);border-right-color:var(--primary);animation:rotateRing 6s linear infinite,fadeInRing 1s ease-out .2s forwards;--initial-z-rotate:0deg;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(var(--initial-z-rotate)) }
-        .gate-ring-2{width:85%;height:85%;border-width:2px;border-bottom-color:var(--secondary);border-left-color:var(--secondary);animation:rotateRing 7s linear infinite reverse,fadeInRing 1s ease-out .4s forwards;--initial-z-rotate:45deg;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(var(--initial-z-rotate)) }
-        .gate-ring-3{width:70%;height:70%;border-width:4px;border-style:solid;border-top-color:var(--accent);border-bottom-color:var(--accent);animation:rotateRing 5s linear infinite,fadeInRing 1s ease-out .6s forwards;--initial-z-rotate:-30deg;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(var(--initial-z-rotate)) translateZ(10px); --initial-z-pos:10px;}
-        @keyframes rotateRing{from{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(0) scale(var(--scale-val,1))}to{transform:translate(-50%,-50%) rotateX(70deg) rotateZ(360deg) scale(var(--scale-val,1))}}
-        @keyframes fadeInRing{from{opacity:0;--scale-val:.5;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(var(--initial-z-rotate)) scale(var(--scale-val)) translateZ(var(--initial-z-pos,0px))}to{opacity:1;--scale-val:1;transform:translate(-50%,-50%) rotateX(70deg) rotateZ(var(--initial-z-rotate)) scale(var(--scale-val)) translateZ(var(--initial-z-pos,0px))}}
-        .loader-core-spark{width:30%;height:30%;position:absolute;top:50%;left:50%;background:radial-gradient(ellipse,rgba(var(--light-rgb),.8) 0%,rgba(var(--accent-rgb),.5) 40%,transparent 70%);border-radius:50%;transform:translate(-50%,-50%) translateZ(5px);animation:sparkPulsate 1.5s ease-in-out infinite,fadeInRing 1s ease-out .8s forwards;opacity:0;--initial-z-rotate:0deg;--initial-z-pos:5px;}
-        @keyframes sparkPulsate{0%,100%{transform:translate(-50%,-50%) translateZ(5px) scale(.9);opacity:.7}50%{transform:translate(-50%,-50%) translateZ(5px) scale(1.1);opacity:1}}
-        .loader-text{font-family:var(--font-anime);font-size:clamp(1.6rem,4vw,2.8rem);font-weight:400;letter-spacing:1px;color:var(--light);text-shadow:0 0 5px rgba(var(--primary-rgb),.7),0 0 10px rgba(var(--secondary-rgb),.5);position:relative;white-space:nowrap;opacity:0;animation:textAppearAndGlitch 2s ease-out 1s forwards,textColorPulse 3s linear infinite 1.5s}
-        @keyframes textAppearAndGlitch{0%{opacity:0;transform:scale(.8) translateY(10px);filter:blur(5px)}20%{opacity:1;transform:scale(1.05) translateY(-2px);filter:blur(0px)}22%{transform:scale(1) translateY(0) skewX(-5deg);text-shadow:-2px 0 var(--accent),2px 0 var(--secondary)}25%{transform:scale(1) translateY(0) skewX(0)}50%{transform:scale(1) translateY(0) skewX(3deg);text-shadow:2px 0 var(--primary),-2px 0 var(--accent)}53%{transform:scale(1) translateY(0) skewX(0)}100%{opacity:1;transform:scale(1) translateY(0)}}
-        @keyframes textColorPulse{0%,100%{color:var(--light);text-shadow:0 0 8px rgba(var(--primary-rgb),.8),0 0 15px rgba(var(--secondary-rgb),.6)}50%{color:var(--secondary);text-shadow:0 0 8px rgba(var(--secondary-rgb),.8),0 0 15px rgba(var(--primary-rgb),.6)}}
-        .loader-text::before,.loader-text::after{content:'';display:none}
-        .loader-progress{position:relative;margin-top:35px;width:60%;max-width:250px;height:6px;background:rgba(var(--light-rgb),.05);border:1px solid rgba(var(--primary-rgb),.2);box-shadow:inset 0 0 5px rgba(var(--dark-rgb),.5);overflow:hidden;border-radius:3px;opacity:0;animation:fadeInBar .5s ease-out 2.5s forwards}
-        @keyframes fadeInBar{to{opacity:1}}
-        .loader-bar{position:absolute;top:0;transform:translateX(-100%);width:100%;height:100%;background:var(--gradient-3);background-size:300% 100%;box-shadow:0 0 10px var(--accent),0 0 5px var(--primary);animation:loadProgressNew 2.5s cubic-bezier(.8,0,.2,1) 2.8s forwards,progressBarGradientAnim 2s linear infinite 2.8s}
-        @keyframes loadProgressNew{from{transform:translateX(-100%)}to{transform:translateX(0)}}
-        @keyframes progressBarGradientAnim{0%{background-position:0% 50%}100%{background-position:100% 50%}}
-        
-        .magnetic-cursor{position:fixed;width:18px;height:18px;border:2px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:screen;transition:width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1),background-color .3s cubic-bezier(.4,0,.2,1),border-color .3s ease;background:rgba(var(--secondary-rgb),.3);will-change:transform}
-        .magnetic-cursor::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;background:var(--light);border-radius:50%;transition:all .3s ease;box-shadow:0 0 5px var(--light)}
-        .magnetic-cursor.hover{width:70px;height:70px;background:rgba(var(--primary-rgb),.15);border-color:var(--primary);box-shadow:0 0 15px var(--primary),0 0 30px var(--secondary)}
-        .magnetic-cursor.hover::after{width:6px;height:6px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
-        .nav{position:fixed;top:0;left:0;width:100%;padding:15px 30px;z-index:1000;transition:all .5s cubic-bezier(.165,.84,.44,1);backdrop-filter:blur(12px);background:rgba(var(--dark-rgb),.65);border-bottom:1px solid rgba(var(--primary-rgb),.1)}
-        .nav.scrolled{padding:12px 30px;background:rgba(var(--contrast-dark),.85);box-shadow:0 5px 25px -5px rgba(var(--primary-rgb),.4);border-bottom-color:rgba(var(--primary-rgb),.25)}
-        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
-        .nav-logo{font-family:var(--font-anime);font-size:clamp(1.4rem,3.5vw,2rem);background:var(--gradient-1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;position:relative;cursor:pointer;animation:gradientShift 4s ease-in-out infinite;transition:transform .3s ease}
-        .nav-links{display:flex;gap:clamp(20px,4vw,35px)}
-        .nav-link{font-family:var(--font-main);font-weight:600;color:var(--light);text-decoration:none;font-size:clamp(.9rem,1.8vw,1.05rem);position:relative;padding:5px 0;transition:all .3s ease}
-        .nav-link:hover{color:var(--accent);text-shadow:0 0 8px var(--accent),0 0 15px var(--primary)}
-        .nav-link::before{content:'';position:absolute;bottom:-2px;left:0;width:100%;height:3px;background:var(--gradient-2);transform:scaleX(0);transform-origin:right;transition:transform .4s cubic-bezier(.76,0,.24,1)}
-        .nav-link:hover::before{transform:scaleX(1);transform-origin:left}
-        .mobile-menu-toggle{display:none;flex-direction:column;cursor:pointer;width:30px;height:22px;justify-content:space-around;z-index:1001;transition:transform .3s ease}
-        .mobile-menu-toggle span{width:100%;height:3px;background:var(--secondary);transition:all .3s cubic-bezier(.68,-.55,.27,1.55);transform-origin:center;border-radius:1px}
-        .mobile-menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px)}
-        .mobile-menu-toggle.active span:nth-child(2){transform:scaleX(0);opacity:0}
-        .mobile-menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(7px,-7px)}
-        .mobile-menu{position:fixed;top:0;right:-100%;width:clamp(280px,75vw,380px);height:100vh;background:rgba(var(--contrast-dark),.97);backdrop-filter:blur(18px);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:35px;z-index:999;transition:right .6s cubic-bezier(.68,0,.26,1);box-shadow:-10px 0 35px rgba(var(--dark-rgb),.5)}
-        .mobile-menu.active{right:0}
-        .mobile-menu .nav-link{font-size:1.7rem;text-align:center;opacity:0;transform:translateX(-30px)}
-        .hero{padding-top:100px;padding-bottom:60px;min-height:100vh;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-        .glowing-effects{position:absolute;pointer-events:none;width:100%;height:100%;top:0;left:0;z-index:0;overflow:hidden}
-        .glowing-effects::before{content:'';position:absolute;border-radius:50%;background:var(--primary);filter:blur(130px);opacity:.3;animation-duration:9s;width:clamp(300px,45vw,550px);height:clamp(300px,45vw,550px);top:10%;left:5%;animation:glowFloat 9s ease-in-out infinite}
-        .glowing-effects::after{content:'';position:absolute;border-radius:50%;background:var(--secondary);filter:blur(140px);opacity:.35;animation-duration:11s;width:clamp(400px,55vw,650px);height:clamp(400px,55vw,650px);bottom:10%;right:5%;animation:glowFloat 11s ease-in-out infinite -5.5s}
-        @keyframes glowFloat{0%,100%{transform:translate(0,0) scale(1);opacity:.25}25%{transform:translate(60px,-40px) scale(1.15);opacity:.3}50%{transform:translate(-40px,60px) scale(.85);opacity:.2}75%{transform:translate(40px,40px) scale(1.1);opacity:.28}}
-        .hero-content{position:relative;z-index:2;text-align:center;max-width:900px;width:100%}
-        .hero-title{font-family:var(--font-display);font-size:clamp(2.8rem,9vw,6.5rem);font-weight:900;line-height:1.05;margin-bottom:35px;position:relative;text-transform:uppercase;letter-spacing:1px;color:var(--light)}
-        .hero-subtitle{font-size:clamp(1.1rem,2.5vw,1.6rem);color:rgba(var(--light-rgb),.85);line-height:1.7;margin-bottom:45px;max-width:750px;margin-left:auto;margin-right:auto}
-        .hero-cta{display:inline-block;font-family:var(--font-display);text-transform:uppercase;letter-spacing:.5px;padding:18px 45px;font-size:clamp(1rem,2.8vw,1.3rem);font-weight:700;color:var(--light);text-decoration:none;background:var(--gradient-1);background-size:250% 100%;border-radius:50px;position:relative;overflow:hidden;border:2px solid transparent;box-shadow:0 10px 30px rgba(var(--primary-rgb),.3);transition:all .4s cubic-bezier(.165,.84,.44,1),border-color .3s ease,box-shadow .3s ease,background-position .5s ease;transform-style:preserve-3d}
-        .hero-cta:hover{background-position:right center;color:var(--light);border-color:var(--accent);transform:translateY(-6px) scale(1.03) perspective(800px) rotateX(3deg);box-shadow:0 15px 30px rgba(var(--primary-rgb),.35),0 0 20px var(--accent)}
-        .hero-cta::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(var(--light-rgb),.3),transparent);transition:left .6s cubic-bezier(.25,.46,.45,.94)}
-        .hero-cta:hover::before{left:100%}
-        .particles-container{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
-        .particle{position:absolute;border-radius:20% 80% 30% 70%/70% 30% 80% 20%;box-shadow:0 0 5px currentColor,0 0 10px currentColor;opacity:0;will-change:transform,opacity}
-        .section-title{font-family:var(--font-anime);font-size:clamp(2.2rem,5.5vw,3.8rem);letter-spacing:1px;margin-bottom:70px;text-transform:uppercase;text-align:center;font-weight:400;background:var(--gradient-2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-        .features{position:relative;padding:100px 20px;background:linear-gradient(to bottom,transparent 0%,rgba(var(--dark-rgb),.5) 20%,var(--contrast-dark) 100%)}
-        .features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:clamp(35px,4vw,50px);max-width:1400px;margin:0 auto}
-        .feature-card{background:rgba(var(--contrast-dark),.5);backdrop-filter:blur(15px) saturate(120%);border:1px solid rgba(var(--primary-rgb),.2);border-radius:15px;padding:35px;box-shadow:0 8px 25px rgba(var(--dark-rgb),.5),inset 0 0 10px rgba(var(--primary-rgb),.1);transition:all .4s cubic-bezier(.165,.84,.44,1);position:relative;overflow:hidden;cursor:pointer}
-        .feature-card::before, .feature-card::after { content: ''; position: absolute; width: 15px; height: 15px; transition: all 0.3s ease-out; }
-        .feature-card::before { top: -2px; left: -2px; border-top: 3px solid var(--secondary); border-left: 3px solid var(--secondary); }
-        .feature-card::after { bottom: -2px; right: -2px; border-bottom: 3px solid var(--secondary); border-right: 3px solid var(--secondary); }
-        .feature-card:hover::before { top: 5px; left: 5px; width:20px; height:20px; border-color: var(--accent); }
-        .feature-card:hover::after { bottom: 5px; right: 5px; width:20px; height:20px; border-color: var(--accent); }
-        .feature-card:hover{transform:translateY(-12px) scale(1.04) rotateX(2deg) rotateY(-2deg);border-color:var(--secondary);box-shadow:0 15px 35px rgba(var(--secondary-rgb),.3),inset 0 0 15px rgba(var(--accent-rgb),.2)}
-        .feature-icon{display:block;font-size:2.8rem;margin-bottom:20px;background:var(--gradient-1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;text-shadow:0 0 10px currentColor;transition:transform .4s cubic-bezier(.68,-.55,.27,1.55)}
-        .feature-card:hover .feature-icon{transform:scale(1.3) rotate(8deg) translateY(-5px)}
-        .feature-title{font-family:var(--font-display);color:var(--secondary);text-transform:uppercase;font-size:clamp(1.3rem,2.5vw,1.7rem);margin-bottom:12px}
-        .feature-description{color:rgba(var(--light-rgb),.75);line-height:1.65;font-size:clamp(.9rem,1.8vw,1rem)}
-        
-        .fleet{padding:100px 20px;position:relative;background:var(--dark);overflow:hidden}
-        .fleet .section-title{color:var(--light);background:var(--gradient-1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
-        .fleet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:clamp(40px,4.5vw,60px);max-width:1600px;margin:0 auto;perspective:3000px}
-        .truck-card{background:linear-gradient(155deg,rgba(var(--dark-rgb),.8),rgba(var(--contrast-dark),.9));border:1px solid rgba(var(--secondary-rgb),.15);border-radius:18px;padding:30px;position:relative;overflow:hidden;transform-style:preserve-3d;box-shadow:0 15px 40px rgba(var(--dark-rgb),.6);transition:transform .6s cubic-bezier(.16,1,.3,1),box-shadow .6s cubic-bezier(.16,1,.3,1),border-color .5s ease;cursor:pointer}
-        .truck-card::before, .truck-card::after { content: ''; position: absolute; width: 0; height: 0; border-style: solid; transition: all 0.4s ease-out; opacity:0.7; }
-        .truck-card::before { top: 0; left: 0; border-width: 0 0 20px 20px; border-color: transparent transparent transparent var(--primary); }
-        .truck-card::after { bottom: 0; right: 0; border-width: 20px 20px 0 0; border-color: var(--primary) transparent transparent transparent; }
-        .truck-card:hover::before { border-width: 0 0 25px 25px; border-color: transparent transparent transparent var(--accent); opacity:1;}
-        .truck-card:hover::after { border-width: 25px 25px 0 0; border-color: var(--accent) transparent transparent transparent; opacity:1;}
-        .truck-card:hover{transform:scale(1.05) translateZ(30px) rotateY(var(--rotateY,0deg)) rotateX(var(--rotateX,0deg));box-shadow:0 0 20px var(--primary),0 0 40px var(--secondary),inset 0 0 30px rgba(var(--accent-rgb),.1);border-color:var(--accent)}
-        .truck-card-image-container{width:100%;height:220px;border-radius:12px;overflow:hidden;margin-bottom:25px;background:rgba(0,0,0,.3);display:flex;align-items:center;justify-content:center;position:relative;transform:translateZ(20px)}
-        .truck-card-image-container img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.165,.84,.44,1);filter:saturate(110%) contrast(105%)}
-        .truck-card:hover .truck-card-image-container img{transform:scale(1.12)}
-        .truck-card-image-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:linear-gradient(to top,rgba(var(--dark-rgb),.9) 0%,transparent 70%);opacity:1;transition:opacity .5s ease}
-        .truck-card:hover .truck-card-image-overlay{opacity:.6}
-        .truck-card-title{font-family:var(--font-display);font-size:clamp(1.5rem,3vw,2rem);color:var(--primary);margin-bottom:15px;text-transform:uppercase;text-shadow:0 0 10px var(--primary);transform:translateZ(40px)}
-        .truck-card-specs{list-style:none;padding:0;margin-bottom:25px;transform:translateZ(30px)}
-        .truck-card-specs li{font-size:clamp(.9rem,1.9vw,1.05rem);color:rgba(var(--light-rgb),.7);margin-bottom:10px;position:relative;padding-left:28px}
-        .truck-card-specs li::before{content:'💠';position:absolute;left:0;color:var(--secondary);font-weight:700;font-size:1.2em;top:-2px;text-shadow:0 0 5px var(--secondary)}
-        .truck-card-glow{position:absolute;top:50%;left:50%;width:400px;height:400px;background:radial-gradient(circle,rgba(var(--primary-rgb),.15) 0%,transparent 60%);transform:translate(-50%,-50%) scale(0);border-radius:50%;pointer-events:none;transition:transform 1s cubic-bezier(.16,1,.3,1),opacity 1s cubic-bezier(.16,1,.3,1);opacity:0;z-index:-1}
-        .truck-card:hover .truck-card-glow{transform:translate(-50%,-50%) scale(1.9);opacity:1}
-        
-        .join{padding:100px 20px;text-align:center;position:relative;overflow:hidden;background:var(--gradient-2)}
-        .join::before{content:'';position:absolute;top:0;left:0;width:100%;height:100%;background-image:linear-gradient(rgba(var(--light-rgb),.03) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--light-rgb),.03) 1px,transparent 1px);background-size:30px 30px;opacity:.7;animation:subtleScroll 20s linear infinite}
-        @keyframes subtleScroll{0%{background-position:0 0}100%{background-position:60px 60px}}
-        .join-content{position:relative;z-index:2;max-width:800px;margin:0 auto}
-        .join-title{font-family:var(--font-anime);font-size:clamp(2rem,5vw,3.2rem);color:var(--dark);text-shadow:0 0 10px rgba(var(--accent-rgb),.7),1px 1px 0 rgba(var(--light-rgb),.5);margin-bottom:25px;font-weight:400}
-        .join-description{color:rgba(var(--dark-rgb),.9);font-weight:500;font-size:clamp(1rem,2.5vw,1.2rem);line-height:1.7;margin-bottom:40px}
-        .join-buttons{display:flex;gap:25px;justify-content:center;flex-wrap:wrap}
-        .join-button{font-family:var(--font-display);text-transform:uppercase;font-size:clamp(.9rem,2.2vw,1.15rem);background:rgba(var(--dark-rgb),.15);color:var(--light);border:2px solid rgba(var(--light-rgb),.3);border-radius:30px;padding:16px 35px;text-decoration:none;backdrop-filter:blur(5px);text-shadow:0 0 5px currentColor;transition:all .35s cubic-bezier(.165,.84,.44,1);position:relative;overflow:hidden}
-        .join-button:hover{background:rgba(var(--dark-rgb),.3);border-color:var(--accent);color:var(--accent);transform:translateY(-4px) scale(1.02);box-shadow:0 5px 15px rgba(var(--dark-rgb),.3),0 0 10px var(--accent)}
-        .join-button::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:var(--accent);z-index:-1;opacity:.2;transition:left .4s cubic-bezier(.77,0,.175,1)}
-        .join-button:hover::before{left:0}
-        
-        #contact.features{background:linear-gradient(to bottom,var(--dark) 0%,var(--contrast-dark) 100%);padding:100px 20px}
-        .contact-form{max-width:800px;margin:0 auto;display:grid;gap:25px}
-        .contact-input{background:rgba(var(--dark-rgb),.5);border:1px solid rgba(var(--secondary-rgb),.25);padding:16px 22px;font-size:1rem;color:var(--light);border-radius:8px;font-family:var(--font-main);transition:all .3s ease;outline:none}
-        .contact-input::placeholder{color:rgba(var(--light-rgb),.4)}
-        .contact-input:focus{border-color:var(--primary);box-shadow:0 0 15px rgba(var(--primary-rgb),.4),inset 0 0 8px rgba(var(--secondary-rgb),.15);background:rgba(var(--dark-rgb),.7)}
-        .contact-form .hero-cta{width:auto;margin:10px auto 0;padding:16px 40px}
-        
-        .footer{padding:80px 20px 40px;background:linear-gradient(to top,#020003,var(--dark));border-top:1px solid rgba(var(--primary-rgb),.15);position:relative;text-align:center;overflow:hidden}
-        .footer-content{max-width:1200px;margin:0 auto;position:relative;z-index:1}
-        .footer-logo{font-family:var(--font-anime);font-size:clamp(1.6rem,4vw,2.4rem);background: var(--gradient-1); -webkit-background-clip: text; background-clip: text;-webkit-text-fill-color: transparent; animation: gradientShift 4s ease-in-out infinite; margin-bottom:25px; display:inline-block;}
-        .footer-links{display:flex;justify-content:center;gap:clamp(18px,3vw,28px);margin-bottom:30px;flex-wrap:wrap}
-        .footer-link{color:rgba(var(--light-rgb),.5);text-decoration:none;font-size:clamp(.85rem,1.7vw,1rem);transition:all .3s ease;font-weight:500}
-        .footer-link:hover{color:var(--secondary);text-shadow:0 0 8px var(--secondary);transform:translateY(-2px)}
-        .social-icons{display:flex;justify-content:center;gap:clamp(20px,3.5vw,30px);margin-bottom:30px}
-        .social-icon svg{width:26px;height:26px}
-        .social-icon{color:rgba(var(--light-rgb),.3);transition:all .3s cubic-bezier(.68,-.55,.27,1.55);display:inline-block}
-        .social-icon:hover{color:var(--accent);transform:scale(1.3) rotate(5deg) translateY(-2px)}
-        .copyright{font-size:clamp(.75rem,1.4vw,.85rem);color:rgba(var(--light-rgb),.25);line-height:1.6}
-        
-        .reveal-up{opacity:0;transform:translateY(40px)}
-        .reveal-scale{opacity:0;transform:scale(.85)}
-        .gsap-char-reveal span{display:inline-block;opacity:0;transform:translateY(20px) scale(.5);filter:blur(3px)}
-        .parallax-layer{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:-1;will-change:transform}
-        .parallax-layer-1{background-image:radial-gradient(circle at 15% 25%,rgba(var(--primary-rgb),.08) .5px,transparent .5px),radial-gradient(circle at 75% 65%,rgba(var(--secondary-rgb),.08) .5px,transparent .5px),radial-gradient(circle at 40% 80%,rgba(var(--accent-rgb),.06) .5px,transparent .5px);background-size:80px 80px,100px 100px,90px 90px;opacity:.6}
-        .parallax-layer-2{background-image:linear-gradient(45deg,rgba(var(--accent-rgb),.03) 25%,transparent 25%,transparent 75%,rgba(var(--accent-rgb),.03) 75%),linear-gradient(45deg,rgba(var(--accent-rgb),.03) 25%,transparent 25%,transparent 75%,rgba(var(--accent-rgb),.03) 75%);background-size:60px 60px;background-position:0 0,30px 30px;opacity:.4}
-        @media(max-width:768px){.nav{padding:12px 20px}.nav.scrolled{padding:10px 20px}.nav-links{display:none}.mobile-menu-toggle{display:flex}.hero{padding-top:80px}.hero-title{font-size:clamp(2.4rem,10vw,4rem)}.hero-subtitle{font-size:clamp(1rem,4vw,1.3rem);margin-bottom:35px}.hero-cta{padding:16px 35px;font-size:clamp(1rem,3.5vw,1.1rem)}.section-title{font-size:clamp(2rem,6vw,3rem);margin-bottom:50px}.features-grid,.fleet-grid{grid-template-columns:1fr;gap:30px}.feature-card,.truck-card{padding:30px}.join-title{font-size:clamp(1.8rem,5.5vw,2.5rem)}.join-description{font-size:clamp(.95rem,3.8vw,1.15rem)}.join-buttons{flex-direction:column;gap:18px;align-items:center}.join-button{width:min(90%,320px)}.footer-links{flex-direction:column;gap:12px;margin-bottom:25px}}
 
+        :root {
+            --primary-purple: #6B46C1;
+            --electric-blue: #3B82F6;
+            --neon-pink: #EC4899;
+            --golden-accent: #F59E0B;
+            --dark-bg: #0F0F23;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        body {
+            font-family: 'Noto Sans JP', sans-serif;
+            background: var(--dark-bg);
+            color: white;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            background: var(--neon-pink);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            mix-blend-mode: difference;
+            transition: transform 0.1s ease;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid var(--electric-blue);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0.5;
+            transition: all 0.3s ease;
+        }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        .loading-bar {
+            width: 300px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            margin: 2rem auto;
+            overflow: hidden;
+        }
+
+        .loading-progress {
+            height: 100%;
+            background: var(--gradient-3);
+            border-radius: 2px;
+            animation: loading 3s ease-in-out;
+        }
+
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 0 0 20px var(--electric-blue); }
+            100% { text-shadow: 0 0 30px var(--neon-pink), 0 0 40px var(--neon-pink); }
+        }
+
+        /* Floating Navigation */
+        .floating-nav {
+            position: fixed;
+            top: 50%;
+            right: 30px;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-dot.active {
+            background: var(--neon-pink);
+            box-shadow: 0 0 20px var(--neon-pink);
+        }
+
+        .nav-dot::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 2px;
+            background: var(--neon-pink);
+            transition: width 0.3s ease;
+        }
+
+        .nav-dot:hover::after {
+            width: 100px;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-1);
+            opacity: 0.8;
+        }
+
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--golden-accent);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 1; }
+        }
+
+        .portal {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, var(--electric-blue), var(--neon-pink), var(--golden-accent), var(--electric-blue));
+            animation: rotate 20s linear infinite;
+            opacity: 0.3;
+        }
+
+        .portal::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            background: var(--dark-bg);
+            border-radius: 50%;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            text-align: center;
+            z-index: 10;
+            max-width: 800px;
+            padding: 2rem;
+        }
+
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: titleGlow 3s ease-in-out infinite alternate;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: var(--gradient-3);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 1s ease-out 1s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes titleGlow {
+            0% { filter: drop-shadow(0 0 20px var(--electric-blue)); }
+            100% { filter: drop-shadow(0 0 30px var(--neon-pink)); }
+        }
+
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Sections */
+        .section {
+            min-height: 100vh;
+            padding: 5rem 2rem;
+            display: flex;
+            align-items: center;
+            position: relative;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease;
+        }
+
+        .section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .section-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.1;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* About Section */
+        .about {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(236, 72, 153, 0.1));
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--neon-pink);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            opacity: 0.8;
+        }
+
+        /* Routes Section */
+        .routes {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(0, 242, 254, 0.1));
+        }
+
+        .route-map {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .route-path {
+            width: 100%;
+            height: 300px;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 300"><path d="M50 150 Q200 50 400 150 T750 150" stroke="%23EC4899" stroke-width="3" fill="none" stroke-dasharray="10,5"><animate attributeName="stroke-dashoffset" values="0;-15" dur="1s" repeatCount="indefinite"/></path></svg>') no-repeat center;
+            background-size: contain;
+        }
+
+        .route-cities {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .city {
+            background: var(--gradient-3);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            animation: pulse 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.05); }
+        }
+
+        /* Fleet Section */
+        .fleet {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.1));
+        }
+
+        .truck-showcase {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .truck-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.5s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .truck-card:hover {
+            transform: rotateY(10deg) rotateX(5deg);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .truck-image {
+            width: 100%;
+            height: 200px;
+            background: var(--gradient-1);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .truck-image::before {
+            content: '🚛';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 4rem;
+            animation: drive 3s ease-in-out infinite;
+        }
+
+        @keyframes drive {
+            0%, 100% { transform: translate(-50%, -50%) translateX(0); }
+            50% { transform: translate(-50%, -50%) translateX(20px); }
+        }
+
+        .truck-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--golden-accent);
+        }
+
+        /* Join Section */
+        .join {
+            background: linear-gradient(135deg, rgba(107, 70, 193, 0.1), rgba(59, 130, 246, 0.1));
+        }
+
+        .join-form {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            margin-top: 3rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .form-group {
+            margin-bottom: 2rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: var(--golden-accent);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient-2);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .submit-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(236, 72, 153, 0.4);
+        }
+
+        /* Footer */
+        .footer {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 3rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            color: var(--electric-blue);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--neon-pink);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .floating-nav {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+
+            .section {
+                padding: 3rem 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .truck-showcase {
+                grid-template-columns: 1fr;
+            }
+
+            .route-cities {
+                justify-content: center;
+            }
+
+            .truck-card:hover {
+                transform: none;
+            }
+        }
+
+        /* Scroll Animations */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .fade-in-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
     </style>
 </head>
 <body>
-    <div class="loader-container">
-        <div class="loader-symbol-gate">
-            <div class="gate-ring gate-ring-1"></div><div class="gate-ring gate-ring-2"></div>
-            <div class="gate-ring gate-ring-3" style="--initial-z-pos:10px;"></div>
-            <div class="loader-core-spark" style="--initial-z-pos:5px;"></div>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-logo">ISEKAI EXPRESS</div>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+            <p>Loading your journey...</p>
         </div>
-        <div class="loader-text" data-text="INITIATING DIVE...">INITIATING DIVE...</div>
-        <div class="loader-progress"><div class="loader-bar"></div></div>
     </div>
 
-    <canvas id="webgl-background"></canvas>
-    <div class="magnetic-cursor"></div>
-    <div class="parallax-layer parallax-layer-1" data-depth="0.05"></div>
-    <div class="parallax-layer parallax-layer-2" data-depth="0.1"></div>
-
-    <nav class="nav">
-        <div class="nav-container">
-            <a href="#hero" class="nav-logo magnetic-target">IsekaiXpress VTC</a>
-            <div class="nav-links">
-                <a href="#hero" class="nav-link magnetic-target">HOME_BASE</a>
-                <a href="#features" class="nav-link magnetic-target">VTC_FEATURES</a>
-                <a href="#fleet" class="nav-link magnetic-target">FLEET_HANGAR</a>
-                <a href="#join" class="nav-link magnetic-target">JOIN_ISEKAIX</a>
-                <a href="#contact" class="nav-link magnetic-target">CONTACT_HQ</a>
-            </div>
-            <div class="mobile-menu-toggle magnetic-target"><span></span><span></span><span></span></div>
-        </div>
+    <!-- Floating Navigation -->
+    <nav class="floating-nav">
+        <div class="nav-dot active" data-section="hero"></div>
+        <div class="nav-dot" data-section="about"></div>
+        <div class="nav-dot" data-section="routes"></div>
+        <div class="nav-dot" data-section="fleet"></div>
+        <div class="nav-dot" data-section="join"></div>
     </nav>
-    <div class="mobile-menu">
-        <a href="#hero" class="nav-link">HOME_BASE</a> <a href="#features" class="nav-link">VTC_FEATURES</a>
-        <a href="#fleet" class="nav-link">FLEET_HANGAR</a> <a href="#join" class="nav-link">JOIN_ISEKAIX</a>
-        <a href="#contact" class="nav-link">CONTACT_HQ</a>
-    </div>
 
-    <main>
-        <section id="hero" class="hero">
-            <div class="glowing-effects"></div> <div class="particles-container"></div>
-            <div class="hero-content">
-                <h1 class="hero-title gsap-char-reveal">Shift Your Reality // IsekaiX VTC</h1>
-                <p class="hero-subtitle reveal-up" data-delay="0.6">Welcome to Isekai Express, pilot! We're not just another Euro Truck Simulator 2 VTC. We're a gateway to anime-fueled, dimension-hopping cargo missions. Join us and haul across realities previously unimaginable.</p>
-                <a href="#join" class="hero-cta magnetic-target reveal-up" data-delay="0.8">Enlist with IsekaiX</a>
-            </div>
-        </section>
-        <section id="features" class="features">
-            <h2 class="section-title reveal-up">IsekaiX VTC Advantages</h2>
-            <div class="features-grid">
-                <div class="feature-card magnetic-target">
-                    <span class="feature-icon">✨</span><h3 class="feature-title">Dimensional Drifting</h3>
-                    <p class="feature-description">Our unique ETS2 server mods create custom routes through vibrant, anime-inspired dimensions. Experience physics-bending roads and ethereal landscapes on every delivery for IsekaiXpress.</p>
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="hero-bg"></div>
+        <div class="particles" id="particles"></div>
+        <div class="portal"></div>
+        <div class="hero-content">
+            <h1 class="hero-title">ISEKAI EXPRESS</h1>
+            <p class="hero-subtitle">Transport to Another World of Trucking Excellence</p>
+            <a href="#about" class="cta-button">Begin Your Journey</a>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="section about" id="about">
+        <div class="container">
+            <h2 class="section-title fade-in-up">About Our VTC</h2>
+            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
+                Welcome to Isekai Express, where anime meets the open road. Our Virtual Trucking Company brings together passionate drivers from across the globe who share a love for anime culture and Euro Truck Simulator 2.
+            </p>
+            <div class="stats-grid">
+                <div class="stat-card fade-in-up">
+                    <span class="stat-number">500+</span>
+                    <span class="stat-label">Active Drivers</span>
                 </div>
-                <div class="feature-card magnetic-target">
-                    <span class="feature-icon">🌌</span><h3 class="feature-title">Nexus Convoys & Events</h3>
-                    <p class="feature-description">Join the IsekaiXpress interdimensional fleet! We host regular ETS2 convoys exploring new realities, plus special VTC events with exclusive cargo and cosmic rewards. Our global crew of anime enthusiasts awaits!</p>
+                <div class="stat-card fade-in-up">
+                    <span class="stat-number">50K+</span>
+                    <span class="stat-label">Miles Delivered</span>
                 </div>
-                <div class="feature-card magnetic-target">
-                    <span class="feature-icon">🤖</span><h3 class="feature-title">Custom Tech Rigs</h3>
-                    <p class="feature-description">As an IsekaiXpress VTC member, pilot custom-tuned ETS2 trucks infused with techno-magical enhancements. Exclusive anime-themed skins, particle effects for your rig, and god-tier performance for those tough dimensional hauls.</p>
+                <div class="stat-card fade-in-up">
+                    <span class="stat-number">25+</span>
+                    <span class="stat-label">Countries</span>
                 </div>
-                <div class="feature-card magnetic-target">
-                    <span class="feature-icon">💠</span><h3 class="feature-title">Pilot Ascension System</h3>
-                    <p class="feature-description">Our VTC features a dynamic ranking system. Complete IsekaiXpress contracts, participate in events, and ascend the pilot ranks to unlock unique titles, VTC roles, and cosmic bragging rights within the ETS2 multiverse.</p>
-                </div>
-            </div>
-        </section>
-        <section id="fleet" class="fleet">
-            <h2 class="section-title reveal-up">IsekaiX Fleet Hangar</h2>
-            <div class="fleet-grid">
-                <div class="truck-card magnetic-target">
-                    <div class="truck-card-image-container"><img src="https://images.unsplash.com/photo-1587588266369-f8381518f000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fGZ1dHVyaXN0aWMlMjB0cnVja3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Astral Juggernaut"><div class="truck-card-image-overlay"></div></div>
-                    <h3 class="truck-card-title">Astral Juggernaut X-1</h3><ul class="truck-card-specs"><li>Core: Nebula Reactor VII</li><li>Output: 9000 Astral HP</li><li>Trait: Phasing Matrix, Comet Trail</li><li>VTC Role: Heavy Interdimensional Hauler</li></ul><div class="truck-card-glow"></div>
-                </div>
-                <div class="truck-card magnetic-target">
-                    <div class="truck-card-image-container"><img src="https://images.unsplash.com/photo-1629828420993-5939327cb934?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fGZ1dHVyaXN0aWMlMjB0cnVja3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60" alt="Voidstrider Mk.II"><div class="truck-card-image-overlay"></div></div>
-                    <h3 class="truck-card-title">Voidstrider Mk.II Custom</h3><ul class="truck-card-specs"><li>Engine: Singularity Drive X</li><li>Range: Trans-Universal (ETS2 Map Modded)</li><li>Trait: Shadow Cloak, Rift Jump Tech</li><li>VTC Role: Covert Ops & Rare Cargo</li></ul><div class="truck-card-glow"></div>
-                </div>
-                <div class="truck-card magnetic-target">
-                    <div class="truck-card-image-container"><img src="https://images.unsplash.com/photo-1633882141584-df6a49ce4076?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZnV0dXJpc3RpYyUyMHRydWNrfGVufDB8fDB8fHww&auto=format&fit=crop&w=500&q=60" alt="Chrono Phoenix"><div class="truck-card-image-overlay"></div></div>
-                    <h3 class="truck-card-title">Chrono Phoenix Type-R</h3><ul class="truck-card-specs"><li>Engine: Temporal Flux Capacitor Prime</li><li>Speed: Exceeds ETS2 Limits (Safely!)</li><li>Trait: Time Dilation Field, Aura Burst System</li><li>VTC Role: Express Priority Deliveries</li></ul><div class="truck-card-glow"></div>
+                <div class="stat-card fade-in-up">
+                    <span class="stat-number">24/7</span>
+                    <span class="stat-label">Community Support</span>
                 </div>
             </div>
-        </section>
-        <section id="join" class="join">
-            <div class="join-content">
-                <h2 class="join-title reveal-up">Ready for your ETS2 Isekai?</h2>
-                <p class="join-description reveal-up" data-delay="0.1">The IsekaiXpress VTC needs elite Euro Truck Simulator 2 pilots like YOU! If you're tired of mundane Earth roads and crave anime-inspired, reality-defying haulage across digital dimensions, your cockpit is waiting. Apply to join our ETS2 fleet and begin your interdimensional trucking career today!</p>
-                <div class="join-buttons">
-                    <a href="#" class="join-button magnetic-target reveal-scale" data-delay="0.2">VTC Enlistment Protocol</a>
-                    <a href="#" class="join-button magnetic-target reveal-scale" data-delay="0.3">Join IsekaiX Discord Server</a>
+        </div>
+    </section>
+
+    <!-- Routes Section -->
+    <section class="section routes" id="routes">
+        <div class="container">
+            <h2 class="section-title fade-in-up">Epic Routes</h2>
+            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
+                Discover breathtaking routes across Europe, each journey carefully crafted to provide the ultimate driving experience through scenic landscapes and bustling cities.
+            </p>
+            <div class="route-map fade-in-up">
+                <div class="route-path"></div>
+                <div class="route-cities">
+                    <div class="city">Berlin</div>
+                    <div class="city">Paris</div>
+                    <div class="city">Rome</div>
+                    <div class="city">Madrid</div>
+                    <div class="city">London</div>
+                    <div class="city">Amsterdam</div>
                 </div>
             </div>
-        </section>
-        <section id="contact" class="features" style="padding-bottom:120px">
-             <h2 class="section-title reveal-up">Contact IsekaiX HQ</h2>
-             <form class="contact-form reveal-up" data-delay="0.1">
-                <input type="text" placeholder="Your Pilot Callsign (Name)" name="name" required class="contact-input magnetic-target"><input type="email" placeholder="Secure Comms Channel (Email)" name="email" required class="contact-input magnetic-target">
-                <textarea placeholder="Your Encrypted Transmission" name="message" rows="6" required class="contact-input magnetic-target"></textarea>
-                <button type="submit" class="hero-cta magnetic-target" style="width:auto;margin:10px auto 0">Transmit to HQ</button>
-             </form>
-        </section>
-    </main>
+        </div>
+    </section>
+
+    <!-- Fleet Section -->
+    <section class="section fleet" id="fleet">
+        <div class="container">
+            <h2 class="section-title fade-in-up">Our Fleet</h2>
+            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
+                Experience the power and precision of our carefully maintained fleet, each truck customized with anime-inspired designs and top-tier performance modifications.
+            </p>
+            <div class="truck-showcase">
+                <div class="truck-card fade-in-left">
+                    <div class="truck-image"></div>
+                    <h3 class="truck-name">Sakura Hauler</h3>
+                    <p>Premium Volvo FH16 with cherry blossom livery and enhanced engine performance.</p>
+                </div>
+                <div class="truck-card fade-in-up">
+                    <div class="truck-image"></div>
+                    <h3 class="truck-name">Dragon Express</h3>
+                    <p>Powerful Scania R-Series featuring dragon-themed artwork and luxury interior.</p>
+                </div>
+                <div class="truck-card fade-in-right">
+                    <div class="truck-image"></div>
+                    <h3 class="truck-name">Neon Rider</h3>
+                    <p>Sleek Mercedes-Benz Actros with cyberpunk aesthetics and LED lighting system.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Join Section -->
+    <section class="section join" id="join">
+        <div class="container">
+            <h2 class="section-title fade-in-up">Join Our Adventure</h2>
+            <p class="fade-in-up" style="text-align: center; font-size: 1.2rem; opacity: 0.9; margin-bottom: 2rem;">
+                Ready to embark on your isekai journey? Join our community of anime-loving truckers and experience the ultimate fusion of culture and simulation.
+            </p>
+            <form class="join-form fade-in-up">
+                <div class="form-group">
+                    <label class="form-label">Steam Name</label>
+                    <input type="text" class="form-input" placeholder="Enter your Steam display name" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Discord Username</label>
+                    <input type="text" class="form-input" placeholder="username#1234" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Favorite Anime</label>
+                    <input type="text" class="form-input" placeholder="Tell us your favorite anime series">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">ETS2 Experience</label>
+                    <select class="form-input">
+                        <option>Select your experience level</option>
+                        <option>Beginner (0-100 hours)</option>
+                        <option>Intermediate (100-500 hours)</option>
+                        <option>Advanced (500+ hours)</option>
+                        <option>Professional (1000+ hours)</option>
+                    </select>
+                </div>
+                <button type="submit" class="submit-button">Start Your Isekai Journey</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <a href="#hero" class="footer-logo magnetic-target">IsekaiXpress VTC</a>
             <div class="footer-links">
-                <a href="#hero" class="footer-link magnetic-target">Return to Home Base</a><a href="#features" class="footer-link magnetic-target">VTC Database</a>
-                <a href="#fleet" class="footer-link magnetic-target">Fleet Manifest</a><a href="#" class="footer-link magnetic-target" onclick="alert('Accessing Holo-Archives... Classified IsekaiX Data.')">Privacy Protocol Omega</a>
-                <a href="#" class="footer-link magnetic-target" onclick="alert('Consulting Universal VTC Codex... Stand By, Pilot.')">IsekaiX Service Mandate</a>
+                <a href="#" class="footer-link">Discord</a>
+                <a href="#" class="footer-link">Steam Group</a>
+                <a href="#" class="footer-link">TruckersMP</a>
+                <a href="#" class="footer-link">Events</a>
+                <a href="#" class="footer-link">Gallery</a>
+                <a href="#" class="footer-link">Contact</a>
             </div>
-            <div class="social-icons">
-                <a href="#" class="social-icon magnetic-target" aria-label="Discord" title="IsekaiX VTC Discord"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M19.54 0c-.46 0-.88.13-1.25.38L3.5 10.46a2.03 2.03 0 000 3.65l3.96 1.98a.93.93 0 00.95-.08L17.5 7.82a.7.7 0 01.98.98L9.4 18.27a.93.93 0 00-.08.95l1.98 3.96c.3.59.86.95 1.48.95.3 0 .6-.06.88-.2l14.28-9.52A2.03 2.03 0 0019.54 0zM7.52 20.48l-2.5-5 10.5-7.01 5 2.5-13 9.51z"/></svg></a>
-                <a href="#" class="social-icon magnetic-target" aria-label="X-Platform" title="IsekaiX on X"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25h6.08l4.308 5.926L18.244 2.25zm-1.16 17.52h1.833L7.084 4.126H5.117l11.967 15.644z"/></svg></a>
-                <a href="#" class="social-icon magnetic-target" aria-label="Holo-Stream" title="IsekaiX Holo-Streams"><svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M21.58 7.19c-.23-.86-.91-1.54-1.77-1.77C18.25 5 12 5 12 5s-6.25 0-7.81.42c-.86.23-1.54.91-1.77 1.77C2 8.75 2 12 2 12s0 3.25.42 4.81c.23.86.91 1.54 1.77 1.77C5.75 19 12 19 12 19s6.25 0 7.81-.42c.86-.23 1.54-.91 1.77-1.77C22 15.25 22 12 22 12s0-3.25-.42-4.81zM9.75 15.5V8.5l6.5 3.5-6.5 3.5z"/></svg></a>
+            <p style="opacity: 0.7;">&copy; 2025 Isekai Express VTC. All rights reserved. | Delivering dreams across dimensions.</p>
+            <div style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.5;">
+                <p>🌸 Powered by Anime • Driven by Passion • United by the Road 🌸</p>
             </div>
-            <p class="copyright">© <span id="currentYear"></span> IsekaiXpress VTC Protocols. All Realities Synchronized for ETS2. // Unauthorized Dimensional Drift Will Be Corrected //</p>
         </div>
     </footer>
-    
+
     <script>
-    console.log("Script execution started.");
-    gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
-    const lerp = (a, b, n) => (1 - n) * a + n * b;
-    let mouse = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
-    let isPageLoaded = false;
-
-    document.addEventListener('DOMContentLoaded', () => {
-        console.log("DOMContentLoaded fired.");
-        const loaderContainer = document.querySelector('.loader-container');
-        const body = document.body;
-
-        const LOADER_ANIMATION_DURATION = 4500; 
-        const LOADER_FADE_OUT_CSS = 1000;   
-
-        console.log(`Loader UI will be visible for ${LOADER_ANIMATION_DURATION}ms.`);
-
-        if (!loaderContainer) {
-            console.error("CRITICAL: Loader container not found! Forcing body visible.");
-            body.style.opacity = '1'; 
-            isPageLoaded = true;
-             setTimeout(() => { 
-                console.log("Calling initPage() due to loader container not found.");
-                initPage();
-            }, 50);
-            return;
-        }
-        
-        setTimeout(() => {
-            console.log("Loader animation duration reached. Starting fade out of loader and fade in of body.");
-            
-            loaderContainer.classList.add('hidden'); 
-            body.style.opacity = '1'; 
-
+        // ===== LOADING SCREEN =====
+        window.addEventListener('load', () => {
             setTimeout(() => {
-                if (loaderContainer.parentNode) {
-                    loaderContainer.style.display = 'none'; 
-                    console.log("Loader display set to 'none'.");
-                }
-            }, LOADER_FADE_OUT_CSS); 
-
-            isPageLoaded = true; 
-            setTimeout(() => {
-                console.log("Calling initPage().");
-                initPage(); 
-            }, 200); 
-
-        }, LOADER_ANIMATION_DURATION);
-    });
-
-    function initPage() {
-        if (!isPageLoaded) {
-            console.warn("initPage called but isPageLoaded is false. Aborting page init.");
-            return; 
-        }
-        console.log("initPage(): Starting full page initialization.");
-
-        try { console.log("Init: ThreeJS Background"); initThreeJSBackground(); } 
-        catch (e) { console.error("Error in initThreeJSBackground:", e); }
-
-        try { console.log("Init: Custom Cursor"); initCustomCursor(); }
-        catch (e) { console.error("Error in initCustomCursor:", e); }
-        
-        try { console.log("Init: Navigation"); initNavigation(); }
-        catch (e) { console.error("Error in initNavigation:", e); }
-        
-        try { console.log("Init: Anime Hero Particles"); initAnimeHeroParticles(70); }
-        catch (e) { console.error("Error in initAnimeHeroParticles:", e); }
-
-        try { console.log("Init: Anime Scroll Animations"); initAnimeScrollAnimations(); }
-        catch (e) { console.error("Error in initAnimeScrollAnimations:", e); }
-
-        try { console.log("Init: Magnetic Targets"); initMagneticTargets(); }
-        catch (e) { console.error("Error in initMagneticTargets:", e); }
-
-        try { console.log("Init: Copyright Year"); updateCopyrightYear(); }
-        catch (e) { console.error("Error in updateCopyrightYear:", e); }
-
-        try { console.log("Init: Mobile Menu"); initMobileMenu(); }
-        catch (e) { console.error("Error in initMobileMenu:", e); }
-
-        try { console.log("Init: Parallax"); initParallax(); }
-        catch (e) { console.error("Error in initParallax:", e); }
-
-        try { console.log("Init: Smooth Scroll"); initSmoothScroll(); }
-        catch (e) { console.error("Error in initSmoothScroll:", e); }
-        
-        console.log("initPage(): All initializations attempted.");
-    }
-    
-    function initThreeJSBackground() {
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('webgl-background'), alpha: true, antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        const primaryCol = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
-        const secondaryCol = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim());
-        const accentCol = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
-        const geometry = new THREE.PlaneGeometry(14, 14, 160, 160);
-        const material = new THREE.ShaderMaterial({
-            vertexShader: document.getElementById('vertexShader').textContent,
-            fragmentShader: document.getElementById('fragmentShader').textContent,
-            uniforms: {
-                time: { value: 0 }, resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
-                color1: { value: primaryCol }, color2: { value: secondaryCol }, color3: { value: accentCol },
-                intensity: { value: 0.6 }, amplitude: { value: 0.4 }
-            }, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 1000);
+            }, 3000);
         });
-        const mesh = new THREE.Mesh(geometry, material); scene.add(mesh); camera.position.z = 2;
-        let lastTime = 0; function animate(currentTime) { requestAnimationFrame(animate); const deltaTime = (currentTime - lastTime) * 0.001; lastTime = currentTime; material.uniforms.time.value += deltaTime * 0.35; renderer.render(scene, camera); } animate(0);
-        window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); material.uniforms.resolution.value.set(window.innerWidth, window.innerHeight); });
-    }
 
-    function initCustomCursor() {
-        const cursor = document.querySelector('.magnetic-cursor'); if (!cursor) return;
-        let cursorRenderX = mouse.x, cursorRenderY = mouse.y; const easingFactor = 0.15;
-        window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
-        function updateCursor() { if (!isPageLoaded) { requestAnimationFrame(updateCursor); return; } cursorRenderX = lerp(cursorRenderX, mouse.x, easingFactor); cursorRenderY = lerp(cursorRenderY, mouse.y, easingFactor); cursor.style.transform = `translate3d(${cursorRenderX - cursor.offsetWidth / 2}px, ${cursorRenderY - cursor.offsetHeight / 2}px, 0)`; requestAnimationFrame(updateCursor); } updateCursor();
-        document.querySelectorAll('a, button, .feature-card, .truck-card, .mobile-menu-toggle').forEach(el => { if (!el.classList.contains('magnetic-target')) { el.addEventListener('mouseenter', () => cursor.classList.add('hover')); el.addEventListener('mouseleave', () => cursor.classList.remove('hover')); } });
-    }
-    
-    function initMagneticTargets() {
-        const magneticTargets = document.querySelectorAll('.magnetic-target');
-        const cursor = document.querySelector('.magnetic-cursor');
-        if (!magneticTargets.length || !cursor) return;
+        // ===== CUSTOM CURSOR =====
+        const cursor = document.querySelector('.cursor');
+        const cursorFollower = document.querySelector('.cursor-follower');
+        let mouseX = 0, mouseY = 0;
+        let followerX = 0, followerY = 0;
 
-        gsap.set(magneticTargets, {transformOrigin: "center center"}); // Set default transform origin
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX - 10 + 'px';
+            cursor.style.top = mouseY - 10 + 'px';
+        });
 
-        const magneticStrength = 0.35; 
-        magneticTargets.forEach(el => {
+        // Smooth follower animation
+        function animateFollower() {
+            followerX += (mouseX - followerX) * 0.1;
+            followerY += (mouseY - followerY) * 0.1;
+            cursorFollower.style.left = followerX - 20 + 'px';
+            cursorFollower.style.top = followerY - 20 + 'px';
+            requestAnimationFrame(animateFollower);
+        }
+        animateFollower();
+
+        // Cursor interactions
+        const interactiveElements = document.querySelectorAll('a, button, .nav-dot, .stat-card, .truck-card');
+        interactiveElements.forEach(el => {
             el.addEventListener('mouseenter', () => {
-                cursor.classList.add('hover');
-                gsap.to(el, { scale:1.03, duration:0.3, ease: "power2.out"});
+                cursor.style.transform = 'scale(1.5)';
+                cursorFollower.style.transform = 'scale(1.5)';
+                cursorFollower.style.borderColor = '#EC4899';
             });
             el.addEventListener('mouseleave', () => {
-                cursor.classList.remove('hover');
-                gsap.to(el, { x: 0, y: 0, scale:1, duration: 0.6, ease: "elastic.out(1.2, 0.5)", overwrite: "auto" });
-            });
-            el.addEventListener('mousemove', function(e) {
-                const rect = el.getBoundingClientRect();
-                const elCenterX = rect.left + rect.width / 2;
-                const elCenterY = rect.top + rect.height / 2;
-                const dxFromCenter = e.clientX - elCenterX;
-                const dyFromCenter = e.clientY - elCenterY;
-                gsap.to(el, { x: dxFromCenter * magneticStrength, y: dyFromCenter * magneticStrength, duration: 0.9, ease: "power4.out", overwrite: "auto" });
+                cursor.style.transform = 'scale(1)';
+                cursorFollower.style.transform = 'scale(1)';
+                cursorFollower.style.borderColor = '#3B82F6';
             });
         });
-    }
 
-    function initNavigation() { const nav = document.querySelector('.nav'); if (!nav) return; ScrollTrigger.create({ start: 'top -70', end: 99999, toggleClass:{className: 'scrolled', targets: nav} }); }
-    
-    function initMobileMenu() {
-        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle'); const mobileMenu = document.querySelector('.mobile-menu'); const navLinksMobile = mobileMenu.querySelectorAll('.nav-link');
-        if (!mobileMenuToggle || !mobileMenu) return;
-        mobileMenuToggle.addEventListener('click', () => { const isActive = mobileMenuToggle.classList.toggle('active'); mobileMenu.classList.toggle('active'); document.body.style.overflow = isActive ? 'hidden' : ''; if (isActive) { gsap.fromTo(navLinksMobile, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, stagger: {amount: 0.3, from: "start"}, delay: 0.1, ease: "power3.out" }); } });
-        navLinksMobile.forEach(link => { link.addEventListener('click', () => { mobileMenuToggle.classList.remove('active'); mobileMenu.classList.remove('active'); document.body.style.overflow = ''; }); });
-    }
+        // ===== FLOATING NAVIGATION =====
+        const sections = document.querySelectorAll('section');
+        const navDots = document.querySelectorAll('.nav-dot');
+        
+        // Smooth scroll navigation
+        navDots.forEach((dot, index) => {
+            dot.addEventListener('click', () => {
+                const targetSection = dot.getAttribute('data-section');
+                const section = document.getElementById(targetSection);
+                section.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
 
-    function initAnimeHeroParticles(count = 70) { 
-        const container = document.querySelector('.particles-container'); if (!container) return; container.innerHTML = ""; 
-        const colors = [ getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(), getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(), getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()];
-        for (let i = 0; i < count; i++) { const particle = document.createElement('div'); particle.classList.add('particle'); const size = Math.random() * 5 + 1.5; particle.style.width = `${size}px`; particle.style.height = `${size * (Math.random() * 1.5 + 0.5)}px`; particle.style.left = `${Math.random() * 100}%`; particle.style.top = `${Math.random() * 100}%`; const particleColor = colors[Math.floor(Math.random() * colors.length)]; particle.style.backgroundColor = particleColor; const duration = Math.random() * 5 + 4; const delay = Math.random() * 4; gsap.set(particle, { opacity: 0, scale: Math.random() * 0.5 + 0.5, x: (Math.random() - 0.5) * 50, y: (Math.random() - 0.5) * 50 }); gsap.to(particle, { duration: duration, delay: delay, opacity: Math.random() * 0.5 + 0.3, x: (Math.random() - 0.5) * 300, y: (Math.random() - 0.5) * 300, rotationZ: (Math.random() - 0.5) * 720, scale: Math.random() * 0.3 + 0.2, repeat: -1, yoyo: true, ease: "sine.inOut" }); container.appendChild(particle); }
-    }
-    
-    function initParallax() {
-        const parallaxLayers = document.querySelectorAll('.parallax-layer'); if(!parallaxLayers.length)return;
-        parallaxLayers.forEach(layer => { const depth = parseFloat(layer.dataset.depth) || 0.1; gsap.to(layer, { y: (i, target) => -ScrollTrigger.maxScroll(window) * depth, ease: "none", scrollTrigger:{ trigger: "body", start: "top top", end: "bottom bottom", scrub: 2.2, } }); });
-    }
+        // Update active navigation on scroll
+        window.addEventListener('scroll', () => {
+            let currentSection = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - sectionHeight / 3) {
+                    currentSection = section.getAttribute('id');
+                }
+            });
 
-    function initAnimeScrollAnimations() { 
-        const heroTitle = document.querySelector('.hero-title.gsap-char-reveal'); if (heroTitle) { const chars = heroTitle.textContent.split("").map(char => char === ' ' ? `<span> </span>` : `<span>${char}</span>`).join(""); heroTitle.innerHTML = chars; gsap.fromTo(heroTitle.querySelectorAll("span"), { opacity: 0, y: 30, x:(i)=>(Math.random()-0.5)*30, scale: 0.7, filter: 'blur(4px)', rotationZ:(i)=>(Math.random()-0.5)*20 }, { opacity: 1, y: 0, x:0, scale: 1, filter: 'blur(0px)', rotationZ:0, duration: 0.8, ease: 'expo.out', stagger: { amount: 0.6, from: "random" }, delay: 0.5, scrollTrigger: { trigger: heroTitle, start: 'top 90%', toggleActions: 'play none none none' } }); } 
-        gsap.utils.toArray('.section-title.reveal-up').forEach(title => { gsap.fromTo(title, { opacity: 0, y: 50, skewX: -10, filter:'blur(3px)' }, { opacity: 1, y: 0, skewX: 0, filter:'blur(0px)', duration: 1, ease: 'power4.out', scrollTrigger: { trigger: title, start: "top 88%", toggleActions: 'play none none none' } }); }); 
-        gsap.from(".feature-card", { scrollTrigger: { trigger: ".features-grid", start: "top 85%", toggleActions: 'play none none none', once: true }, opacity: 0, x: (i) => (i % 2 === 0 ? -60 : 60), y:40, scale:0.9, rotationZ:(i) => (i % 2 === 0 ? -5 : 5), duration: 0.7, stagger: 0.1, ease: "power3.out" }); 
-        gsap.from(".truck-card", { scrollTrigger: { trigger: ".fleet-grid", start: "top 85%", toggleActions: 'play none none none', once: true }, opacity: 0, y: 80, z:-100, rotationX: -25, rotationY: (i)=>(i%2 === 0 ? 15: -15), transformOrigin: "center center -100px", duration: 0.9, stagger: 0.15, ease: "expo.out" }); 
-        gsap.utils.toArray('.join-content .reveal-up, .join-content .reveal-scale').forEach(el => { let startProps = { opacity: 0, scale: el.classList.contains('reveal-scale') ? 0.6 : 0.8, filter:'blur(5px)' }; if (el.classList.contains('reveal-up')) startProps.y = 50; gsap.fromTo(el, startProps, { opacity: 1, y: 0, scale: 1, filter:'blur(0px)', duration: 1, ease: 'elastic.out(1, 0.6)', delay: (parseFloat(el.dataset.delay) || 0) * 1.2, scrollTrigger: { trigger: el.parentElement, start: 'top 88%', toggleActions: 'play none none none', once:true } }); }); 
-        const contactForm = document.querySelector(".contact-form.reveal-up"); if(contactForm) { gsap.fromTo(contactForm, { opacity:1, clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' }, { clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', duration: 1.2, ease: 'power3.inOut', delay: parseFloat(contactForm.dataset.delay) || 0, scrollTrigger: { trigger: contactForm, start: "top 90%", toggleActions: 'play none none none', once:true } }); }
-    }
-    
-    function initSmoothScroll(){document.querySelectorAll('a[href^="#"]').forEach(anchor=>{anchor.addEventListener("click",function(e){e.preventDefault();const targetId=this.getAttribute("href"),targetElement=document.querySelector(targetId);if(targetElement){const navHeight=document.querySelector(".nav")?.offsetHeight||60;gsap.to(window,{duration:1.5,scrollTo:{y:targetElement,offsetY:navHeight+20},ease:"power4.inOut"})}})}) }
-    function updateCopyrightYear(){const el=document.getElementById("currentYear");if(el)el.textContent=new Date().getFullYear()}
-    document.querySelectorAll("form").forEach(form=>{form.addEventListener("submit",e=>{e.preventDefault();alert("TRANSMISSION SENT TO THE VOID... OR PERHAPS JUST A DEMO ALERT.")})});
-    console.log("Script execution finished declarations.");
+            navDots.forEach(dot => {
+                dot.classList.remove('active');
+                if (dot.getAttribute('data-section') === currentSection) {
+                    dot.classList.add('active');
+                }
+            });
+        });
+
+        // ===== PARTICLE SYSTEM =====
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 6 + 's';
+                particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+                
+                // Random colors
+                const colors = ['#F59E0B', '#EC4899', '#3B82F6', '#10B981'];
+                particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // ===== SCROLL ANIMATIONS =====
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        const animatedElements = document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right, .section');
+        animatedElements.forEach(el => observer.observe(el));
+
+        // ===== PARALLAX EFFECTS =====
+        window.addEventListener('scroll', () => {
+            const scrolled = window.pageYOffset;
+            const parallaxElements = document.querySelectorAll('.hero-bg, .portal');
+            
+            parallaxElements.forEach(element => {
+                const speed = element.classList.contains('portal') ? 0.5 : 0.3;
+                element.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+
+        // ===== ANIMATED COUNTERS =====
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            
+            counters.forEach(counter => {
+                const target = parseInt(counter.textContent.replace(/\D/g, ''));
+                const suffix = counter.textContent.replace(/[0-9]/g, '');
+                let current = 0;
+                const duration = 2000;
+                const increment = target / (duration / 16);
+                
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.textContent = Math.floor(current) + suffix;
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target + suffix;
+                    }
+                };
+                
+                // Start animation when element is visible
+                const counterObserver = new IntersectionObserver((entries) => {
+                    if (entries[0].isIntersecting) {
+                        updateCounter();
+                        counterObserver.disconnect();
+                    }
+                });
+                
+                counterObserver.observe(counter);
+            });
+        }
+        animateCounters();
+
+        // ===== 3D TRUCK CARD EFFECTS =====
+        const truckCards = document.querySelectorAll('.truck-card');
+        
+        truckCards.forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                if (window.innerWidth > 768) { // Only on desktop
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    const rotateX = (y - centerY) / 10;
+                    const rotateY = (centerX - x) / 10;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(20px)`;
+                }
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateZ(0)';
+            });
+        });
+
+        // ===== FORM INTERACTIONS =====
+        const form = document.querySelector('.join-form');
+        const inputs = form.querySelectorAll('.form-input');
+        
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.style.transform = 'scale(1)';
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Create success animation
+            const button = form.querySelector('.submit-button');
+            const originalText = button.textContent;
+            
+            button.textContent = 'Joining the Adventure...';
+            button.style.background = 'linear-gradient(135deg, #10B981, #059669)';
+            
+            setTimeout(() => {
+                button.textContent = 'Welcome to Isekai Express! 🌸';
+                button.style.background = 'linear-gradient(135deg, #10B981, #34D399)';
+                
+                // Create confetti effect
+                createConfetti();
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.style.background = '';
+                    form.reset();
+                }, 3000);
+            }, 2000);
+        });
+
+        // ===== CONFETTI EFFECT =====
+        function createConfetti() {
+            const colors = ['#EC4899', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = '10px';
+                confetti.style.height = '10px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.top = '-10px';
+                confetti.style.zIndex = '10000';
+                confetti.style.pointerEvents = 'none';
+                confetti.style.borderRadius = '50%';
+                
+                document.body.appendChild(confetti);
+                
+                // Animate confetti
+                const animation = confetti.animate([
+                    {
+                        transform: 'translateY(0) rotate(0deg)',
+                        opacity: 1
+                    },
+                    {
+                        transform: `translateY(100vh) rotate(${Math.random() * 360}deg)`,
+                        opacity: 0
+                    }
+                ], {
+                    duration: Math.random() * 3000 + 2000,
+                    easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                });
+                
+                animation.addEventListener('finish', () => {
+                    confetti.remove();
+                });
+            }
+        }
+
+        // ===== ROUTE ANIMATION =====
+        function animateRoute() {
+            const cities = document.querySelectorAll('.city');
+            
+            cities.forEach((city, index) => {
+                city.style.animationDelay = `${index * 0.5}s`;
+                
+                city.addEventListener('mouseenter', () => {
+                    city.style.transform = 'scale(1.1) translateY(-5px)';
+                    city.style.boxShadow = '0 10px 25px rgba(236, 72, 153, 0.4)';
+                });
+                
+                city.addEventListener('mouseleave', () => {
+                    city.style.transform = 'scale(1) translateY(0)';
+                    city.style.boxShadow = 'none';
+                });
+            });
+        }
+        animateRoute();
+
+        // ===== SMOOTH SCROLL FOR CTA BUTTON =====
+        document.querySelector('.cta-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('about').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        });
+
+        // ===== KEYBOARD NAVIGATION =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
+                e.preventDefault();
+                const currentActive = document.querySelector('.nav-dot.active');
+                const currentIndex = Array.from(navDots).indexOf(currentActive);
+                const nextIndex = (currentIndex + 1) % navDots.length;
+                navDots[nextIndex].click();
+            } else if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
+                e.preventDefault();
+                const currentActive = document.querySelector('.nav-dot.active');
+                const currentIndex = Array.from(navDots).indexOf(currentActive);
+                const prevIndex = currentIndex === 0 ? navDots.length - 1 : currentIndex - 1;
+                navDots[prevIndex].click();
+            }
+        });
+
+        // ===== PERFORMANCE OPTIMIZATION =====
+        // Reduce motion for users who prefer it
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.documentElement.style.setProperty('--animation-duration', '0.01s');
+            const animations = document.querySelectorAll('*');
+            animations.forEach(el => {
+                el.style.animationDuration = '0.01s';
+                el.style.animationDelay = '0s';
+                el.style.transitionDuration = '0.01s';
+            });
+        }
+
+        // ===== EASTER EGG - KONAMI CODE =====
+        let konamiCode = [];
+        const konamiSequence = [
+            'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+            'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+            'KeyB', 'KeyA'
+        ];
+
+        document.addEventListener('keydown', (e) => {
+            konamiCode.push(e.code);
+            
+            if (konamiCode.length > konamiSequence.length) {
+                konamiCode.shift();
+            }
+            
+            if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
+                // Activate anime mode!
+                document.body.style.filter = 'hue-rotate(180deg) saturate(1.5)';
+                createConfetti();
+                
+                // Show special message
+                const message = document.createElement('div');
+                message.innerHTML = '🌸 ANIME MODE ACTIVATED! 🌸<br>You found the secret!';
+                message.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: linear-gradient(135deg, #EC4899, #8B5CF6);
+                    color: white;
+                    padding: 2rem;
+                    border-radius: 20px;
+                    font-family: 'Orbitron', sans-serif;
+                    font-weight: bold;
+                    text-align: center;
+                    z-index: 10001;
+                    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+                    animation: fadeInUp 0.5s ease;
+                `;
+                
+                document.body.appendChild(message);
+                
+                setTimeout(() => {
+                    message.remove();
+                    document.body.style.filter = '';
+                }, 5000);
+                
+                konamiCode = [];
+            }
+        });
+
+        // ===== INITIALIZE ON DOM LOAD =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Add stagger animation to stats
+            const statCards = document.querySelectorAll('.stat-card');
+            statCards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.2}s`;
+            });
+
+            // Add stagger animation to truck cards
+            const truckCardElements = document.querySelectorAll('.truck-card');
+            truckCardElements.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.3}s`;
+            });
+        });
+
+        // ===== RESPONSIVE OPTIMIZATIONS =====
+        function handleResize() {
+            if (window.innerWidth <= 768) {
+                // Disable 3D effects on mobile
+                truckCards.forEach(card => {
+                    card.style.transform = 'none';
+                });
+            }
+        }
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Initial call
     </script>
 </body>
 </html>
