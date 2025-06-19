@@ -1714,4 +1714,16 @@
             observer.observe(card);
         });
 
-        console.log('🌸 Isekai Express
+                console.log('🌸 Isekai Express Website Initialized! Ready for your journey!');
+
+        // Initialize all animations and effects once DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            startAnimations();
+            updateScrollMetrics();
+            createSakuraPetals();
+            createNetworkVisualization();
+            createMatrixRain();
+        });
+    </script>
+</body>
+</html>
