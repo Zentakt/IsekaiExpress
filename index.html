@@ -20,10 +20,12 @@
             --sakura-pink: #FFB7C5;
             --cyber-cyan: #00FFFF;
             --dark-bg: #0A0A0F;
+            --road-gray: #2D3748;
             --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --gradient-4: linear-gradient(135deg, #FFB7C5 0%, #EC4899 50%, #8B5CF6 100%);
+            --road-gradient: linear-gradient(180deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
         }
 
         body {
@@ -32,48 +34,292 @@
             color: white;
             overflow-x: hidden;
             cursor: none;
+            perspective: 1000px;
         }
 
-        /* Advanced Custom Cursor */
-        .cursor {
+        /* Road Environment */
+        .road-container {
             position: fixed;
-            width: 20px;
-            height: 20px;
-            background: var(--neon-pink);
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
             pointer-events: none;
-            z-index: 9999;
-            mix-blend-mode: difference;
-            transition: all 0.1s ease;
+            z-index: 1;
+            transform-style: preserve-3d;
         }
 
-        .cursor-follower {
+        .road-surface {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 200vh;
+            background: var(--road-gradient);
+            transform-origin: center bottom;
+            animation: roadMovement 0.1s linear infinite;
+        }
+
+        .road-lines {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 40px,
+                #FFD700 40px,
+                #FFD700 80px,
+                transparent 80px,
+                transparent 120px
+            );
+            animation: roadLinesMove 2s linear infinite;
+        }
+
+        .road-side-lines {
+            position: absolute;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: repeating-linear-gradient(
+                to bottom,
+                transparent 0px,
+                transparent 20px,
+                white 20px,
+                white 40px
+            );
+            animation: roadLinesMove 1s linear infinite;
+        }
+
+        .road-side-lines.left {
+            left: 20%;
+        }
+
+        .road-side-lines.right {
+            right: 20%;
+        }
+
+        @keyframes roadMovement {
+            0% { transform: translateY(0) rotateX(0deg); }
+            100% { transform: translateY(100px) rotateX(2deg); }
+        }
+
+        @keyframes roadLinesMove {
+            0% { background-position: 0 0; }
+            100% { background-position: 0 100px; }
+        }
+
+        /* Virtual Dashboard */
+        .dashboard {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            padding: 20px;
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--neon-pink);
+            display: flex;
+            gap: 30px;
+            align-items: center;
+            box-shadow: 0 10px 40px rgba(236, 72, 153, 0.3);
+        }
+
+        .speedometer {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, var(--electric-blue), var(--neon-pink), var(--golden-accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .speedometer::before {
+            content: '';
+            position: absolute;
+            width: 70px;
+            height: 70px;
+            background: var(--dark-bg);
+            border-radius: 50%;
+        }
+
+        .speed-display {
+            position: relative;
+            z-index: 10;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 10px currentColor;
+        }
+
+        .progress-bar {
+            width: 200px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-3);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: progressShimmer 2s linear infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Audio System */
+        .audio-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            padding: 15px;
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--electric-blue);
+        }
+
+        .play-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-4);
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .play-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 20px var(--neon-pink);
+        }
+
+        .audio-visualizer {
+            display: flex;
+            gap: 2px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+
+        .audio-bar {
+            width: 3px;
+            height: 20px;
+            background: var(--cyber-cyan);
+            border-radius: 2px;
+            animation: audioVisualize 1s ease-in-out infinite;
+        }
+
+        .audio-bar:nth-child(1) { animation-delay: 0s; }
+        .audio-bar:nth-child(2) { animation-delay: 0.1s; }
+        .audio-bar:nth-child(3) { animation-delay: 0.2s; }
+        .audio-bar:nth-child(4) { animation-delay: 0.3s; }
+        .audio-bar:nth-child(5) { animation-delay: 0.4s; }
+
+        @keyframes audioVisualize {
+            0%, 100% { transform: scaleY(0.3); }
+            50% { transform: scaleY(1); }
+        }
+
+        /* Enhanced Custom Cursor with Anime Character */
+        .cursor {
             position: fixed;
             width: 40px;
             height: 40px;
-            border: 2px solid var(--electric-blue);
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-character {
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--sakura-pink), var(--neon-pink));
             border-radius: 50%;
+            position: relative;
+            animation: characterFloat 2s ease-in-out infinite;
+        }
+
+        .cursor-character::before {
+            content: '( ◕ ◡ ◕ )';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 12px;
+            color: white;
+            font-weight: bold;
+        }
+
+        @keyframes characterFloat {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(5deg); }
+        }
+
+        .speech-bubble {
+            position: fixed;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--dark-bg);
+            padding: 8px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
             pointer-events: none;
             z-index: 9998;
-            opacity: 0.7;
-            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .cursor-trail {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: var(--sakura-pink);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9997;
             opacity: 0;
-            animation: trailFade 0.5s ease-out forwards;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            max-width: 150px;
+            text-align: center;
         }
 
-        @keyframes trailFade {
-            0% { opacity: 1; transform: scale(1); }
-            100% { opacity: 0; transform: scale(0); }
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid rgba(255, 255, 255, 0.95);
+        }
+
+        .speech-bubble.show {
+            opacity: 1;
+            transform: translateY(0);
         }
 
         /* Enhanced Loading Screen */
@@ -96,56 +342,40 @@
             position: relative;
         }
 
-        .loading-character {
+        .loading-truck {
             width: 200px;
-            height: 300px;
+            height: 100px;
             margin: 0 auto 2rem;
             position: relative;
-            overflow: hidden;
+            background: linear-gradient(45deg, var(--neon-pink), var(--electric-blue));
+            border-radius: 10px;
+            animation: truckDrive 2s ease-in-out infinite;
         }
 
-        .character-silhouette {
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--neon-pink), var(--electric-blue), var(--golden-accent));
-            clip-path: polygon(30% 0%, 70% 0%, 85% 25%, 95% 50%, 90% 75%, 75% 100%, 25% 100%, 10% 75%, 5% 50%, 15% 25%);
-            animation: characterGlow 2s ease-in-out infinite alternate;
-            position: relative;
-        }
-
-        .character-silhouette::before {
+        .loading-truck::before {
             content: '';
             position: absolute;
-            top: 20%;
+            top: 50%;
+            left: -20px;
+            width: 40px;
+            height: 60px;
+            background: var(--golden-accent);
+            border-radius: 5px;
+            transform: translateY(-50%);
+        }
+
+        .loading-truck::after {
+            content: '🚛';
+            position: absolute;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 30px;
-            height: 30px;
-            background: var(--cyber-cyan);
-            border-radius: 50%;
-            animation: eyeGlow 1.5s ease-in-out infinite;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
         }
 
-        @keyframes characterGlow {
-            0% { 
-                filter: drop-shadow(0 0 30px var(--neon-pink)) brightness(1);
-                transform: scale(1);
-            }
-            100% { 
-                filter: drop-shadow(0 0 50px var(--electric-blue)) brightness(1.2);
-                transform: scale(1.05);
-            }
-        }
-
-        @keyframes eyeGlow {
-            0%, 100% { opacity: 1; transform: translateX(-50%) scale(1); }
-            50% { opacity: 0.3; transform: translateX(-50%) scale(0.8); }
-        }
-
-        .loading-text {
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 2rem;
+        @keyframes truckDrive {
+            0%, 100% { transform: translateX(-10px) rotateZ(-1deg); }
+            50% { transform: translateX(10px) rotateZ(1deg); }
         }
 
         .loading-logo {
@@ -193,53 +423,6 @@
             100% { opacity: 0.8; transform: translateX(-50%) translateY(0); }
         }
 
-        .sound-visualizer {
-            display: flex;
-            justify-content: center;
-            gap: 4px;
-            margin: 2rem 0;
-        }
-
-        .sound-bar {
-            width: 6px;
-            background: var(--gradient-3);
-            border-radius: 3px;
-            animation: soundWave 1.5s ease-in-out infinite;
-        }
-
-        .sound-bar:nth-child(1) { height: 40px; animation-delay: 0s; }
-        .sound-bar:nth-child(2) { height: 60px; animation-delay: 0.1s; }
-        .sound-bar:nth-child(3) { height: 80px; animation-delay: 0.2s; }
-        .sound-bar:nth-child(4) { height: 50px; animation-delay: 0.3s; }
-        .sound-bar:nth-child(5) { height: 70px; animation-delay: 0.4s; }
-        .sound-bar:nth-child(6) { height: 45px; animation-delay: 0.5s; }
-        .sound-bar:nth-child(7) { height: 65px; animation-delay: 0.6s; }
-
-        @keyframes soundWave {
-            0%, 100% { transform: scaleY(0.3); opacity: 0.7; }
-            50% { transform: scaleY(1); opacity: 1; }
-        }
-
-        .glitch-effect {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--dark-bg);
-            opacity: 0;
-            animation: glitchReveal 0.5s ease-out 4s forwards;
-        }
-
-        @keyframes glitchReveal {
-            0% { opacity: 0; }
-            20% { opacity: 1; transform: translateX(-5px); }
-            40% { opacity: 0; transform: translateX(5px); }
-            60% { opacity: 1; transform: translateX(-2px); }
-            80% { opacity: 0; transform: translateX(2px); }
-            100% { opacity: 1; transform: translateX(0); }
-        }
-
         /* Floating Navigation Enhanced */
         .floating-nav {
             position: fixed;
@@ -270,20 +453,24 @@
         }
 
         .nav-dot::after {
-            content: '';
+            content: attr(data-label);
             position: absolute;
             top: 50%;
             right: 20px;
             transform: translateY(-50%);
-            width: 0;
-            height: 2px;
-            background: linear-gradient(90deg, var(--neon-pink), var(--electric-blue));
-            transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            border-radius: 1px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 5px;
+            white-space: nowrap;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
         }
 
         .nav-dot:hover::after {
-            width: 120px;
+            opacity: 1;
         }
 
         /* Hero Section with Portal Opening */
@@ -294,6 +481,7 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            background: linear-gradient(45deg, var(--dark-bg), #1a1a2e);
         }
 
         .dimensional-rift {
@@ -506,6 +694,7 @@
             align-items: center;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
         }
 
         .morphing-bg {
@@ -610,34 +799,6 @@
             50% { transform: scale(1.5); opacity: 1; }
         }
 
-        /* Fleet Section - Holographic Effect */
-        .fleet {
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05), rgba(139, 92, 246, 0.05));
-        }
-
-        .hologram-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        .hologram-line {
-            position: absolute;
-            width: 100%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--cyber-cyan), transparent);
-            animation: hologramScan 4s linear infinite;
-        }
-
-        @keyframes hologramScan {
-            0% { top: 0%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
         /* Join Section - Matrix Effect */
         .join {
             background: linear-gradient(135deg, rgba(107, 70, 193, 0.05), rgba(0, 255, 255, 0.05));
@@ -714,63 +875,6 @@
             border-radius: 2px;
         }
 
-        /* Enhanced Cards */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 3rem;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 2.5rem;
-            text-align: center;
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--gradient-4);
-            opacity: 0;
-            transition: opacity 0.4s ease;
-        }
-
-        .stat-card:hover::before {
-            opacity: 0.1;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-15px) rotateX(5deg);
-            box-shadow: 0 30px 60px rgba(236, 72, 153, 0.3);
-        }
-
-        .stat-number {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 3.5rem;
-            font-weight: 900;
-            color: var(--neon-pink);
-            display: block;
-            margin-bottom: 1rem;
-            text-shadow: 0 0 20px currentColor;
-        }
-
-        .stat-label {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            font-weight: 500;
-        }
-
         /* Story Content */
         .story-content {
             text-align: center;
@@ -799,6 +903,7 @@
             margin-top: 3rem;
         }
 
+      /* Community Features - Continued */
         .community-card {
             background: rgba(255, 255, 255, 0.05);
             border-radius: 20px;
@@ -808,685 +913,789 @@
             transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
+            transform-style: preserve-3d;
         }
 
         .community-card::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, var(--neon-pink), transparent);
-            animation: cardGlow 4s linear infinite;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.8s ease;
         }
 
         .community-card:hover::before {
-            opacity: 0.1;
+            left: 100%;
         }
 
-        @keyframes cardGlow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .community-card:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border-color: var(--neon-pink);
         }
 
-        .community-icon {
+        .card-icon {
             font-size: 3rem;
             margin-bottom: 1.5rem;
-            display: block;
-            text-align: center;
+            background: var(--gradient-4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .community-title {
+        .card-title {
             font-family: 'Orbitron', sans-serif;
             font-size: 1.5rem;
             font-weight: 700;
             margin-bottom: 1rem;
-            color: var(--golden-accent);
-            text-align: center;
+            color: var(--cyber-cyan);
         }
 
-        .community-description {
-            font-size: 1.1rem;
-            line-height: 1.6;
+        .card-description {
             opacity: 0.9;
-            text-align: center;
+            line-height: 1.6;
         }
 
-        /* Enhanced Form */
-        .join-form {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 25px;
-            padding: 4rem;
+        /* Routes Grid */
+        .routes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
             margin-top: 3rem;
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+        }
+
+        .route-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 15px;
+            padding: 2rem;
+            border: 1px solid var(--electric-blue);
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
 
-        .join-form::before {
+        .route-card::after {
             content: '';
             position: absolute;
             top: 0;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(59, 130, 246, 0.1), transparent);
-            animation: formShimmer 6s linear infinite;
+            right: 0;
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, var(--golden-accent), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        @keyframes formShimmer {
-            0% { transform: translateX(-100%) translateY(-100%) rotate(0deg); }
-            100% { transform: translateX(100%) translateY(100%) rotate(360deg); }
+        .route-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.2);
+            border-color: var(--neon-pink);
+        }
+
+        .route-card:hover::after {
+            opacity: 1;
+        }
+
+        .route-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: var(--cyber-cyan);
+        }
+
+        .route-distance {
+            color: var(--golden-accent);
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .route-description {
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+
+        /* Join Form */
+        .join-form {
+            max-width: 600px;
+            margin: 3rem auto 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 3rem;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .form-group {
             margin-bottom: 2rem;
-            position: relative;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--cyber-cyan);
+            font-weight: bold;
         }
 
         .form-input {
             width: 100%;
-            padding: 1.5rem;
-            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
             border: 2px solid rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
+            border-radius: 10px;
             color: white;
-            font-size: 1.1rem;
-            backdrop-filter: blur(10px);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         .form-input:focus {
             outline: none;
             border-color: var(--neon-pink);
-            box-shadow: 0 0 30px rgba(236, 72, 153, 0.3);
-            transform: scale(1.02);
-        }
-
-        .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .form-label {
-            position: absolute;
-            top: -10px;
-            left: 20px;
-            background: var(--dark-bg);
-            padding: 0 10px;
-            font-size: 0.9rem;
-            color: var(--electric-blue);
-            font-weight: 600;
+            box-shadow: 0 0 20px rgba(236, 72, 153, 0.3);
         }
 
         .submit-btn {
             width: 100%;
-            padding: 1.5rem;
+            padding: 1rem;
             background: var(--gradient-4);
             border: none;
-            border-radius: 15px;
+            border-radius: 10px;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            position: relative;
-            overflow: hidden;
+            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
         }
 
-        .submit-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            transform: translate(-50%, -50%);
-        }
-
-        .submit-btn:hover::before {
-            width: 300px;
-            height: 300px;
-        }
-
         .submit-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(236, 72, 153, 0.4);
+            box-shadow: 0 15px 30px rgba(236, 72, 153, 0.4);
         }
 
-        /* Interactive Magnetic Effect */
-        .magnetic {
-            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .floating-nav {
-                right: 15px;
-                gap: 0.8rem;
-            }
-
-            .nav-dot {
-                width: 10px;
-                height: 10px;
-            }
-
-            .hero-title {
-                font-size: 2.5rem;
-            }
-
-            .hero-subtitle {
-                font-size: 1.2rem;
-            }
-
-            .section {
-                padding: 3rem 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .community-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .join-form {
-                padding: 2rem;
-                margin: 0 1rem;
-            }
-
-            .loading-logo {
-                font-size: 2.5rem;
-            }
-
-            .character-silhouette {
-                width: 150px;
-                height: 200px;
-            }
-        }
-
-        /* Scroll Animations */
-        .fade-in-up {
+        /* Scroll to Top Button */
+        .scroll-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-4);
+            border: none;
+            border-radius: 50%;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1000;
             opacity: 0;
-            transform: translateY(50px);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: translateY(20px);
         }
 
-        .fade-in-up.animate {
+        .scroll-top.visible {
             opacity: 1;
             transform: translateY(0);
         }
 
-        .fade-in-left {
-            opacity: 0;
-            transform: translateX(-50px);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        .scroll-top:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 15px 30px rgba(236, 72, 153, 0.4);
         }
 
-        .fade-in-left.animate {
-            opacity: 1;
-            transform: translateX(0);
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .dashboard {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .floating-nav {
+                display: none;
+            }
+            
+            .audio-controls {
+                top: 10px;
+                right: 10px;
+                padding: 10px;
+            }
+            
+            .section {
+                padding: 3rem 1rem;
+            }
+            
+            .community-grid,
+            .routes-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
-        .fade-in-right {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-
-        .fade-in-right.animate {
-            opacity: 1;
-            transform: translateX(0);
-        }
-
-        /* Advanced Particle System */
-        .particle {
+        /* Transformation Sequences */
+        .section-transition {
             position: absolute;
-            width: 2px;
-            height: 2px;
-            background: var(--cyber-cyan);
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0.7;
-            animation: particleFloat 6s linear infinite;
-        }
-
-        @keyframes particleFloat {
-            0% {
-                transform: translateY(100vh) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.7;
-            }
-            90% {
-                opacity: 0.7;
-            }
-            100% {
-                transform: translateY(-100px) translateX(100px);
-                opacity: 0;
-            }
-        }
-
-        /* Mouse Trail Enhancement */
-        .trail-particle {
-            position: fixed;
-            width: 3px;
-            height: 3px;
-            background: var(--sakura-pink);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9995;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, var(--neon-pink), transparent);
             opacity: 0;
-            animation: trailParticle 1s ease-out forwards;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
         }
 
-        @keyframes trailParticle {
-            0% { 
-                opacity: 1; 
-                transform: scale(1); 
-            }
-            100% { 
-                opacity: 0; 
-                transform: scale(0) translateY(-20px); 
-            }
+        .section-transition.active {
+            opacity: 0.3;
+            animation: transformationPulse 1s ease-in-out;
+        }
+
+        @keyframes transformationPulse {
+            0%, 100% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+        }
+
+        /* Loading Complete */
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
-    <!-- Custom Cursor -->
-    <div class="cursor"></div>
-    <div class="cursor-follower"></div>
-
-    <!-- Enhanced Loading Screen -->
+    <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
-            <div class="loading-character">
-                <div class="character-silhouette"></div>
-            </div>
-            <div class="loading-text">
-                <h1 class="loading-logo">ISEKAI EXPRESS</h1>
-            </div>
-            <div class="sound-visualizer">
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-                <div class="sound-bar"></div>
-            </div>
+            <div class="loading-truck"></div>
+            <div class="loading-logo">Isekai Express</div>
         </div>
-        <div class="glitch-effect"></div>
     </div>
+
+    <!-- Road Environment -->
+    <div class="road-container">
+        <div class="road-surface"></div>
+        <div class="road-lines"></div>
+        <div class="road-side-lines left"></div>
+        <div class="road-side-lines right"></div>
+    </div>
+
+    <!-- Virtual Dashboard -->
+    <div class="dashboard">
+        <div class="speedometer">
+            <div class="speed-display" id="speedDisplay">0</div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <div style="color: var(--cyber-cyan); font-family: 'Orbitron', sans-serif;">
+            <div style="font-size: 0.8rem; opacity: 0.7;">SCROLL SPEED</div>
+            <div style="font-size: 0.8rem; opacity: 0.7;">JOURNEY PROGRESS</div>
+        </div>
+    </div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <button class="play-button" id="playButton">▶️</button>
+        <div class="audio-visualizer">
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+            <div class="audio-bar"></div>
+        </div>
+    </div>
+
+    <!-- Custom Cursor -->
+    <div class="cursor" id="cursor">
+        <div class="cursor-character"></div>
+    </div>
+
+    <!-- Speech Bubble -->
+    <div class="speech-bubble" id="speechBubble"></div>
 
     <!-- Floating Navigation -->
     <nav class="floating-nav">
-        <div class="nav-dot active" data-section="hero"></div>
-        <div class="nav-dot" data-section="about"></div>
-        <div class="nav-dot" data-section="routes"></div>
-        <div class="nav-dot" data-section="fleet"></div>
-        <div class="nav-dot" data-section="join"></div>
+        <div class="nav-dot active" data-section="hero" data-label="Home"></div>
+        <div class="nav-dot" data-section="about" data-label="About"></div>
+        <div class="nav-dot" data-section="routes" data-label="Routes"></div>
+        <div class="nav-dot" data-section="join" data-label="Join"></div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" id="hero">
+    <section id="hero" class="hero section">
         <div class="dimensional-rift"></div>
         <div class="hero-particles" id="heroParticles"></div>
         <div class="hero-content">
-            <h1 class="hero-title">ISEKAI EXPRESS</h1>
-            <p class="hero-subtitle">Where Anime Dreams Meet ETS2 Adventures</p>
-            <a href="#join" class="cta-button magnetic">Join Our World</a>
+            <h1 class="hero-title">Isekai Express</h1>
+            <p class="hero-subtitle">Unite Anime Lovers Across Virtual Europe</p>
+            <a href="#join" class="cta-button">Begin Your Journey</a>
         </div>
+        <div class="section-transition"></div>
     </section>
 
     <!-- About Section -->
-    <section class="about section" id="about">
+    <section id="about" class="about section">
         <div class="morphing-bg"></div>
         <div class="sakura-container" id="sakuraContainer"></div>
         <div class="container">
-            <h2 class="section-title fade-in-up">Our Story</h2>
-            <div class="story-content fade-in-up">
-                <p>In a world where trucking meets anime passion, <span class="story-highlight">Isekai Express</span> was born from the dreams of otaku who found themselves transported into the virtual highways of Euro Truck Simulator 2.</p>
-                <br>
-                <p>We're not just another VTC - we're a <span class="story-highlight">community of anime lovers</span> who believe that every delivery is an adventure, every route is a new episode, and every member is a protagonist in their own isekai story.</p>
+            <h2 class="section-title">Our Story</h2>
+            <div class="story-content">
+                <p>Welcome to <span class="story-highlight">Isekai Express</span>, where the worlds of trucking and anime collide in perfect harmony. Born from a shared passion for both the open road and captivating anime stories, our VTC has become a haven for drivers who appreciate the finer things in virtual life.</p>
+                
+                <p>Like protagonists in our favorite anime series, we embark on epic journeys across Europe, building friendships that transcend borders and creating memories that last a lifetime. Every route is an adventure, every delivery a chapter in our collective story.</p>
+                
+                <p>Join us as we transport goods and dreams across the digital highways of Euro Truck Simulator 2, where <span class="story-highlight">every mile driven is a mile toward bringing the anime community together</span>.</p>
             </div>
-            <div class="stats-grid">
-                <div class="stat-card fade-in-left magnetic">
-                    <span class="stat-number">500+</span>
-                    <span class="stat-label">Anime Lovers United</span>
+            
+            <div class="community-grid">
+                <div class="community-card">
+                    <div class="card-icon">🚛</div>
+                    <h3 class="card-title">Professional Driving</h3>
+                    <p class="card-description">Experience realistic trucking with fellow anime enthusiasts. We maintain high standards while keeping the atmosphere friendly and welcoming.</p>
                 </div>
-                <div class="stat-card fade-in-up magnetic">
-                    <span class="stat-number">25+</span>
-                    <span class="stat-label">Countries Connected</span>
+                
+                <div class="community-card">
+                    <div class="card-icon">🎌</div>
+                    <h3 class="card-title">Anime Culture</h3>
+                    <p class="card-description">Share your favorite series, discuss latest episodes, and participate in anime-themed convoys and events throughout the year.</p>
                 </div>
-                <div class="stat-card fade-in-right magnetic">
-                    <span class="stat-number">∞</span>
-                    <span class="stat-label">Adventures Waiting</span>
+                
+                <div class="community-card">
+                    <div class="card-icon">👥</div>
+                    <h3 class="card-title">Community Events</h3>
+                    <p class="card-description">Regular convoys, competitions, and social gatherings. From seasonal festivals to anime convention meetups, there's always something happening.</p>
                 </div>
             </div>
         </div>
+        <div class="section-transition"></div>
     </section>
 
     <!-- Routes Section -->
-    <section class="routes section" id="routes">
+    <section id="routes" class="routes section">
         <div class="morphing-bg"></div>
         <div class="route-network" id="routeNetwork"></div>
         <div class="container">
-            <h2 class="section-title fade-in-up">Epic Routes</h2>
-            <div class="community-grid">
-                <div class="community-card fade-in-left magnetic">
-                    <span class="community-icon">🌸</span>
-                    <h3 class="community-title">Sakura Express</h3>
-                    <p class="community-description">Journey through Europe's most beautiful landscapes while discussing your favorite slice-of-life anime. Perfect for those who love peaceful adventures.</p>
+            <h2 class="section-title">Featured Routes</h2>
+            <div class="routes-grid">
+                <div class="route-card">
+                    <h3 class="route-name">Tokyo Express</h3>
+                    <div class="route-distance">Berlin → Warsaw (573 km)</div>
+                    <p class="route-description">Our signature route connecting two major European capitals. Experience the thrill of long-distance hauling while discussing your favorite anime series with fellow drivers.</p>
                 </div>
-                <div class="community-card fade-in-up magnetic">
-                    <span class="community-icon">⚡</span>
-                    <h3 class="community-title">Shonen Speedway</h3>
-                    <p class="community-description">High-speed deliveries for action anime fans! Race against time while debating who would win in epic anime battles.</p>
+                
+                <div class="route-card">
+                    <h3 class="route-name">Sakura Circuit</h3>
+                    <div class="route-distance">Paris → Lyon → Marseille (863 km)</div>
+                    <p class="route-description">A scenic journey through France's beautiful countryside. Perfect for spring convoys when we celebrate hanami season together.</p>
                 </div>
-                <div class="community-card fade-in-right magnetic">
-                    <span class="community-icon">🎭</span>
-                    <h3 class="community-title">Otaku Odyssey</h3>
-                    <p class="community-description">Long-haul routes perfect for deep anime discussions. Share recommendations and dive into plot theories during extended convoy journeys.</p>
+                
+                <div class="route-card">
+                    <h3 class="route-name">Nordic Adventure</h3>
+                    <div class="route-distance">Stockholm → Oslo → Copenhagen (1,247 km)</div>
+                    <p class="route-description">Embrace the winter anime spirit on this challenging Nordic route. Snow, mountains, and stunning vistas await brave drivers.</p>
                 </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Fleet Section -->
-    <section class="fleet section" id="fleet">
-        <div class="morphing-bg"></div>
-        <div class="hologram-container" id="hologramContainer"></div>
-        <div class="container">
-            <h2 class="section-title fade-in-up">Legendary Fleet</h2>
-            <div class="community-grid">
-                <div class="community-card fade-in-left magnetic">
-                    <span class="community-icon">🚛</span>
-                    <h3 class="community-title">Mecha Haulers</h3>
-                    <p class="community-description">Customized trucks inspired by iconic mecha anime. Each vehicle tells a story and represents the pilot's favorite series.</p>
+                
+                <div class="route-card">
+                    <h3 class="route-name">Mediterranean Dream</h3>
+                    <div class="route-distance">Rome → Naples → Palermo (934 km)</div>
+                    <p class="route-description">Coastal roads and historic cities make this route perfect for slice-of-life anime fans who appreciate scenic beauty and cultural heritage.</p>
                 </div>
-                <div class="community-card fade-in-up magnetic">
-                    <span class="community-icon">✨</span>
-                    <h3 class="community-title">Magical Girl Carriers</h3>
-                    <p class="community-description">Elegant designs with kawaii aesthetics. These trucks bring a touch of magic to every delivery across Europe.</p>
+                
+                <div class="route-card">
+                    <h3 class="route-name">Alpine Quest</h3>
+                    <div class="route-distance">Munich → Zurich → Milan (512 km)</div>
+                    <p class="route-description">Challenge yourself with mountain passes and breathtaking Alpine scenery. A favorite among fans of adventure anime series.</p>
                 </div>
-                <div class="community-card fade-in-right magnetic">
-                    <span class="community-icon">🗾</span>
-                    <h3 class="community-title">Anime Liveries</h3>
-                    <p class="community-description">Express your otaku pride with custom anime-themed truck designs. Show off your favorite characters on every route!</p>
+                
+                <div class="route-card">
+                    <h3 class="route-name">Eastern Expedition</h3>
+                    <div class="route-distance">Prague → Budapest → Bucharest (1,156 km)</div>
+                    <p class="route-description">Discover Eastern Europe's hidden gems while discussing isekai adventures and fantasy worlds with your convoy partners.</p>
                 </div>
             </div>
         </div>
+        <div class="section-transition"></div>
     </section>
 
     <!-- Join Section -->
-    <section class="join section" id="join">
+    <section id="join" class="join section">
         <div class="morphing-bg"></div>
         <div class="matrix-rain" id="matrixRain"></div>
         <div class="container">
-            <h2 class="section-title fade-in-up">Join Our World</h2>
-            <div class="story-content fade-in-up">
-                <p>Ready to begin your <span class="story-highlight">isekai adventure</span>? Join a community where your love for anime and trucking creates unforgettable experiences.</p>
+            <h2 class="section-title">Join Our Guild</h2>
+            <div class="story-content">
+                <p>Ready to begin your isekai adventure with us? Join a community where your love for anime and trucking comes together. Fill out the form below to start your application process.</p>
             </div>
-            <form class="join-form fade-in-up">
+            
+            <form class="join-form" id="joinForm">
                 <div class="form-group">
-                    <label class="form-label">Anime Name</label>
-                    <input type="text" class="form-input magnetic" placeholder="What should your fellow otaku call you?" required>
+                    <label class="form-label" for="truckersmpId">TruckersMP ID</label>
+                    <input type="text" class="form-input" id="truckersmpId" required>
                 </div>
+                
                 <div class="form-group">
-                    <label class="form-label">Discord Tag</label>
-                    <input type="text" class="form-input magnetic" placeholder="YourName#1234" required>
+                    <label class="form-label" for="discordUsername">Discord Username</label>
+                    <input type="text" class="form-input" id="discordUsername" required>
                 </div>
+                
                 <div class="form-group">
-                    <label class="form-label">Favorite Anime</label>
-                    <input type="text" class="form-input magnetic" placeholder="Tell us your current obsession!" required>
+                    <label class="form-label" for="favoriteAnime">Favorite Anime</label>
+                    <input type="text" class="form-input" id="favoriteAnime" required>
                 </div>
+                
                 <div class="form-group">
-                    <label class="form-label">ETS2 Experience</label>
-                    <select class="form-input magnetic" required>
-                        <option value="">Select your level</option>
-                        <option value="beginner">New Adventurer (0-100 hours)</option>
-                        <option value="intermediate">Seasoned Driver (100-500 hours)</option>
-                        <option value="expert">Veteran Trucker (500+ hours)</option>
-                        <option value="legend">Isekai Legend (1000+ hours)</option>
+                    <label class="form-label" for="experience">ETS2 Experience</label>
+                    <select class="form-input" id="experience" required>
+                        <option value="">Select your experience level</option>
+                        <option value="beginner">New to trucking (0-100 hours)</option>
+                        <option value="intermediate">Experienced driver (100-500 hours)</option>
+                        <option value="veteran">Veteran trucker (500+ hours)</option>
                     </select>
                 </div>
-                <button type="submit" class="submit-btn magnetic">Begin My Isekai Journey</button>
+                
+                <div class="form-group">
+                    <label class="form-label" for="message">Why do you want to join Isekai Express?</label>
+                    <textarea class="form-input" id="message" rows="4" placeholder="Tell us about your passion for anime and trucking..."></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">Submit Application</button>
             </form>
         </div>
+        <div class="section-transition"></div>
     </section>
 
-    <!-- JavaScript for Enhanced Interactions -->
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" id="scrollTop">↑</button>
+
     <script>
-        // Enhanced Cursor System
-        const cursor = document.querySelector('.cursor');
-        const cursorFollower = document.querySelector('.cursor-follower');
-        let mouseX = 0, mouseY = 0;
-        let followerX = 0, followerY = 0;
-        let trails = [];
+        // Initialize variables
+        let scrollSpeed = 0;
+        let lastScrollY = 0;
+        let animationFrame;
+        
+        // Speech bubble messages
+        const speechMessages = [
+            "Konnichiwa! 🌸",
+            "Ready for adventure?",
+            "Ganbatte! 💪",
+            "Sugoi desu ne! ✨",
+            "Let's go trucking! 🚛",
+            "Anime wa saikou! 🎌",
+            "Join our convoy! 🛣️",
+            "Kawaii cursor desu! 💕"
+        ];
 
-        // Smooth cursor following
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-            
-            cursor.style.transform = `translate(${mouseX - 10}px, ${mouseY - 10}px)`;
-            
-            // Create trail particles
-            if (Math.random() > 0.8) {
-                createTrailParticle(mouseX, mouseY);
-            }
-        });
-
-        // Smooth follower animation
-        function animateFollower() {
-            followerX += (mouseX - followerX) * 0.1;
-            followerY += (mouseY - followerY) * 0.1;
-            
-            cursorFollower.style.transform = `translate(${followerX - 20}px, ${followerY - 20}px)`;
-            requestAnimationFrame(animateFollower);
-        }
-        animateFollower();
-
-        // Trail particle system
-        function createTrailParticle(x, y) {
-            const particle = document.createElement('div');
-            particle.className = 'trail-particle';
-            particle.style.left = x + 'px';
-            particle.style.top = y + 'px';
-            document.body.appendChild(particle);
-            
-            setTimeout(() => {
-                document.body.removeChild(particle);
-            }, 1000);
-        }
-
-        // Magnetic effect for interactive elements
-        document.querySelectorAll('.magnetic').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursor.style.transform += ' scale(1.5)';
-                cursor.style.backgroundColor = 'var(--golden-accent)';
-            });
-            
-            el.addEventListener('mouseleave', () => {
-                cursor.style.transform = cursor.style.transform.replace(' scale(1.5)', '');
-                cursor.style.backgroundColor = 'var(--neon-pink)';
-            });
-            
-            el.addEventListener('mousemove', (e) => {
-                const rect = el.getBoundingClientRect();
-                const x = e.clientX - rect.left - rect.width / 2;
-                const y = e.clientY - rect.top - rect.height / 2;
-                
-                el.style.transform = `translate(${x * 0.1}px, ${y * 0.1}px)`;
-            });
-            
-            el.addEventListener('mouseleave', () => {
-                el.style.transform = '';
-            });
-        });
-
-        // Enhanced Loading Screen
+        // Loading screen
         window.addEventListener('load', () => {
             setTimeout(() => {
-                const loadingScreen = document.getElementById('loadingScreen');
-                loadingScreen.style.opacity = '0';
-                loadingScreen.style.transform = 'scale(1.1)';
-                
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                }, 1500);
-            }, 4500);
+                document.getElementById('loadingScreen').classList.add('hidden');
+                startAnimations();
+            }, 3000);
         });
 
-        // Floating Navigation
-        const navDots = document.querySelectorAll('.nav-dot');
-        const sections = document.querySelectorAll('.section, .hero');
+        // Custom cursor functionality
+        const cursor = document.getElementById('cursor');
+        const speechBubble = document.getElementById('speechBubble');
+        
+        let speechTimeout;
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX - 20 + 'px';
+            cursor.style.top = e.clientY - 20 + 'px';
+            
+            speechBubble.style.left = e.clientX - 75 + 'px';
+            speechBubble.style.top = e.clientY - 60 + 'px';
+        });
 
-        navDots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                sections[index].scrollIntoView({ behavior: 'smooth' });
+        // Show speech bubble on hover over interactive elements
+        document.querySelectorAll('a, button, .community-card, .route-card').forEach(element => {
+            element.addEventListener('mouseenter', () => {
+                const randomMessage = speechMessages[Math.floor(Math.random() * speechMessages.length)];
+                speechBubble.textContent = randomMessage;
+                speechBubble.classList.add('show');
+                
+                clearTimeout(speechTimeout);
+                speechTimeout = setTimeout(() => {
+                    speechBubble.classList.remove('show');
+                }, 2000);
+            });
+            
+            element.addEventListener('mouseleave', () => {
+                clearTimeout(speechTimeout);
+                speechTimeout = setTimeout(() => {
+                    speechBubble.classList.remove('show');
+                }, 300);
             });
         });
 
-        // Update active nav dot on scroll
+        // Scroll tracking and dashboard updates
+        function updateScrollMetrics() {
+            const currentScrollY = window.scrollY;
+            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+            
+            // Calculate scroll speed
+            scrollSpeed = Math.abs(currentScrollY - lastScrollY);
+            lastScrollY = currentScrollY;
+            
+            // Update speedometer
+            const displaySpeed = Math.min(Math.round(scrollSpeed * 2), 99);
+            document.getElementById('speedDisplay').textContent = displaySpeed;
+            
+            // Update progress bar
+            const progress = (currentScrollY / maxScroll) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            
+            // Update road animation speed
+            const roadSurface = document.querySelector('.road-surface');
+            const roadLines = document.querySelector('.road-lines');
+            
+            if (scrollSpeed > 0) {
+                roadSurface.style.animationDuration = Math.max(0.05, 0.2 - scrollSpeed * 0.01) + 's';
+                roadLines.style.animationDuration = Math.max(0.5, 2 - scrollSpeed * 0.1) + 's';
+            }
+        }
+
+        // Scroll event listener
         window.addEventListener('scroll', () => {
-            let current = '';
+            updateScrollMetrics();
+            updateActiveSection();
+            toggleScrollTopButton();
+        });
+
+        // Floating navigation
+        function updateActiveSection() {
+            const sections = document.querySelectorAll('.section');
+            const navDots = document.querySelectorAll('.nav-dot');
+            
+            let currentSection = '';
+            const scrollPos = window.scrollY + window.innerHeight / 2;
+            
             sections.forEach(section => {
                 const sectionTop = section.offsetTop;
-                const sectionHeight = section.clientHeight;
-                if (scrollY >= (sectionTop - sectionHeight / 3)) {
-                    current = section.getAttribute('id');
+                const sectionHeight = section.offsetHeight;
+                
+                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
+                    currentSection = section.id;
                 }
             });
-
+            
             navDots.forEach(dot => {
                 dot.classList.remove('active');
-                if (dot.getAttribute('data-section') === current) {
+                if (dot.dataset.section === currentSection) {
                     dot.classList.add('active');
                 }
             });
+        }
+
+        // Navigation clicks
+        document.querySelectorAll('.nav-dot').forEach(dot => {
+            dot.addEventListener('click', () => {
+                const targetSection = document.getElementById(dot.dataset.section);
+                targetSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Trigger transformation effect
+                const transition = targetSection.querySelector('.section-transition');
+                transition.classList.add('active');
+                setTimeout(() => {
+                    transition.classList.remove('active');
+                }, 1000);
+            });
         });
 
-        // Speed Lines Generation
-        function createSpeedLine() {
-            const speedLine = document.createElement('div');
-            speedLine.className = 'speed-line';
-            speedLine.style.top = Math.random() * 100 + '%';
-            speedLine.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.getElementById('heroParticles').appendChild(speedLine);
-            
-            setTimeout(() => {
-                speedLine.remove();
-            }, 2000);
+        // Scroll to top button
+        function toggleScrollTopButton() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.scrollY > 300) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
         }
 
-        // Generate speed lines periodically
-        setInterval(createSpeedLine, 500);
+        document.getElementById('scrollTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
-        // Sakura Petal Generation
-        function createSakuraPetal() {
-            const petal = document.createElement('div');
-            petal.className = 'sakura-petal';
-            petal.style.left = Math.random() * 100 + '%';
-            petal.style.animationDelay = Math.random() * 8 + 's';
-            petal.style.animationDuration = (8 + Math.random() * 4) + 's';
+        // Audio system (placeholder - you'll need to add your actual audio files)
+        let isPlaying = false;
+        const playButton = document.getElementById('playButton');
+        
+        playButton.addEventListener('click', () => {
+            isPlaying = !isPlaying;
+            playButton.textContent = isPlaying ? '⏸️' : '▶️';
             
-            document.getElementById('sakuraContainer').appendChild(petal);
+            // Add your audio playback logic here
+            // For now, just animate the visualizer
+            const audioBars = document.querySelectorAll('.audio-bar');
+            audioBars.forEach(bar => {
+                if (isPlaying) {
+                    bar.style.animationPlayState = 'running';
+                } else {
+                    bar.style.animationPlayState = 'paused';
+                }
+            });
+        });
+
+        // Form submission
+        document.getElementById('joinForm').addEventListener('submit', (e) => {
+            e.preventDefault();
             
-            setTimeout(() => {
-                petal.remove();
-            }, 12000);
+            // Get form data
+            const formData = {
+                truckersmpId: document.getElementById('truckersmpId').value,
+                discordUsername: document.getElementById('discordUsername').value,
+                favoriteAnime: document.getElementById('favoriteAnime').value,
+                experience: document.getElementById('experience').value,
+                message: document.getElementById('message').value
+            };
+            
+            // Simulate form submission
+            alert('Application submitted! We\'ll contact you on Discord soon. Arigatou gozaimasu! 🌸');
+            
+            // Reset form
+            document.getElementById('joinForm').reset();
+        });
+
+        // Smooth scrolling for CTA button
+        document.querySelector('.cta-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            document.getElementById('join').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Start animations after loading
+        function startAnimations() {
+            // Create sakura petals
+            createSakuraPetals();
+            
+            // Create speed lines
+            createSpeedLines();
+            
+            // Create network visualization
+            createNetworkVisualization();
+            
+            // Create matrix rain
+            createMatrixRain();
+            
+            // Start scroll tracking
+            setInterval(updateScrollMetrics, 100);
         }
 
-        // Generate sakura petals
-        setInterval(createSakuraPetal, 1000);
-
-        // Network Generation for Routes Section
-        function generateNetwork() {
-            const network = document.getElementById('routeNetwork');
-            const lines = 8;
-            const nodes = 12;
-            
-            // Generate network lines
-            for (let i = 0; i < lines; i++) {
-                const line = document.createElement('div');
-                line.className = 'network-line';
-                line.style.top = (20 + i * 10) + '%';
-                line.style.left = '10%';
-                line.style.width = '80%';
-                line.style.animationDelay = (i * 0.5) + 's';
-                network.appendChild(line);
+        // Create sakura petals
+        function createSakuraPetals() {
+            const container = document.getElementById('sakuraContainer');
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const petal = document.createElement('div');
+                    petal.className = 'sakura-petal';
+                    petal.style.left = Math.random() * 100 + '%';
+                    petal.style.animationDelay = Math.random() * 8 + 's';
+                    petal.style.animationDuration = (8 + Math.random() * 4) + 's';
+                    container.appendChild(petal);
+                    
+                    // Remove petal after animation
+                    setTimeout(() => {
+                        petal.remove();
+                    }, 12000);
+                }, i * 300);
             }
             
-            // Generate network nodes
-            for (let i = 0; i < nodes; i++) {
+            // Continuously create new petals
+            setTimeout(createSakuraPetals, 4000);
+        }
+
+        // Create speed lines
+        function createSpeedLines() {
+            const container = document.getElementById('heroParticles');
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const line = document.createElement('div');
+                    line.className = 'speed-line';
+                    line.style.top = Math.random() * 100 + '%';
+                    line.style.animationDelay = Math.random() * 2 + 's';
+                    container.appendChild(line);
+                    
+                    setTimeout(() => {
+                        line.remove();
+                    }, 2000);
+                }, i * 250);
+            }
+            
+            setTimeout(createSpeedLines, 3000);
+        }
+
+        // Create network visualization
+        function createNetworkVisualization() {
+            const container = document.getElementById('routeNetwork');
+            if (!container) return;
+            
+            // Create network lines
+            for (let i = 0; i < 6; i++) {
+                const line = document.createElement('div');
+                line.className = 'network-line';
+                line.style.top = (i * 15 + 20) + '%';
+                line.style.left = '10%';
+                line.style.width = '80%';
+                line.style.animationDelay = i * 0.5 + 's';
+                container.appendChild(line);
+            }
+            
+            // Create network nodes
+            for (let i = 0; i < 12; i++) {
                 const node = document.createElement('div');
                 node.className = 'network-node';
                 node.style.top = Math.random() * 80 + 10 + '%';
                 node.style.left = Math.random() * 80 + 10 + '%';
                 node.style.animationDelay = Math.random() * 2 + 's';
-                network.appendChild(node);
+                container.appendChild(node);
             }
         }
 
-        generateNetwork();
-
-        // Hologram Scanner
-        function createHologramLine() {
-            const line = document.createElement('div');
-            line.className = 'hologram-line';
-            line.style.animationDelay = Math.random() * 4 + 's';
+        // Create matrix rain effect
+        function createMatrixRain() {
+            const container = document.getElementById('matrixRain');
+            const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
             
-            document.getElementById('hologramContainer').appendChild(line);
-            
-            setTimeout(() => {
-                line.remove();
-            }, 4000);
-        }
-
-        setInterval(createHologramLine, 2000);
-
-        // Matrix Rain Effect
-        function createMatrixColumn() {
-            const characters = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789';
-            const column = document.createElement('div');
-            column.className = 'matrix-column';
-            column.style.left = Math.random() * 100 + '%';
-            column.style.animationDelay = Math.random() * 8 + 's';
-            column.style.animationDuration = (8 + Math.random() * 4) + 's';
-            
-            let text = '';
             for (let i = 0; i < 20; i++) {
-                text += characters.charAt(Math.floor(Math.random() * characters.length)) + '<br>';
+                const column = document.createElement('div');
+                column.className = 'matrix-column';
+                column.style.left = Math.random() * 100 + '%';
+                column.style.animationDelay = Math.random() * 8 + 's';
+                column.style.animationDuration = (8 + Math.random() * 4) + 's';
+                
+                let columnText = '';
+                for (let j = 0; j < 20; j++) {
+                    columnText += matrixChars[Math.floor(Math.random() * matrixChars.length)] + '<br>';
+                }
+                column.innerHTML = columnText;
+                
+                container.appendChild(column);
+                
+                setTimeout(() => {
+                    column.remove();
+                }, 12000);
             }
-            column.innerHTML = text;
             
-            document.getElementById('matrixRain').appendChild(column);
-            
-            setTimeout(() => {
-                column.remove();
-            }, 12000);
+            setTimeout(createMatrixRain, 5000);
         }
 
-        setInterval(createMatrixColumn, 300);
+        // Performance optimization
+        let ticking = false;
+        
+        function requestTick() {
+            if (!ticking) {
+                requestAnimationFrame(updateScrollMetrics);
+                ticking = true;
+            }
+        }
 
-        // Scroll Animation Observer
+        // Intersection Observer for animations
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -1495,61 +1704,14 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('animate');
+                    entry.target.style.animationPlayState = 'running';
                 }
             });
         }, observerOptions);
 
-        // Observe all animation elements
-        document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right').forEach(el => {
-            observer.observe(el);
+        // Observe all animated elements
+        document.querySelectorAll('.community-card, .route-card').forEach(card => {
+            observer.observe(card);
         });
 
-        // Form Enhancement
-        const form = document.querySelector('.join-form');
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const btn = form.querySelector('.submit-btn');
-            btn.innerHTML = 'Portal Opening...';
-            btn.style.background = 'var(--gradient-3)';
-            
-            setTimeout(() => {
-                btn.innerHTML = 'Welcome to Isekai Express! 🎌';
-                btn.style.background = 'var(--gradient-2)';
-                
-                setTimeout(() => {
-                    form.reset();
-                    btn.innerHTML = 'Begin My Isekai Journey';
-                    btn.style.background = 'var(--gradient-4)';
-                }, 3000);
-            }, 2000);
-        });
-
-        // Ambient Particles
-        function createAmbientParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.animationDuration = (6 + Math.random() * 4) + 's';
-            particle.style.animationDelay = Math.random() * 2 + 's';
-            
-            document.body.appendChild(particle);
-            
-            setTimeout(() => {
-                particle.remove();
-            }, 10000);
-        }
-
-        setInterval(createAmbientParticle, 2000);
-
-        // Performance optimization: Reduce particles on mobile
-        if (window.innerWidth < 768) {
-            // Reduce particle generation intervals for mobile
-            document.querySelectorAll('[id*="Container"]').forEach(container => {
-                container.style.display = 'none';
-            });
-        }
-    </script>
-</body>
-</html>
+        console.log('🌸 Isekai Express
