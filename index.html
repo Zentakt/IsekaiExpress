@@ -1714,16 +1714,162 @@
             observer.observe(card);
         });
 
-                console.log('🌸 Isekai Express Website Initialized! Ready for your journey!');
+                     console.log('🌸 Isekai Express Website Initialized! Welcome, ' + 'Zentakt' + '!');
+        console.log('Initialization Time (UTC):', '2025-06-19 11:33:33');
 
-        // Initialize all animations and effects once DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            startAnimations();
-            updateScrollMetrics();
-            createSakuraPetals();
-            createNetworkVisualization();
-            createMatrixRain();
-        });
+        // Error handling for animation systems
+        class AnimationSystem {
+            static handleError(component, error) {
+                console.error(`Animation error in ${component}:`, error);
+                // Gracefully degrade animation if it fails
+                return false;
+            }
+            
+            static isSupported() {
+                return window.requestAnimationFrame && 
+                       document.createElement('div').style.animation !== undefined;
+            }
+        }
+
+        // Initialize all core systems
+        const initializeSystems = () => {
+            try {
+                // Check browser compatibility
+                if (!AnimationSystem.isSupported()) {
+                    throw new Error('Browser does not support required animation features');
+                }
+
+                // Initialize audio system
+                const audioSystem = {
+                    init: () => {
+                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                        if (!audioContext) {
+                            throw new Error('Audio system initialization failed');
+                        }
+                        return audioContext;
+                    }
+                };
+
+                // Initialize particle systems
+                const particleSystems = {
+                    sakura: () => createSakuraPetals(),
+                    matrix: () => createMatrixRain(),
+                    network: () => createNetworkVisualization(),
+                    speedLines: () => createSpeedLines()
+                };
+
+                // Initialize performance monitoring
+                let lastFrameTime = performance.now();
+                const fpsMonitor = setInterval(() => {
+                    const currentTime = performance.now();
+                    const delta = currentTime - lastFrameTime;
+                    if (delta > 50) { // Frame time > 50ms (< 20 FPS)
+                        console.warn('Performance warning: Frame time:', delta.toFixed(2), 'ms');
+                    }
+                    lastFrameTime = currentTime;
+                }, 1000);
+
+                // Initialize scroll manager
+                const scrollManager = {
+                    init: () => {
+                        let scrollTimeout;
+                        window.addEventListener('scroll', () => {
+                            clearTimeout(scrollTimeout);
+                            scrollTimeout = setTimeout(() => {
+                                updateScrollMetrics();
+                                updateActiveSection();
+                                toggleScrollTopButton();
+                            }, 10);
+                        }, { passive: true });
+                    }
+                };
+
+                // Initialize responsive layout manager
+                const layoutManager = {
+                    init: () => {
+                        const updateLayout = () => {
+                            const isMobile = window.innerWidth < 768;
+                            document.body.classList.toggle('is-mobile', isMobile);
+                            // Adjust animations and effects based on device capability
+                            if (isMobile) {
+                                document.querySelectorAll('.particle-heavy').forEach(el => 
+                                    el.style.display = 'none');
+                            }
+                        };
+                        window.addEventListener('resize', updateLayout);
+                        updateLayout();
+                    }
+                };
+
+                // Initialize interaction manager
+                const interactionManager = {
+                    init: () => {
+                        // Custom cursor system
+                        const cursor = document.getElementById('cursor');
+                        const speechBubble = document.getElementById('speechBubble');
+                        
+                        document.addEventListener('mousemove', (e) => {
+                            if (cursor && speechBubble) {
+                                requestAnimationFrame(() => {
+                                    cursor.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
+                                    speechBubble.style.transform = `translate(${e.clientX - 75}px, ${e.clientY - 60}px)`;
+                                });
+                            }
+                        });
+
+                        // Form validation and submission
+                        const joinForm = document.getElementById('joinForm');
+                        if (joinForm) {
+                            joinForm.addEventListener('submit', (e) => {
+                                e.preventDefault();
+                                // Add your form submission logic here
+                                console.log('Form submitted successfully');
+                            });
+                        }
+                    }
+                };
+
+                // Initialize all systems
+                return Promise.all([
+                    audioSystem.init(),
+                    scrollManager.init(),
+                    layoutManager.init(),
+                    interactionManager.init(),
+                    ...Object.values(particleSystems).map(system => system())
+                ]).then(() => {
+                    console.log('All systems initialized successfully');
+                    document.getElementById('loadingScreen')?.classList.add('hidden');
+                });
+
+            } catch (error) {
+                console.error('Critical initialization error:', error);
+                // Show user-friendly error message
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'error-message';
+                errorMessage.textContent = 'Something went wrong. Please refresh the page.';
+                document.body.appendChild(errorMessage);
+                return Promise.reject(error);
+            }
+        };
+
+        // Start initialization when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeSystems);
+        } else {
+            initializeSystems().catch(error => {
+                console.error('Failed to initialize:', error);
+            });
+        }
+
+        // Export for debugging purposes
+        window.__isekaiExpress = {
+            version: '1.0.0',
+            initTime: '2025-06-19 11:33:33',
+            debug: {
+                reloadAnimations: () => initializeSystems(),
+                toggleDebugMode: () => document.body.classList.toggle('debug-mode')
+            }
+        };
     </script>
 </body>
 </html>
