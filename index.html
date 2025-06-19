@@ -54,11 +54,11 @@
             opacity:1; /* Starts fully visible */
             perspective:1200px;
             transition:opacity 1s ease-in-out; /* Defines fade-out transition */
-            pointer-events:auto; /* Allows interaction if needed during load */
+            pointer-events:auto; 
         }
         .loader-container.hidden { /* JS adds this to START fade-out */
-            opacity:0 !important; /* Force fade */
-            pointer-events:none; /* No interaction once hidden */
+            opacity:0 !important; 
+            pointer-events:none; 
         }
         .loader-symbol-gate{width:clamp(180px,30vw,280px);height:clamp(180px,30vw,280px);position:relative;margin-bottom:30px;transform-style:preserve-3d;animation:gatePulsate 3s ease-in-out infinite,rotateGateComplex 40s linear infinite}
         @keyframes rotateGateComplex{0%{transform:rotateX(10deg) rotateY(0) rotateZ(0) scale(1)}25%{transform:rotateX(15deg) rotateY(90deg) rotateZ(-5deg) scale(1.05)}50%{transform:rotateX(10deg) rotateY(180deg) rotateZ(0) scale(1)}75%{transform:rotateX(5deg) rotateY(270deg) rotateZ(5deg) scale(.95)}100%{transform:rotateX(10deg) rotateY(360deg) rotateZ(0) scale(1)}}
@@ -81,13 +81,14 @@
         @keyframes loadProgressNew{from{transform:translateX(-100%)}to{transform:translateX(0)}}
         @keyframes progressBarGradientAnim{0%{background-position:0% 50%}100%{background-position:100% 50%}}
         
-        /* Rest of your existing CSS below - This has been truncated for brevity in the example. Ensure ALL your previous CSS is here. */
+        /* Styles from previous anime-themed version (ensuring all are present) */
         .magnetic-cursor{position:fixed;width:18px;height:18px;border:2px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9999;mix-blend-mode:screen;transition:width .3s cubic-bezier(.4,0,.2,1),height .3s cubic-bezier(.4,0,.2,1),background-color .3s cubic-bezier(.4,0,.2,1),border-color .3s ease;background:rgba(var(--secondary-rgb),.3);will-change:transform}
         .magnetic-cursor::after{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:4px;height:4px;background:var(--light);border-radius:50%;transition:all .3s ease;box-shadow:0 0 5px var(--light)}
         .magnetic-cursor.hover{width:70px;height:70px;background:rgba(var(--primary-rgb),.15);border-color:var(--primary);box-shadow:0 0 15px var(--primary),0 0 30px var(--secondary)}
         .magnetic-cursor.hover::after{width:6px;height:6px;background:var(--accent);box-shadow:0 0 10px var(--accent)}
         .nav{position:fixed;top:0;left:0;width:100%;padding:15px 30px;z-index:1000;transition:all .5s cubic-bezier(.165,.84,.44,1);backdrop-filter:blur(12px);background:rgba(var(--dark-rgb),.65);border-bottom:1px solid rgba(var(--primary-rgb),.1)}
         .nav.scrolled{padding:12px 30px;background:rgba(var(--contrast-dark),.85);box-shadow:0 5px 25px -5px rgba(var(--primary-rgb),.4);border-bottom-color:rgba(var(--primary-rgb),.25)}
+        .nav-container { max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; }
         .nav-logo{font-family:var(--font-anime);font-size:clamp(1.4rem,3.5vw,2rem);background:var(--gradient-1);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;position:relative;cursor:pointer;animation:gradientShift 4s ease-in-out infinite;transition:transform .3s ease}
         .nav-links{display:flex;gap:clamp(20px,4vw,35px)}
         .nav-link{font-family:var(--font-main);font-weight:600;color:var(--light);text-decoration:none;font-size:clamp(.9rem,1.8vw,1.05rem);position:relative;padding:5px 0;transition:all .3s ease}
@@ -182,7 +183,7 @@
     </style>
 </head>
 <body>
-    <div class="loader-container"> <!-- JS will add .hidden to this -->
+    <div class="loader-container">
         <div class="loader-symbol-gate">
             <div class="gate-ring gate-ring-1"></div><div class="gate-ring gate-ring-2"></div>
             <div class="gate-ring gate-ring-3" style="--initial-z-pos:10px;"></div>
@@ -288,50 +289,49 @@
         const loaderContainer = document.querySelector('.loader-container');
         const body = document.body;
 
-        const LOADER_ANIMATION_DURATION = 4500; // Total time loader animations run (visual part)
-        const LOADER_FADE_OUT_CSS = 1000;   // Duration of .loader-container opacity transition in CSS
+        const LOADER_ANIMATION_DURATION = 4500; 
+        const LOADER_FADE_OUT_CSS = 1000;   
 
         console.log(`Loader UI will be visible for ${LOADER_ANIMATION_DURATION}ms.`);
 
         if (!loaderContainer) {
-            console.error("CRITICAL: Loader container not found! Page might not display correctly.");
-            body.style.opacity = '1'; // Make body visible anyway
+            console.error("CRITICAL: Loader container not found! Forcing body visible.");
+            body.style.opacity = '1'; 
             isPageLoaded = true;
-            initPage(); // Attempt to init page
+             setTimeout(() => { // ensure initPage runs after DOM is fully painted if loader fails
+                console.log("Calling initPage() due to loader container not found.");
+                initPage();
+            }, 50);
             return;
         }
-
+        
         // This timeout controls how long the loader UI elements (animations etc.) are active.
         setTimeout(() => {
             console.log("Loader animation duration reached. Starting fade out of loader and fade in of body.");
             
-            loaderContainer.classList.add('hidden'); // This triggers CSS opacity transition to 0
-            body.style.opacity = '1'; // This triggers CSS opacity transition to 1
+            loaderContainer.classList.add('hidden'); 
+            body.style.opacity = '1'; 
 
-            // This timeout removes the loader from the DOM *after* its fade-out CSS transition completes.
             setTimeout(() => {
                 if (loaderContainer.parentNode) {
-                    // loaderContainer.parentNode.removeChild(loaderContainer); // Alternative: remove completely
-                    loaderContainer.style.display = 'none'; // Or just hide
+                    loaderContainer.style.display = 'none'; 
                     console.log("Loader display set to 'none'.");
                 }
-            }, LOADER_FADE_OUT_CSS); // Match loader's CSS opacity transition duration
+            }, LOADER_FADE_OUT_CSS); 
 
-            isPageLoaded = true; // Set page as loaded
-
-            // Slightly delay initPage to ensure body opacity transition has started and DOM is stable.
+            isPageLoaded = true; 
             setTimeout(() => {
                 console.log("Calling initPage().");
                 initPage(); 
-            }, 200); // Small delay, can be adjusted. Was 50, now 200 for more buffer.
+            }, 200); 
 
         }, LOADER_ANIMATION_DURATION);
     });
 
     function initPage() {
         if (!isPageLoaded) {
-            console.warn("initPage called prematurely or isPageLoaded flag not set.");
-            return; // Don't run if the main load sequence hasn't finished
+            console.warn("initPage called but isPageLoaded is false. Aborting page init.");
+            return; 
         }
         console.log("initPage(): Starting full page initialization.");
 
@@ -368,18 +368,361 @@
         console.log("initPage(): All initializations attempted.");
     }
     
-    // Minified versions or functional stubs if complex functions are suspected
-    function initThreeJSBackground(){try{const e=new THREE.Scene,t=new THREE.PerspectiveCamera(75,window.innerWidth/window.innerHeight,.1,1e3),i=new THREE.WebGLRenderer({canvas:document.getElementById("webgl-background"),alpha:!0,antialias:!0});i.setSize(window.innerWidth,window.innerHeight),i.setPixelRatio(Math.min(window.devicePixelRatio,2));const n=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--primary").trim()),o=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--secondary").trim()),r=new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()),a=new THREE.PlaneGeometry(14,14,160,160),l=new THREE.ShaderMaterial({vertexShader:document.getElementById("vertexShader").textContent,fragmentShader:document.getElementById("fragmentShader").textContent,uniforms:{time:{value:0},resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},color1:{value:n},color2:{value:o},color3:{value:r},intensity:{value:.6},amplitude:{value:.4}},transparent:!0,depthWrite:!1,blending:THREE.AdditiveBlending}),d=new THREE.Mesh(a,l);e.add(d),t.position.z=2;let s=0;!function c(m){requestAnimationFrame(c);const p=(m-s)*.001;s=m,l.uniforms.time.value+=.35*p,i.render(e,t)}(0),window.addEventListener("resize",()=>{t.aspect=window.innerWidth/window.innerHeight,t.updateProjectionMatrix(),i.setSize(window.innerWidth,window.innerHeight),i.setPixelRatio(Math.min(window.devicePixelRatio,2)),l.uniforms.resolution.value.set(window.innerWidth,window.innerHeight)})}catch(e){console.error("Three.js init failed:",e);const t=document.getElementById("webgl-background");t&&(t.style.display="none")}}
-    function initCustomCursor(){const e=document.querySelector(".magnetic-cursor");if(!e)return;let t=mouse.x,i=mouse.y;const n=.15;window.addEventListener("mousemove",e=>{mouse.x=e.clientX,mouse.y=e.clientY});!function o(){if(!isPageLoaded)return void requestAnimationFrame(o);t=lerp(t,mouse.x,n),i=lerp(i,mouse.y,n),e.style.transform=`translate3d(${t-e.offsetWidth/2}px, ${i-e.offsetHeight/2}px, 0)`,requestAnimationFrame(o)}();document.querySelectorAll("a, button, .feature-card, .truck-card, .mobile-menu-toggle").forEach(t=>{t.classList.contains("magnetic-target")||(t.addEventListener("mouseenter",()=>e.classList.add("hover")),t.addEventListener("mouseleave",()=>e.classList.remove("hover")))})}
-    function initMagneticTargets(){const e=document.querySelectorAll(".magnetic-target"),t=document.querySelector(".magnetic-cursor");if(!e.length||!t)return;e.forEach(e=>{e.addEventListener("mouseenter",()=>t.classList.add("hover")),e.addEventListener("mouseleave",()=>{t.classList.remove("hover"),gsap.to(e,{x:0,y:0,scale:1,duration:.6,ease:"elastic.out(1.2, 0.5)"})}),e.addEventListener("mousemove",function(t){const i=e.getBoundingClientRect(),n=i.left+i.width/2,o=i.top+i.height/2,r=t.clientX-n,a=t.clientY-o;gsap.to(e,{x:.35*r,y:.35*a,scale:1.05+Math.abs(.001*r),duration:.9,ease:"power4.out"})})})}
-    function initNavigation(){const e=document.querySelector(".nav");e&&ScrollTrigger.create({start:"top -70",end:99999,toggleClass:{className:"scrolled",targets:e}})}
-    function initMobileMenu(){const e=document.querySelector(".mobile-menu-toggle"),t=document.querySelector(".mobile-menu"),i=t.querySelectorAll(".nav-link");if(!e||!t)return;e.addEventListener("click",()=>{const n=e.classList.toggle("active");t.classList.toggle("active"),document.body.style.overflow=n?"hidden":"",n&&gsap.fromTo(i,{opacity:0,x:-30},{opacity:1,x:0,duration:.5,stagger:{amount:.3,from:"start"},ease:"power3.out",delay:.1})}),i.forEach(i=>{i.addEventListener("click",()=>{e.classList.remove("active"),t.classList.remove("active"),document.body.style.overflow=""})})}
-    function initAnimeHeroParticles(e=70){const t=document.querySelector(".particles-container");if(!t)return;t.innerHTML="";const i=[getComputedStyle(document.documentElement).getPropertyValue("--primary").trim(),getComputedStyle(document.documentElement).getPropertyValue("--secondary").trim(),getComputedStyle(document.documentElement).getPropertyValue("--accent").trim()];for(let n=0;n<e;n++){const e=document.createElement("div");e.classList.add("particle");const o=5*Math.random()+1.5;e.style.width=`${o}px`,e.style.height=`${o*(1.5*Math.random()+.5)}px`,e.style.left=`${100*Math.random()}%`,e.style.top=`${100*Math.random()}%`;const r=i[Math.floor(Math.random()*i.length)];e.style.backgroundColor=r;const a=5*Math.random()+4,l=4*Math.random();gsap.set(e,{opacity:0,scale:.5*Math.random()+.5,x:50*(Math.random()-.5),y:50*(Math.random()-.5)}),gsap.to(e,{duration:a,delay:l,opacity:.5*Math.random()+.3,x:300*(Math.random()-.5),y:300*(Math.random()-.5),rotationZ:720*(Math.random()-.5),scale:.3*Math.random()+.2,repeat:-1,yoyo:!0,ease:"sine.inOut"}),t.appendChild(e)}}
-    function initParallax(){const e=document.querySelectorAll(".parallax-layer");e.length&&e.forEach(e=>{const t=parseFloat(e.dataset.depth)||.1;gsap.to(e,{y:()=>-ScrollTrigger.maxScroll(window)*t,ease:"none",scrollTrigger:{trigger:"body",start:"top top",end:"bottom bottom",scrub:2.2}})})}
-    function initAnimeScrollAnimations(){const e=document.querySelector(".hero-title.gsap-char-reveal");e&& (e.innerHTML=e.textContent.split("").map(e=>" "===e?"<span> </span>":`<span>${e}</span>`).join(""),gsap.fromTo(e.querySelectorAll("span"),{opacity:0,y:30,x:e=>(Math.random()-.5)*30,scale:.7,filter:"blur(4px)",rotationZ:e=>(Math.random()-.5)*20},{opacity:1,y:0,x:0,scale:1,filter:"blur(0px)",rotationZ:0,duration:.8,ease:"expo.out",stagger:{amount:.6,from:"random"},delay:.5,scrollTrigger:{trigger:e,start:"top 90%",toggleActions:"play none none none"}}));gsap.utils.toArray(".section-title.reveal-up").forEach(e=>{gsap.fromTo(e,{opacity:0,y:50,skewX:-10,filter:"blur(3px)"},{opacity:1,y:0,skewX:0,filter:"blur(0px)",duration:1,ease:"power4.out",scrollTrigger:{trigger:e,start:"top 88%",toggleActions:"play none none none"}})});gsap.from(".feature-card",{scrollTrigger:{trigger:".features-grid",start:"top 85%",toggleActions:"play none none none",once:!0},opacity:0,x:e=>e%2==0?-60:60,y:40,scale:.9,rotationZ:e=>e%2==0?-5:5,duration:.7,stagger:.1,ease:"power3.out"});gsap.from(".truck-card",{scrollTrigger:{trigger:".fleet-grid",start:"top 85%",toggleActions:"play none none none",once:!0},opacity:0,y:80,z:-100,rotationX:-25,rotationY:e=>e%2==0?15:-15,transformOrigin:"center center -100px",duration:.9,stagger:.15,ease:"expo.out"});gsap.utils.toArray(".join-content .reveal-up, .join-content .reveal-scale").forEach(e=>{let t={opacity:0,scale:e.classList.contains("reveal-scale")?.6:.8,filter:"blur(5px)"};e.classList.contains("reveal-up")&&(t.y=50),gsap.fromTo(e,t,{opacity:1,y:0,scale:1,filter:"blur(0px)",duration:1,ease:"elastic.out(1, 0.6)",delay:1.2*(parseFloat(e.dataset.delay)||0),scrollTrigger:{trigger:e.parentElement,start:"top 88%",toggleActions:"play none none none",once:!0}})});const t=document.querySelector(".contact-form.reveal-up");t&&gsap.fromTo(t,{opacity:1,clipPath:"polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)"},{clipPath:"polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)",duration:1.2,ease:"power3.inOut",delay:parseFloat(t.dataset.delay)||0,scrollTrigger:{trigger:t,start:"top 90%",toggleActions:"play none none none",once:!0}})}
-    function initSmoothScroll(){document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(t){t.preventDefault();const i=this.getAttribute("href"),n=document.querySelector(i);if(n){const o=document.querySelector(".nav")?.offsetHeight||60;gsap.to(window,{duration:1.5,scrollTo:{y:n,offsetY:o+20},ease:"power4.inOut"})}})}) }
-    function updateCopyrightYear(){const e=document.getElementById("currentYear");e&&(e.textContent=(new Date).getFullYear())}
-    document.querySelectorAll("form").forEach(e=>{e.addEventListener("submit",t=>{t.preventDefault(),alert("TRANSMISSION SENT TO THE VOID... OR PERHAPS JUST A DEMO ALERT.")})});
+
+    // --- FULL JAVASCRIPT FUNCTION DEFINITIONS ---
+
+    function initThreeJSBackground() {
+        // No try-catch inside individual function definitions, handled in initPage caller
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.getElementById('webgl-background'),
+            alpha: true,
+            antialias: true 
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+        const primaryCol = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--primary').trim());
+        const secondaryCol = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim());
+        const accentCol = new THREE.Color(getComputedStyle(document.documentElement).getPropertyValue('--accent').trim());
+
+        const geometry = new THREE.PlaneGeometry(14, 14, 160, 160); // Slightly larger, more segments
+        const material = new THREE.ShaderMaterial({
+            vertexShader: document.getElementById('vertexShader').textContent,
+            fragmentShader: document.getElementById('fragmentShader').textContent,
+            uniforms: {
+                time: { value: 0 },
+                resolution: { value: new THREE.Vector2(window.innerWidth, window.innerHeight) },
+                color1: { value: primaryCol },
+                color2: { value: secondaryCol },
+                color3: { value: accentCol },
+                intensity: { value: 0.6 }, // Adjusted for anime visuals
+                amplitude: { value: 0.4 }  // Adjusted for anime visuals
+            },
+            transparent: true,
+            depthWrite: false,
+            blending: THREE.AdditiveBlending, // Good for glowy effects
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+        scene.add(mesh);
+        camera.position.z = 2; // Adjusted for new plane size
+
+        let lastTime = 0;
+        function animate(currentTime) {
+            requestAnimationFrame(animate);
+            const deltaTime = (currentTime - lastTime) * 0.001; 
+            lastTime = currentTime;
+            material.uniforms.time.value += deltaTime * 0.35; // Slightly faster time for effect
+            renderer.render(scene, camera);
+        }
+        animate(0);
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            material.uniforms.resolution.value.set(window.innerWidth, window.innerHeight);
+        });
+    }
+
+    function initCustomCursor() {
+        const cursor = document.querySelector('.magnetic-cursor');
+        if (!cursor) return;
+        
+        let cursorRenderX = mouse.x;
+        let cursorRenderY = mouse.y;
+        const easingFactor = 0.15; 
+
+        window.addEventListener('mousemove', (e) => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+        });
+        
+        function updateCursor() {
+            if (!isPageLoaded) { 
+                 requestAnimationFrame(updateCursor);
+                 return;
+            }
+            cursorRenderX = lerp(cursorRenderX, mouse.x, easingFactor);
+            cursorRenderY = lerp(cursorRenderY, mouse.y, easingFactor);
+            
+            cursor.style.transform = `translate3d(${cursorRenderX - cursor.offsetWidth / 2}px, ${cursorRenderY - cursor.offsetHeight / 2}px, 0)`;
+            requestAnimationFrame(updateCursor);
+        }
+        updateCursor();
+
+        document.querySelectorAll('a, button, .feature-card, .truck-card, .mobile-menu-toggle').forEach(el => {
+            if (!el.classList.contains('magnetic-target')) { 
+                el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            }
+        });
+    }
+    
+    function initMagneticTargets() {
+        const magneticTargets = document.querySelectorAll('.magnetic-target');
+        const cursor = document.querySelector('.magnetic-cursor');
+        if (!magneticTargets.length || !cursor) return;
+
+        const magneticStrength = 0.35; // Anime: could be a bit snappier
+
+        magneticTargets.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+                 // Anime: slight scale up on target itself for emphasis
+                gsap.to(el, { scale:1.03, duration:0.3, ease: "power2.out"});
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+                gsap.to(el, { x: 0, y: 0, scale:1, duration: 0.6, ease: "elastic.out(1.2, 0.5)" });
+            });
+
+            el.addEventListener('mousemove', function(e) {
+                const rect = el.getBoundingClientRect();
+                const elCenterX = rect.left + rect.width / 2;
+                const elCenterY = rect.top + rect.height / 2;
+                
+                const dxFromCenter = e.clientX - elCenterX;
+                const dyFromCenter = e.clientY - elCenterY;
+
+                gsap.to(el, {
+                    x: dxFromCenter * magneticStrength,
+                    y: dyFromCenter * magneticStrength,
+                    // scale: 1.05 + Math.abs(dxFromCenter * 0.001), // Keep if desired
+                    duration: 0.9, // Faster response
+                    ease: "power4.out"
+                });
+            });
+        });
+    }
+
+    function initNavigation() {
+        const nav = document.querySelector('.nav');
+        if (!nav) return;
+        ScrollTrigger.create({
+            start: 'top -70', 
+            end: 99999,
+            toggleClass: {className: 'scrolled', targets: nav}
+        });
+    }
+    
+    function initMobileMenu() {
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const navLinksMobile = mobileMenu.querySelectorAll('.nav-link');
+
+        if (!mobileMenuToggle || !mobileMenu) return;
+
+        mobileMenuToggle.addEventListener('click', () => {
+            const isActive = mobileMenuToggle.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            document.body.style.overflow = isActive ? 'hidden' : ''; 
+            
+            if (isActive) {
+                gsap.fromTo(navLinksMobile, 
+                    { opacity: 0, x: -30 }, // Slide in from left
+                    { opacity: 1, x: 0, duration: 0.5, stagger: {amount: 0.3, from: "start"}, delay: 0.1, ease: "power3.out" }
+                );
+            }
+        });
+        
+        navLinksMobile.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenuToggle.classList.remove('active');
+                mobileMenu.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    }
+
+    function initAnimeHeroParticles(count = 70) { // Renamed and adjusted
+        const container = document.querySelector('.particles-container');
+        if (!container) return;
+        container.innerHTML = ""; // Clear existing
+
+        const colors = [
+            getComputedStyle(document.documentElement).getPropertyValue('--primary').trim(),
+            getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim(),
+            getComputedStyle(document.documentElement).getPropertyValue('--accent').trim()
+        ];
+
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            const size = Math.random() * 5 + 1.5; // Small, sharp shards
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size * (Math.random() * 1.5 + 0.5)}px`; // Vary aspect ratio for shard effect
+            
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            
+            const particleColor = colors[Math.floor(Math.random() * colors.length)];
+            particle.style.backgroundColor = particleColor; // Using CSS vars for color
+            // particle.style.boxShadow = `0 0 5px ${particleColor}, 0 0 10px ${particleColor}`; // Glow effect from CSS class
+
+            const duration = Math.random() * 5 + 4; // 4 to 9 seconds
+            const delay = Math.random() * 4;
+
+            gsap.set(particle, { // Initial state set by GSAP for animation
+                opacity: 0, 
+                scale: Math.random() * 0.5 + 0.5, // Start smaller
+                x: (Math.random() - 0.5) * 50, // Slight random offset
+                y: (Math.random() - 0.5) * 50
+            });
+            gsap.to(particle, { // Anime style: fast streaks, wider drift, rotation
+                duration: duration,
+                delay: delay,
+                opacity: Math.random() * 0.5 + 0.3,
+                x: (Math.random() - 0.5) * 300, // Wider travel
+                y: (Math.random() - 0.5) * 300,
+                rotationZ: (Math.random() - 0.5) * 720, // More spin
+                scale: Math.random() * 0.3 + 0.2, // End smaller, like fading streaks
+                repeat: -1,
+                yoyo: true, // Pulse in and out
+                ease: "sine.inOut" // Smooth, drifting motion
+            });
+            container.appendChild(particle);
+        }
+    }
+    
+    function initParallax() {
+        const parallaxLayers = document.querySelectorAll('.parallax-layer');
+        if(!parallaxLayers.length) return;
+
+        parallaxLayers.forEach(layer => {
+            const depth = parseFloat(layer.dataset.depth) || 0.1;
+            gsap.to(layer, {
+                y: (i, target) => -ScrollTrigger.maxScroll(window) * depth,
+                ease: "none",
+                scrollTrigger: {
+                    trigger: "body", start: "top top", end: "bottom bottom",
+                    scrub: 2.2, // More responsive scrub
+                }
+            });
+        });
+    }
+
+    function initAnimeScrollAnimations() { // Renamed and enhanced for Anime
+        // Hero Title - Character by Character Reveal (very anime/techy)
+        const heroTitle = document.querySelector('.hero-title.gsap-char-reveal');
+        if (heroTitle) {
+            const chars = heroTitle.textContent.split("").map(char => char === ' ' ? `<span> </span>` : `<span>${char}</span>`).join("");
+            heroTitle.innerHTML = chars; // Replaces text with spans for each char
+            gsap.fromTo(heroTitle.querySelectorAll("span"),
+                { // From: initial state for each char
+                    opacity: 0,
+                    y: 30, // Start lower
+                    x: (i) => (Math.random()-0.5)*30, // Random horizontal scatter
+                    scale: 0.7,
+                    filter: 'blur(4px)',
+                    rotationZ: (i) => (Math.random()-0.5)*20 // Slight random rotation
+                },
+                { // To: final state
+                    opacity: 1, y: 0, x:0, scale: 1, filter: 'blur(0px)', rotationZ:0,
+                    duration: 0.8, ease: 'expo.out', 
+                    stagger: { amount: 0.6, from: "random" }, // Animate chars with stagger
+                    delay: 0.5, // Delay after page load animations
+                    scrollTrigger: { trigger: heroTitle, start: 'top 90%', toggleActions: 'play none none none' }
+                }
+            );
+        }
+        
+        // General Section Title reveal (Anime style: skewed, blur)
+        gsap.utils.toArray('.section-title.reveal-up').forEach(title => {
+            gsap.fromTo(title,
+                { opacity: 0, y: 50, skewX: -10, filter:'blur(3px)' },
+                {
+                    opacity: 1, y: 0, skewX:0, filter:'blur(0px)', duration: 1, ease: 'power4.out',
+                    scrollTrigger: { trigger: title, start: "top 88%", toggleActions: 'play none none none' }
+                }
+            );
+        });
+
+        // Feature cards: diagonal slide-in with rotation
+        gsap.from(".feature-card", {
+            scrollTrigger: { trigger: ".features-grid", start: "top 85%", toggleActions: 'play none none none', once: true },
+            opacity: 0, 
+            x: (i) => (i % 2 === 0 ? -60 : 60), // Alternating direction
+            y:40,
+            scale:0.9,
+            rotationZ:(i) => (i % 2 === 0 ? -5 : 5), // Slight alternating rotation
+            duration: 0.7, stagger: 0.1, ease: "power3.out"
+        });
+        
+        // Fleet cards: more pronounced 3D perspective entrance
+        gsap.from(".truck-card", {
+            scrollTrigger: { trigger: ".fleet-grid", start: "top 85%", toggleActions: 'play none none none', once: true },
+            opacity: 0, y: 80, z:-100, // Move from further back in Z
+            rotationX: -25, // More tilt
+            rotationY: (i)=>(i%2 === 0 ? 15: -15), // Alternate Y rotation
+            transformOrigin: "center center -100px",
+            duration: 0.9, stagger: 0.15, ease: "expo.out"
+        });
+
+        // Join section elements: elastic, slightly "explosive" feel
+        gsap.utils.toArray('.join-content .reveal-up, .join-content .reveal-scale').forEach(el => {
+             let startProps = { opacity: 0, scale: el.classList.contains('reveal-scale') ? 0.6 : 0.8, filter:'blur(5px)'};
+             if (el.classList.contains('reveal-up')) startProps.y = 50;
+
+            gsap.fromTo(el, startProps, {
+                opacity: 1, y: 0, scale: 1, filter:'blur(0px)',
+                duration: 1, ease: 'elastic.out(1, 0.6)', // Bouncy!
+                delay: (parseFloat(el.dataset.delay) || 0) * 1.2, // Adjust delay factor if needed
+                scrollTrigger: { trigger: el.parentElement, start: 'top 88%', toggleActions: 'play none none none', once:true }
+            });
+        });
+
+        // Contact form: upward mask reveal
+        const contactForm = document.querySelector(".contact-form.reveal-up");
+        if(contactForm) {
+            gsap.fromTo(contactForm,
+                { opacity:1, clipPath: 'polygon(0% 100%, 100% 100%, 100% 100%, 0% 100%)' }, // Start fully masked from bottom
+                {
+                    clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)', // Reveal to full
+                    duration: 1.2, ease: 'power3.inOut',
+                    delay: parseFloat(contactForm.dataset.delay) || 0,
+                    scrollTrigger: { trigger: contactForm, start: "top 90%", toggleActions: 'play none none none', once:true }
+                }
+            );
+        }
+    }
+    
+    function initSmoothScroll() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const navHeight = document.querySelector('.nav')?.offsetHeight || 60; // Anime Nav might be smaller
+                    gsap.to(window, { 
+                        duration: 1.5, // Slower, more cinematic scroll for anime
+                        scrollTo: { y: targetElement, offsetY: navHeight + 20 }, 
+                        ease: "power4.inOut" // Smoother ease
+                    });
+                }
+            });
+        });
+    }
+
+    function updateCopyrightYear() {
+        const yearSpan = document.getElementById('currentYear');
+        if (yearSpan) {
+            yearSpan.textContent = new Date().getFullYear();
+        }
+    }
+
+    document.querySelectorAll("form").forEach(form => {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Anime-themed alert
+            alert('TRANSMISSION SENT TO THE VOID... OR PERHAPS JUST A DEMO ALERT.');
+        });
+    });
     console.log("Script execution finished declarations.");
     </script>
 </body>
