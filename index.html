@@ -41,17 +41,17 @@
         #cursor {
             position: fixed;
             left: 0; top: 0;
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             pointer-events: none;
             z-index: 99999;
             background: radial-gradient(circle at 30% 30%, var(--neon-pink) 40%, var(--electric-blue) 100%);
-            box-shadow: 0 0 24px 8px var(--neon-pink), 0 0 0 2px var(--electric-blue) inset;
+            box-shadow: 0 0 15px 5px rgba(236,72,153,0.6), 0 0 0 2px var(--electric-blue) inset;
             opacity: 0.85;
             transition: background 0.2s, box-shadow 0.2s;
             mix-blend-mode: lighten;
-            will-change: transform;
+            will-change: left, top;
         }
 
         /* Speech Bubble (already styled, but ensure z-index is above everything except cursor) */
@@ -1422,7 +1422,7 @@
         
         let speechTimeout;
         
-        // Store last mouse position for scroll sync
+        // Cursor logic – store last mouse position for scroll sync
         let lastCursorX = window.innerWidth / 2;
         let lastCursorY = window.innerHeight / 2;
         function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
@@ -1430,7 +1430,8 @@
             // Clamp to viewport
             let x = clamp(e.clientX, 0, window.innerWidth - 36);
             let y = clamp(e.clientY, 0, window.innerHeight - 36);
-            cursor.style.transform = `translate3d(${x}px,${y}px,0)`;
+            cursor.style.left = (x - 20) + 'px';
+            cursor.style.top  = (y - 20) + 'px';
             cursor.style.display = 'block';
             lastCursorX = x;
             lastCursorY = y;
@@ -1442,7 +1443,8 @@
         });
         // On scroll, reapply cursor position
         document.addEventListener('scroll', () => {
-            cursor.style.transform = `translate3d(${lastCursorX}px,${lastCursorY}px,0)`;
+            cursor.style.left = (lastCursorX - 20) + 'px';
+            cursor.style.top  = (lastCursorY - 20) + 'px';
             cursor.style.display = 'block';
         });
         // Hide cursor if mouse leaves window
