@@ -1582,224 +1582,176 @@
             
             // Create matrix rain
             createMatrixRain();
-            
-            // Start scroll tracking
-            setInterval(updateScrollMetrics, 100);
-        }
-
-        // Create sakura petals
-        function createSakuraPetals() {
-            const container = document.getElementById('sakuraContainer');
-            for (let i = 0; i < 15; i++) {
-                setTimeout(() => {
-                    const petal = document.createElement('div');
-                    petal.className = 'sakura-petal';
-                    petal.style.left = Math.random() * 100 + '%';
-                    petal.style.animationDelay = Math.random() * 8 + 's';
-                    petal.style.animationDuration = (8 + Math.random() * 4) + 's';
-                    container.appendChild(petal);
-                    
-                    // Remove petal after animation
-                    setTimeout(() => {
-                        petal.remove();
-                    }, 12000);
-                }, i * 300);
-            }
-            
-            // Continuously create new petals
-            setTimeout(createSakuraPetals, 4000);
-        }
-
-        // Create speed lines
-        function createSpeedLines() {
-            const container = document.getElementById('heroParticles');
-            for (let i = 0; i < 8; i++) {
-                setTimeout(() => {
-                    const line = document.createElement('div');
-                    line.className = 'speed-line';
-                    line.style.top = Math.random() * 100 + '%';
-                    line.style.animationDelay = Math.random() * 2 + 's';
-                    container.appendChild(line);
-                    
-                    setTimeout(() => {
-                        line.remove();
-                    }, 2000);
-                }, i * 250);
-            }
-            
-            setTimeout(createSpeedLines, 3000);
-        }
-
-        // Create network visualization
-        function createNetworkVisualization() {
-            const container = document.getElementById('routeNetwork');
-            if (!container) return;
-            
-            // Create network lines
-            for (let i = 0; i < 6; i++) {
-                const line = document.createElement('div');
-                line.className = 'network-line';
-                line.style.top = (i * 15 + 20) + '%';
-                line.style.left = '10%';
-                line.style.width = '80%';
-                line.style.animationDelay = i * 0.5 + 's';
-                container.appendChild(line);
-            }
-            
-            // Create network nodes
-            for (let i = 0; i < 12; i++) {
-                const node = document.createElement('div');
-                node.className = 'network-node';
-                node.style.top = Math.random() * 80 + 10 + '%';
-                node.style.left = Math.random() * 80 + 10 + '%';
-                node.style.animationDelay = Math.random() * 2 + 's';
-                container.appendChild(node);
-            }
-        }
-
-        // Create matrix rain effect
-        function createMatrixRain() {
-            const container = document.getElementById('matrixRain');
-            const matrixChars = '01アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン';
-            
-            for (let i = 0; i < 20; i++) {
-                const column = document.createElement('div');
-                column.className = 'matrix-column';
-                column.style.left = Math.random() * 100 + '%';
-                column.style.animationDelay = Math.random() * 8 + 's';
-                column.style.animationDuration = (8 + Math.random() * 4) + 's';
-                
-                let columnText = '';
-                for (let j = 0; j < 20; j++) {
-                    columnText += matrixChars[Math.floor(Math.random() * matrixChars.length)] + '<br>';
-                }
-                column.innerHTML = columnText;
-                
-                container.appendChild(column);
-                
-                setTimeout(() => {
-                    column.remove();
-                }, 12000);
-            }
-            
-            setTimeout(createMatrixRain, 5000);
-        }
-
-        // Performance optimization
-        let ticking = false;
-        
-        function requestTick() {
-            if (!ticking) {
-                requestAnimationFrame(updateScrollMetrics);
-                ticking = true;
-            }
-        }
-
-        // Intersection Observer for animations
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationPlayState = 'running';
-                }
-            });
-        }, observerOptions);
-
-        // Observe all animated elements
-        document.querySelectorAll('.community-card, .route-card').forEach(card => {
-            observer.observe(card);
-        });
-
-                     console.log('🌸 Isekai Express Website Initialized! Welcome, ' + 'Zentakt' + '!');
-        console.log('Initialization Time (UTC):', '2025-06-19 11:33:33');
-
-        // Error handling for animation systems
-        class AnimationSystem {
-            static handleError(component, error) {
-                console.error(`Animation error in ${component}:`, error);
-                // Gracefully degrade animation if it fails
-                return false;
-            }
-            
-            static isSupported() {
-                return window.requestAnimationFrame && 
-                       document.createElement('div').style.animation !== undefined;
-            }
         }
 
         // Initialize all core systems
-        const initializeSystems = () => {
-            try {
-                // Check browser compatibility
-                if (!AnimationSystem.isSupported()) {
-                    throw new Error('Browser does not support required animation features');
+        function initializeSystems() {
+            // Initialize particle systems
+            function createSakuraPetals() {
+                const container = document.getElementById('sakuraContainer');
+                if (!container) return;
+                
+                const petalCount = 15;
+                
+                for (let i = 0; i < petalCount; i++) {
+                    const petal = document.createElement('div');
+                    petal.className = 'sakura-petal';
+                    petal.style.left = `${Math.random() * 100}%`;
+                    petal.style.animationDuration = `${5 + Math.random() * 10}s`;
+                    petal.style.animationDelay = `-${Math.random() * 5}s`;
+                    container.appendChild(petal);
                 }
+            }
+            
+            function initializeParticleSystems() {
+                return {
+                    sakura: createSakuraPetals,
+                    matrix: createMatrixRain,
+                    network: createNetworkVisualization,
+                    speedLines: createSpeedLines
+                };
+            }
 
-                // Initialize audio system
-                const audioSystem = {
-                    init: () => {
-                        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                        if (!audioContext) {
-                            throw new Error('Audio system initialization failed');
+            function createMatrixRain() {
+                const container = document.getElementById('matrixRain');
+                if (!container) return;
+                
+                const columns = Math.floor(window.innerWidth / 20);
+                
+                for (let i = 0; i < columns; i++) {
+                    const drop = document.createElement('div');
+                    drop.className = 'matrix-drop';
+                    drop.style.left = `${(i * 20)}px`;
+                    drop.style.animationDelay = `${Math.random() * 5}s`;
+                    container.appendChild(drop);
+                }
+            }
+
+            function createNetworkVisualization() {
+                const container = document.getElementById('routeNetwork');
+                if (!container) return;
+                
+                const nodeCount = 8;
+                const connectionCount = 15;
+                
+                // Create nodes
+                for (let i = 0; i < nodeCount; i++) {
+                    const node = document.createElement('div');
+                    node.className = 'network-node';
+                    node.style.left = `${10 + Math.random() * 80}%`;
+                    node.style.top = `${10 + Math.random() * 80}%`;
+                    container.appendChild(node);
+                }
+                
+                // Create connections
+                for (let i = 0; i < connectionCount; i++) {
+                    const connection = document.createElement('div');
+                    connection.className = 'network-connection';
+                    container.appendChild(connection);
+                }
+            }
+
+            function createSpeedLines() {
+                const container = document.querySelector('.hero');
+                if (!container) return;
+                
+                const lineCount = 20;
+                
+                for (let i = 0; i < lineCount; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'speed-line';
+                    line.style.left = `${Math.random() * 100}%`;
+                    line.style.animationDuration = `${0.5 + Math.random() * 1.5}s`;
+                    container.appendChild(line);
+                }
+            }
+
+            // Error handling system
+            const errorSystem = {
+                handleError: (error, context = '') => {
+                    console.error(`Error in ${context}:`, error);
+                    // You could add error reporting to a service here
+                },
+                isSupported: (feature) => {
+                    try {
+                        return !!window[feature];
+                    } catch (e) {
+                        return false;
+                    }
+                }
+            };
+            
+            try {
+
+            // Initialize audio system
+            const audioSystem = {
+                init: () => {
+                    try {
+                        const AudioContext = window.AudioContext || window.webkitAudioContext;
+                        if (!AudioContext) {
+                            throw new Error('Web Audio API not supported');
                         }
-                        return audioContext;
+                        return new AudioContext();
+                    } catch (error) {
+                        errorSystem.handleError(error, 'Audio System');
+                        return null;
                     }
-                };
+                }
+            };
 
-                // Initialize particle systems
-                const particleSystems = {
-                    sakura: () => createSakuraPetals(),
-                    matrix: () => createMatrixRain(),
-                    network: () => createNetworkVisualization(),
-                    speedLines: () => createSpeedLines()
-                };
+            // Initialize performance monitoring
+            let lastFrameTime = performance.now();
+            const fpsMonitor = setInterval(() => {
+                const currentTime = performance.now();
+                const delta = currentTime - lastFrameTime;
+                if (delta > 50) { // Frame time > 50ms (< 20 FPS)
+                    console.warn('Performance warning: Frame time:', delta.toFixed(2), 'ms');
+                }
+                lastFrameTime = currentTime;
+            }, 1000);
 
-                // Initialize performance monitoring
-                let lastFrameTime = performance.now();
-                const fpsMonitor = setInterval(() => {
-                    const currentTime = performance.now();
-                    const delta = currentTime - lastFrameTime;
-                    if (delta > 50) { // Frame time > 50ms (< 20 FPS)
-                        console.warn('Performance warning: Frame time:', delta.toFixed(2), 'ms');
-                    }
-                    lastFrameTime = currentTime;
-                }, 1000);
+            // Initialize scroll manager
+            const scrollManager = {
+                init: () => {
+                    let scrollTimeout;
+                    const handleScroll = () => {
+                        clearTimeout(scrollTimeout);
+                        scrollTimeout = setTimeout(() => {
+                            updateScrollMetrics();
+                            updateActiveSection();
+                            toggleScrollTopButton();
+                        }, 10);
+                    };
+                    
+                    window.addEventListener('scroll', handleScroll, { passive: true });
+                    
+                    // Initial call
+                    handleScroll();
+                    
+                    // Return cleanup function
+                    return () => {
+                        window.removeEventListener('scroll', handleScroll);
+                        clearTimeout(scrollTimeout);
+                    };
+                }
+            };
 
-                // Initialize scroll manager
-                const scrollManager = {
-                    init: () => {
-                        let scrollTimeout;
-                        window.addEventListener('scroll', () => {
-                            clearTimeout(scrollTimeout);
-                            scrollTimeout = setTimeout(() => {
-                                updateScrollMetrics();
-                                updateActiveSection();
-                                toggleScrollTopButton();
-                            }, 10);
-                        }, { passive: true });
-                    }
-                };
-
-                // Initialize responsive layout manager
-                const layoutManager = {
-                    init: () => {
-                        const updateLayout = () => {
-                            const isMobile = window.innerWidth < 768;
-                            document.body.classList.toggle('is-mobile', isMobile);
-                            // Adjust animations and effects based on device capability
-                            if (isMobile) {
-                                document.querySelectorAll('.particle-heavy').forEach(el => 
-                                    el.style.display = 'none');
-                            }
-                        };
-                        window.addEventListener('resize', updateLayout);
-                        updateLayout();
-                    }
-                };
+            // Initialize responsive layout manager
+            const layoutManager = {
+                init: () => {
+                    const updateLayout = () => {
+                        // Update layout logic here
+                    };
+                    
+                    window.addEventListener('resize', updateLayout);
+                    updateLayout();
+                    
+                    // Return cleanup function
+                    return () => {
+                        window.removeEventListener('resize', updateLayout);
+                    };
+                }
+            };
 
                 // Initialize interaction manager
                 const interactionManager = {
@@ -1834,15 +1786,13 @@
                     audioSystem.init(),
                     scrollManager.init(),
                     layoutManager.init(),
-                    interactionManager.init(),
-                    ...Object.values(particleSystems).map(system => system())
+                    interactionManager.init()
                 ]).then(() => {
                     console.log('All systems initialized successfully');
                     document.getElementById('loadingScreen')?.classList.add('hidden');
                 });
-
             } catch (error) {
-                console.error('Critical initialization error:', error);
+                console.error('Error initializing systems:', error);
                 // Show user-friendly error message
                 const errorMessage = document.createElement('div');
                 errorMessage.className = 'error-message';
