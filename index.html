@@ -45,12 +45,13 @@
             height: 36px;
             border-radius: 50%;
             pointer-events: none;
-            z-index: 9999;
+            z-index: 99999;
             background: radial-gradient(circle at 30% 30%, var(--neon-pink) 40%, var(--electric-blue) 100%);
             box-shadow: 0 0 24px 8px var(--neon-pink), 0 0 0 2px var(--electric-blue) inset;
             opacity: 0.85;
             transition: background 0.2s, box-shadow 0.2s;
             mix-blend-mode: lighten;
+            will-change: transform;
         }
 
         /* Speech Bubble (already styled, but ensure z-index is above everything except cursor) */
@@ -60,13 +61,13 @@
 
         /* Road Environment Fixes */
         .road-container {
-            position: fixed;
+            position: absolute;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 2;
+            z-index: 0;
             transform-style: preserve-3d;
         }
         .road-surface {
@@ -78,8 +79,9 @@
             background: var(--road-gradient);
             transform-origin: center bottom;
             animation: roadMovement 0.1s linear infinite;
-            z-index: 1;
+            z-index: 0;
             opacity: 1;
+            pointer-events: none;
         }
         .road-lines {
             position: absolute;
@@ -126,7 +128,7 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 1000;
+            z-index: 10;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 20px;
             padding: 20px;
@@ -206,7 +208,7 @@
             position: fixed;
             top: 20px;
             right: 20px;
-            z-index: 1000;
+            z-index: 10;
             background: rgba(0, 0, 0, 0.8);
             border-radius: 15px;
             padding: 15px;
@@ -437,7 +439,7 @@
             top: 50%;
             right: 30px;
             transform: translateY(-50%);
-            z-index: 1000;
+            z-index: 10;
             display: flex;
             flex-direction: column;
             gap: 1rem;
@@ -703,6 +705,7 @@
             position: relative;
             overflow: hidden;
             transform-style: preserve-3d;
+            z-index: 5;
         }
 
         .morphing-bg {
@@ -1099,7 +1102,7 @@
             font-size: 1.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 1000;
+            z-index: 10;
             opacity: 0;
             transform: translateY(20px);
         }
@@ -1178,6 +1181,8 @@
     </style>
 </head>
 <body>
+    <!-- Road Environment (moved to top, z-index:0) -->
+    <div class="road-container"></div>
     <!-- Custom Cursor & Speech Bubble -->
     <div id="cursor"></div>
     <div id="speechBubble" class="speech-bubble"></div>
@@ -1417,12 +1422,32 @@
         
         let speechTimeout;
         
+        // Store last mouse position for scroll sync
+        let lastCursorX = window.innerWidth / 2;
+        let lastCursorY = window.innerHeight / 2;
+        function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
         document.addEventListener('mousemove', (e) => {
-            cursor.style.left = e.clientX - 20 + 'px';
-            cursor.style.top = e.clientY - 20 + 'px';
-            
-            speechBubble.style.left = e.clientX - 75 + 'px';
-            speechBubble.style.top = e.clientY - 60 + 'px';
+            // Clamp to viewport
+            let x = clamp(e.clientX, 0, window.innerWidth - 36);
+            let y = clamp(e.clientY, 0, window.innerHeight - 36);
+            cursor.style.transform = `translate3d(${x}px,${y}px,0)`;
+            cursor.style.display = 'block';
+            lastCursorX = x;
+            lastCursorY = y;
+            // Speech bubble
+            let sx = clamp(e.clientX - 75, 0, window.innerWidth - 150);
+            let sy = clamp(e.clientY - 60, 0, window.innerHeight - 40);
+            speechBubble.style.left = sx + 'px';
+            speechBubble.style.top = sy + 'px';
+        });
+        // On scroll, reapply cursor position
+        document.addEventListener('scroll', () => {
+            cursor.style.transform = `translate3d(${lastCursorX}px,${lastCursorY}px,0)`;
+            cursor.style.display = 'block';
+        });
+        // Hide cursor if mouse leaves window
+        document.addEventListener('mouseleave', () => {
+            cursor.style.display = 'none';
         });
 
         // Show speech bubble on hover over interactive elements
