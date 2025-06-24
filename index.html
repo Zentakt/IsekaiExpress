@@ -140,10 +140,20 @@
             0% { box-shadow: 0 0 16px 4px #ec489988; }
             100% { box-shadow: 0 0 32px 8px #38bdf8cc, 0 0 0 2px #ec4899cc; }
         }
-    </style>
+            /* Scroll Reveal */
+        .reveal {opacity:0; transform: translateY(40px) scale(0.95); transition: opacity 0.8s ease-out, transform 0.8s ease-out;}
+        .reveal.in-view {opacity:1; transform: translateY(0) scale(1);} 
+        /* Speed Lines Layer */
+        .speed-lines {position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; background: repeating-linear-gradient(120deg, transparent 0 10px, rgba(56,189,248,.15) 10px 20px); animation: speedMove 3s linear infinite;} 
+        @keyframes speedMove {0% {background-position:0 0;} 100% {background-position:1000px 600px;}} 
+        /* Cursor Sparkle */
+        .sparkle {position: fixed; width:6px; height:6px; border-radius:50%; pointer-events:none; background: radial-gradient(circle, var(--electric-blue) 0%, transparent 70%); opacity:0.9; animation: sparkleFade 0.6s forwards;} 
+        @keyframes sparkleFade {to {transform: scale(1.8); opacity:0;}} 
+</style>
 </head>
 <body>
     <div class="anime-bg"></div>
+    <div class="speed-lines"></div>
     <!-- Sakura petals (will be animated by JS) -->
     <div id="sakura-petals"></div>
 <script>
@@ -850,5 +860,26 @@ for(let i=0;i<12;i++) setTimeout(createSakuraPetal, i*400);
             }
         };
     </script>
+<script>
+// Scroll Reveal IntersectionObserver
+const revealEls = document.querySelectorAll('.section .container, .community-card, .route-card');
+revealEls.forEach(el => el.classList.add('reveal'));
+const observer = new IntersectionObserver((entries,obs)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){ entry.target.classList.add('in-view'); obs.unobserve(entry.target);} });
+},{threshold:0.15});
+revealEls.forEach(el=>observer.observe(el));
+// Cursor Sparkles
+const cursorEl=document.getElementById('cursor');
+function spawnSparkle(x,y){
+  const sp=document.createElement('div');
+  sp.className='sparkle';
+  sp.style.left=(x-3)+'px';
+  sp.style.top=(y-3)+'px';
+  document.body.appendChild(sp);
+  sp.addEventListener('animationend',()=>sp.remove());
+}
+document.addEventListener('mousemove',(e)=>{spawnSparkle(e.clientX,e.clientY);});
+</script>
 </body>
 </html>
