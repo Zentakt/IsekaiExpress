@@ -37,53 +37,72 @@
             perspective: 1000px;
         }
 
-        /* Road Environment */
+        /* Custom Cursor */
+        #cursor {
+            position: fixed;
+            left: 0; top: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            background: radial-gradient(circle at 30% 30%, var(--neon-pink) 40%, var(--electric-blue) 100%);
+            box-shadow: 0 0 24px 8px var(--neon-pink), 0 0 0 2px var(--electric-blue) inset;
+            opacity: 0.85;
+            transition: background 0.2s, box-shadow 0.2s;
+            mix-blend-mode: lighten;
+        }
+
+        /* Speech Bubble (already styled, but ensure z-index is above everything except cursor) */
+        #speechBubble.speech-bubble {
+            z-index: 9998;
+        }
+
+        /* Road Environment Fixes */
         .road-container {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
+            width: 100vw;
             height: 100vh;
             pointer-events: none;
-            z-index: 1;
+            z-index: 2;
             transform-style: preserve-3d;
         }
-
         .road-surface {
             position: absolute;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 200vh;
+            width: 100vw;
+            height: 100vh;
             background: var(--road-gradient);
             transform-origin: center bottom;
             animation: roadMovement 0.1s linear infinite;
+            z-index: 1;
+            opacity: 1;
         }
-
         .road-lines {
             position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
             width: 8px;
-            height: 100%;
+            height: 100vh;
             background: repeating-linear-gradient(
                 to bottom,
                 transparent 0px,
                 transparent 40px,
-                #FFD700 40px,
-                #FFD700 80px,
-                transparent 80px,
-                transparent 120px
+                white 40px,
+                white 80px
             );
             animation: roadLinesMove 2s linear infinite;
+            z-index: 2;
         }
-
         .road-side-lines {
             position: absolute;
             top: 0;
             width: 4px;
-            height: 100%;
+            height: 100vh;
             background: repeating-linear-gradient(
                 to bottom,
                 transparent 0px,
@@ -92,24 +111,13 @@
                 white 40px
             );
             animation: roadLinesMove 1s linear infinite;
+            z-index: 2;
         }
-
         .road-side-lines.left {
-            left: 20%;
+            left: 20vw;
         }
-
         .road-side-lines.right {
-            right: 20%;
-        }
-
-        @keyframes roadMovement {
-            0% { transform: translateY(0) rotateX(0deg); }
-            100% { transform: translateY(100px) rotateX(2deg); }
-        }
-
-        @keyframes roadLinesMove {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100px; }
+            right: 20vw;
         }
 
         /* Virtual Dashboard */
@@ -409,7 +417,7 @@
             0% { 
                 opacity: 0;
                 transform: translateY(30px) rotateX(90deg);
-                filter: blur(10px);
+                filter: blur(20px);
             }
             100% { 
                 opacity: 1;
@@ -1170,6 +1178,9 @@
     </style>
 </head>
 <body>
+    <!-- Custom Cursor & Speech Bubble -->
+    <div id="cursor"></div>
+    <div id="speechBubble" class="speech-bubble"></div>
     <!-- Loading Screen -->
     <div class="loading-screen" id="loadingScreen">
         <div class="loading-content">
