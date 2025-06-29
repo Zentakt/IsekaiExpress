@@ -612,12 +612,11 @@
                 },
                 vertexShader: `
                     attribute float size;
-                    attribute vec3 color;
                     varying vec3 vColor;
                     uniform float time;
                     
                     void main() {
-                        vColor = color;
+                        vColor = color; // 'color' is provided by Three.js
                         vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
                         gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time + position.x * 0.01) * 0.5);
                         gl_Position = projectionMatrix * mvPosition;
