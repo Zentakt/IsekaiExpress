@@ -574,136 +574,111 @@
         // Three.js Background Scene
         let scene, camera, renderer, particles;
         
-        function handleResize() {
-            if (camera && renderer) {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            }
-        }
-        
         function initThreeJS() {
-            try {
-                scene = new THREE.Scene();
-                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-                renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                renderer.setPixelRatio(window.devicePixelRatio);
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            
+            // Create particle system
+            const particleCount = 2000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
                 
-                // Create particle system
-                const particleCount = 2000;
-                const positions = new Float32Array(particleCount * 3);
-                const colors = new Float32Array(particleCount * 3);
-                const sizes = new Float32Array(particleCount);
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.2 + 0.8, 0.8, 0.6);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
                 
-                for (let i = 0; i < particleCount; i++) {
-                    positions[i * 3] = (Math.random() - 0.5) * 2000;
-                    positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
-                    positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
-                    
-                    const color = new THREE.Color();
-                    color.setHSL(Math.random() * 0.2 + 0.8, 0.8, 0.6);
-                    colors[i * 3] = color.r;
-                    colors[i * 3 + 1] = color.g;
-                    colors[i * 3 + 2] = color.b;
-                    
-                    sizes[i] = Math.random() * 3 + 1;
-                }
-                
-                const geometry = new THREE.BufferGeometry();
-                geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-                geometry.setAttribute('customColor', new THREE.BufferAttribute(colors, 3));
-                geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
-                
-                const material = new THREE.ShaderMaterial({
-                    uniforms: {
-                        time: { value: 0 }
-                    },
-                    vertexShader: `
-                        attribute float size;
-                        attribute vec3 customColor;
-                        varying vec3 vColor;
-                        uniform float time;
-                        
-                        void main() {
-                            vColor = customColor;
-                            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-                            gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time + position.x * 0.01) * 0.5);
-                            gl_Position = projectionMatrix * mvPosition;
-                        }
-                    `,
-                    fragmentShader: `
-                        varying vec3 vColor;
-                        
-                        void main() {
-                            float distance = length(gl_PointCoord - vec2(0.5));
-                            float alpha = 1.0 - smoothstep(0.0, 0.5, distance);
-                            gl_FragColor = vec4(vColor, alpha);
-                        }
-                    `,
-                    blending: THREE.AdditiveBlending,
-                    transparent: true
-                });
-                
-                particles = new THREE.Points(geometry, material);
-                scene.add(particles);
-                
-                camera.position.z = 100;
-                
-                // Add resize listener after camera is created
-                window.addEventListener('resize', handleResize);
-                
-                animate();
-            } catch (error) {
-                console.log('Three.js initialization failed:', error);
+                sizes[i] = Math.random() * 3 + 1;
             }
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 }
+                },
+                vertexShader: `
+                    attribute float size;
+                    attribute vec3 color;
+                    varying vec3 vColor;
+                    uniform float time;
+                    
+                    void main() {
+                        vColor = color;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time + position.x * 0.01) * 0.5);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        float distance = length(gl_PointCoord - vec2(0.5));
+                        float alpha = 1.0 - smoothstep(0.0, 0.5, distance);
+                        gl_FragColor = vec4(vColor, alpha);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                vertexColors: true,
+                transparent: true
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            camera.position.z = 100;
+            
+            animate();
         }
         
         function animate() {
             requestAnimationFrame(animate);
             
-            if (particles && particles.material && particles.material.uniforms) {
-                const time = Date.now() * 0.001;
-                particles.material.uniforms.time.value = time;
-                particles.rotation.y = time * 0.1;
-                particles.rotation.x = time * 0.05;
-            }
+            const time = Date.now() * 0.001;
+            particles.material.uniforms.time.value = time;
+            particles.rotation.y = time * 0.1;
+            particles.rotation.x = time * 0.05;
             
-            if (renderer && scene && camera) {
-                renderer.render(scene, camera);
-            }
+            renderer.render(scene, camera);
         }
+        
+        // Window resize handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
         
         // Loading screen completion
         setTimeout(() => {
-            if (typeof gsap !== 'undefined') {
-                gsap.to('#loading-screen', {
-                    opacity: 0,
-                    duration: 1,
-                    ease: 'power2.out',
-                    onComplete: () => {
-                        document.getElementById('loading-screen').style.display = 'none';
-                        document.getElementById('main-content').style.visibility = 'visible';
-                        gsap.to('#main-content', {
-                            opacity: 1,
-                            duration: 1,
-                            ease: 'power2.out'
-                        });
-                    }
-                });
-            } else {
-                // Fallback without GSAP
-                const loadingScreen = document.getElementById('loading-screen');
-                const mainContent = document.getElementById('main-content');
-                loadingScreen.style.opacity = '0';
-                loadingScreen.style.transition = 'opacity 1s';
-                setTimeout(() => {
-                    loadingScreen.style.display = 'none';
-                    mainContent.style.visibility = 'visible';
-                    mainContent.style.opacity = '1';
-                    mainContent.style.transition = 'opacity 1s';
-                }, 1000);
-            }
+            gsap.to('#loading-screen', {
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.out',
+                onComplete: () => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.visibility = 'visible';
+                    gsap.to('#main-content', {
+                        opacity: 1,
+                        duration: 1,
+                        ease: 'power2.out'
+                    });
+                }
+            });
         }, 4000);
         
         // Initialize Three.js after loading
@@ -733,19 +708,12 @@
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    if (typeof gsap !== 'undefined') {
-                        gsap.from(entry.target, {
-                            y: 50,
-                            opacity: 0,
-                            duration: 1,
-                            ease: 'power2.out'
-                        });
-                    } else {
-                        // Fallback animation without GSAP
-                        entry.target.style.transform = 'translateY(0)';
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transition = 'all 1s ease-out';
-                    }
+                    gsap.from(entry.target, {
+                        y: 50,
+                        opacity: 0,
+                        duration: 1,
+                        ease: 'power2.out'
+                    });
                 }
             });
         }, observerOptions);
@@ -769,249 +737,31 @@
             
             document.body.appendChild(element);
             
-            if (typeof gsap !== 'undefined') {
-                gsap.to(element, {
-                    y: -window.innerHeight - 100,
-                    duration: Math.random * 10 + 20,
-           ease: 'none',
-           onComplete: () => {
-               element.remove();
-           }
-       });
-   } else {
-       // Fallback animation without GSAP
-       const duration = Math.random() * 10 + 20;
-       element.style.transition = `transform ${duration}s ease-out`;
-       element.style.transform = `translateY(-${window.innerHeight + 100}px)`;
-       
-       setTimeout(() => {
-           element.remove();
-       }, duration * 1000);
-   }
-}
-
-// Create floating elements periodically
-setInterval(createFloatingElement, 3000);
-
-// Parallax effect on scroll
-let ticking = false;
-
-function updateParallax() {
-   const scrolled = window.pageYOffset;
-   const parallax = scrolled * 0.5;
-   
-   if (particles) {
-       particles.position.y = parallax * 0.1;
-   }
-   
-   // Update floating elements
-   document.querySelectorAll('.floating-element').forEach((element, index) => {
-       const speed = 0.5 + (index % 3) * 0.2;
-       element.style.transform = `translateY(${scrolled * speed}px)`;
-   });
-   
-   ticking = false;
-}
-
-function requestTick() {
-   if (!ticking) {
-       requestAnimationFrame(updateParallax);
-       ticking = true;
-   }
-}
-
-window.addEventListener('scroll', requestTick);
-
-// Navigation scroll effect
-window.addEventListener('scroll', () => {
-   const nav = document.querySelector('nav');
-   if (window.scrollY > 100) {
-       nav.style.background = 'rgba(0, 0, 0, 0.8)';
-       nav.style.backdropFilter = 'blur(30px)';
-   } else {
-       nav.style.background = 'rgba(0, 0, 0, 0.3)';
-       nav.style.backdropFilter = 'blur(20px)';
-   }
-});
-
-// Mouse trail effect
-const trail = [];
-
-document.addEventListener('mousemove', (e) => {
-   trail.push({
-       x: e.clientX,
-       y: e.clientY,
-       time: Date.now()
-   });
-   
-   // Keep only recent trail points
-   while (trail.length > 20) {
-       trail.shift();
-   }
-   
-   // Create trail particle
-   const particle = document.createElement('div');
-   particle.style.position = 'fixed';
-   particle.style.left = e.clientX + 'px';
-   particle.style.top = e.clientY + 'px';
-   particle.style.width = '4px';
-   particle.style.height = '4px';
-   particle.style.background = 'rgba(255, 107, 157, 0.6)';
-   particle.style.borderRadius = '50%';
-   particle.style.pointerEvents = 'none';
-   particle.style.zIndex = '9999';
-   particle.style.transform = 'translate(-50%, -50%)';
-   
-   document.body.appendChild(particle);
-   
-   if (typeof gsap !== 'undefined') {
-       gsap.to(particle, {
-           scale: 0,
-           opacity: 0,
-           duration: 0.8,
-           ease: 'power2.out',
-           onComplete: () => {
-               particle.remove();
-           }
-       });
-   } else {
-       // Fallback without GSAP
-       particle.style.transition = 'all 0.8s ease-out';
-       setTimeout(() => {
-           particle.style.transform = 'translate(-50%, -50%) scale(0)';
-           particle.style.opacity = '0';
-       }, 10);
-       setTimeout(() => {
-           particle.remove();
-       }, 800);
-   }
-});
-
-// Contact card interactions
-document.querySelectorAll('.contact-card').forEach(card => {
-   card.addEventListener('mouseenter', () => {
-       if (typeof gsap !== 'undefined') {
-           gsap.to(card, {
-               scale: 1.05,
-               rotationY: 5,
-               duration: 0.3,
-               ease: 'power2.out'
-           });
-       }
-   });
-   
-   card.addEventListener('mouseleave', () => {
-       if (typeof gsap !== 'undefined') {
-           gsap.to(card, {
-               scale: 1,
-               rotationY: 0,
-               duration: 0.3,
-               ease: 'power2.out'
-           });
-       }
-   });
-});
-
-// Easter egg: Konami code
-let konamiCode = [];
-const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65]; // ↑↑↓↓←→←→BA
-
-document.addEventListener('keydown', (e) => {
-   konamiCode.push(e.keyCode);
-   if (konamiCode.length > konamiSequence.length) {
-       konamiCode.shift();
-   }
-   
-   if (JSON.stringify(konamiCode) === JSON.stringify(konamiSequence)) {
-       // Activate easter egg
-       document.body.style.filter = 'hue-rotate(180deg)';
-       createFireworks();
-       setTimeout(() => {
-           document.body.style.filter = 'none';
-       }, 5000);
-       konamiCode = [];
-   }
-});
-
-function createFireworks() {
-   for (let i = 0; i < 10; i++) {
-       setTimeout(() => {
-           const firework = document.createElement('div');
-           firework.style.position = 'fixed';
-           firework.style.left = Math.random() * window.innerWidth + 'px';
-           firework.style.top = Math.random() * window.innerHeight + 'px';
-           firework.style.width = '4px';
-           firework.style.height = '4px';
-           firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-           firework.style.borderRadius = '50%';
-           firework.style.pointerEvents = 'none';
-           firework.style.zIndex = '10000';
-           
-           document.body.appendChild(firework);
-           
-           if (typeof gsap !== 'undefined') {
-               gsap.to(firework, {
-                   scale: 20,
-                   opacity: 0,
-                   duration: 1,
-                   ease: 'power2.out',
-                   onComplete: () => {
-                       firework.remove();
-                   }
-               });
-           } else {
-               firework.style.transition = 'all 1s ease-out';
-               setTimeout(() => {
-                   firework.style.transform = 'scale(20)';
-                   firework.style.opacity = '0';
-               }, 10);
-               setTimeout(() => {
-                   firework.remove();
-               }, 1000);
-           }
-       }, i * 200);
-   }
-}
-
-// Performance optimization
-let rafId;
-function optimizePerformance() {
-   if (rafId) {
-       cancelAnimationFrame(rafId);
-   }
-   
-   rafId = requestAnimationFrame(() => {
-       // Update only visible elements
-       const rect = document.documentElement.getBoundingClientRect();
-       if (rect.top < window.innerHeight && rect.bottom > 0) {
-           // Page is visible, continue animations
-       }
-   });
-}
-
-document.addEventListener('visibilitychange', () => {
-   if (document.hidden) {
-       // Pause animations when tab is not visible
-       if (particles && particles.material) {
-           particles.material.visible = false;
-       }
-   } else {
-       // Resume animations
-       if (particles && particles.material) {
-           particles.material.visible = true;
-       }
-   }
-});
-
-// Initialize all interactions after page load
-window.addEventListener('load', () => {
-   console.log('Express Isekai - Ready for Adventure! 🚛✨');
-   
-   // Preload next sections for smooth scrolling
-   document.querySelectorAll('section').forEach(section => {
-       section.style.willChange = 'transform';
-   });
-});
-   </script>
+            gsap.to(element, {
+                y: -window.innerHeight - 100,
+                duration: Math.random() * 10 + 15,
+                ease: 'none',
+                onComplete: () => {
+                    element.remove();
+                }
+            });
+        }
+        
+        // Create floating elements periodically
+        setInterval(createFloatingElement, 3000);
+        
+        // Mouse movement parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            gsap.to('.floating-element', {
+                x: (mouseX - 0.5) * 20,
+                y: (mouseY - 0.5) * 20,
+                duration: 1,
+                ease: 'power2.out'
+            });
+        });
+    </script>
 </body>
 </html>
