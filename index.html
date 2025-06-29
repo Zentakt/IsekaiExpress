@@ -3,1029 +3,857 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isekai Express VTC - Advanced Transport Solutions</title>
+    <title>Express Isekai - Virtual Trucking Company</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/theatre/0.5.1/theatre.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Noto+Sans+JP:wght@300;400;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
+        
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Noto Sans JP', sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2e 50%, #16213e 100%);
+            color: #ffffff;
             overflow-x: hidden;
-            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
-            color: white;
-            cursor: none;
+            position: relative;
         }
-
-        /* Custom Cursor */
-        .custom-cursor {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            background: radial-gradient(circle, #ff6b6b, #ffd93d);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transition: transform 0.1s ease;
-            mix-blend-mode: difference;
-        }
-
-        .cursor-trail {
-            position: fixed;
-            width: 4px;
-            height: 4px;
-            background: #ff6b6b;
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            opacity: 0.7;
-        }
-
+        
         /* Loading Screen */
-        .loading-screen {
+        #loading-screen {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #ff6b9d 0%, #c44569 25%, #6c5ce7 50%, #a29bfe 75%, #fd79a8 100%);
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 10000;
-            transition: opacity 1s ease;
+            animation: pulseGradient 3s ease-in-out infinite;
         }
-
+        
+        @keyframes pulseGradient {
+            0%, 100% { background: radial-gradient(circle at center, #ff6b9d 0%, #c44569 25%, #6c5ce7 50%, #a29bfe 75%, #fd79a8 100%); }
+            50% { background: radial-gradient(circle at center, #a29bfe 0%, #6c5ce7 25%, #fd79a8 50%, #ff6b9d 75%, #c44569 100%); }
+        }
+        
+        #loading-canvas {
+            margin-bottom: 30px;
+        }
+        
         .loading-text {
-            font-size: 2rem;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: pulse 2s infinite;
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            animation: glow 2s ease-in-out infinite alternate;
+            margin-bottom: 20px;
         }
-
-        /* Audio Controls */
-        .audio-controls {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            display: flex;
-            gap: 10px;
-            align-items: center;
+        
+        .loading-subtitle {
+            font-family: 'Noto Sans JP', sans-serif;
+            font-size: 1.2rem;
+            color: #e0e0e0;
+            text-align: center;
+            animation: fadeInOut 2s ease-in-out infinite;
         }
-
-        .audio-btn {
-            padding: 10px 15px;
-            background: rgba(255, 107, 107, 0.2);
-            border: 2px solid #ff6b6b;
-            color: white;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(255, 107, 157, 0.6); }
+            to { text-shadow: 0 0 30px rgba(255, 255, 255, 1), 0 0 60px rgba(255, 107, 157, 1); }
         }
-
-        .audio-btn:hover {
-            background: rgba(255, 107, 107, 0.4);
-            transform: scale(1.1);
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
-
-        /* Audio Visualizer */
-        .audio-visualizer {
-            position: fixed;
-            bottom: 20px;
-            left: 20px;
-            width: 200px;
-            height: 100px;
-            display: flex;
-            align-items: end;
-            gap: 2px;
-            z-index: 1000;
+        
+        /* Main Content */
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
         }
-
-        .visualizer-bar {
-            width: 4px;
-            background: linear-gradient(to top, #ff6b6b, #ffd93d);
-            border-radius: 2px;
-            transition: height 0.1s ease;
-        }
-
-        /* Speedometer */
-        .speedometer {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 120px;
-            height: 120px;
-            border: 3px solid #ff6b6b;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-        }
-
-        .speed-needle {
-            position: absolute;
-            width: 2px;
-            height: 40px;
-            background: #ffd93d;
-            transform-origin: bottom center;
-            transition: transform 0.3s ease;
-        }
-
-        /* Road Elements */
-        .road-container {
+        
+        /* Three.js Background */
+        #bg-canvas {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100vw;
-            height: 100vh;
-            overflow: hidden;
-            z-index: -1;
-        }
-
-        .road-line {
-            position: absolute;
-            width: 4px;
-            height: 100px;
-            background: white;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: roadScroll 2s linear infinite;
-        }
-
-        @keyframes roadScroll {
-            from { top: -100px; }
-            to { top: 100vh; }
-        }
-
-        /* Particle System */
-        .particle {
-            position: absolute;
-            width: 2px;
-            height: 2px;
-            background: #4ecdc4;
-            border-radius: 50%;
-            pointer-events: none;
-        }
-
-        /* Cherry Blossom */
-        .cherry-blossom {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: radial-gradient(circle, #ffb3ba, #ff6b6b);
-            border-radius: 50% 0 50% 0;
-            animation: fall 10s linear infinite;
-            transform-origin: center;
-        }
-
-        @keyframes fall {
-            0% { transform: translateY(-100vh) rotate(0deg); }
-            100% { transform: translateY(100vh) rotate(360deg); }
-        }
-
-        /* Main Sections */
-        .section {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 50px;
-            position: relative;
-            transform-style: preserve-3d;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 217, 61, 0.1));
-            text-align: center;
-            perspective: 1000px;
-        }
-
-        .hero h1 {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: textGlow 3s ease-in-out infinite alternate;
-            transform: translateZ(50px);
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 30px;
-            opacity: 0.9;
-            transform: translateZ(30px);
-        }
-
-        .cta-button {
-            padding: 15px 40px;
-            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
-            border: none;
-            border-radius: 50px;
-            color: white;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            transform: translateZ(40px);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button:hover {
-            transform: translateZ(60px) scale(1.1);
-            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.3);
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
+            z-index: -1;
         }
-
-        .cta-button:hover::before {
-            left: 100%;
+        
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 50px;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: all 0.3s ease;
         }
-
-        /* Services Section */
-        .services {
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(255, 107, 107, 0.1));
-            flex-direction: column;
+        
+        nav:hover {
+            background: rgba(0, 0, 0, 0.5);
         }
-
-        .services h2 {
-            font-size: 3rem;
-            margin-bottom: 50px;
-            text-align: center;
-            background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+        
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-family: 'Orbitron', monospace;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b9d, #a29bfe, #6c5ce7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(255, 107, 157, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-
-        .service-grid {
+        
+        .logo:hover {
+            transform: scale(1.05);
+            filter: brightness(1.2);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1.1rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(45deg, #ff6b9d, #a29bfe);
+            transition: width 0.3s ease;
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .nav-links a:hover {
+            color: #ff6b9d;
+            transform: translateY(-2px);
+        }
+        
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(45deg, #ff6b9d, #ffffff, #a29bfe, #6c5ce7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: heroGlow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes heroGlow {
+            0% { 
+                filter: drop-shadow(0 0 20px rgba(255, 107, 157, 0.8));
+                transform: scale(1);
+            }
+            100% { 
+                filter: drop-shadow(0 0 40px rgba(162, 155, 254, 1));
+                transform: scale(1.02);
+            }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+        
+        .hero-tagline {
+            font-size: 1.2rem;
+            color: #a0a0a0;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+        
+        .cta-button {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff6b9d, #a29bfe);
+            border: none;
+            border-radius: 50px;
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.3);
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.5);
+        }
+        
+        /* Sections */
+        section {
+            padding: 100px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 3rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(45deg, #ff6b9d, #a29bfe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .section-content {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .section-content:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+            border-color: rgba(255, 107, 157, 0.3);
+        }
+        
+        .section-content p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+        }
+        
+        .section-content ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        
+        .section-content li {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+            position: relative;
+            padding-left: 25px;
+        }
+        
+        .section-content li::before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: #ff6b9d;
+            font-weight: bold;
+        }
+        
+        /* Contact Cards */
+        .contact-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            max-width: 1200px;
+            margin-top: 40px;
         }
-
-        .service-card {
-            background: rgba(255, 255, 255, 0.1);
+        
+        .contact-card {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(162, 155, 254, 0.1));
+            border: 2px solid rgba(255, 107, 157, 0.3);
+            border-radius: 20px;
             padding: 30px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
             transition: all 0.3s ease;
-            transform-style: preserve-3d;
+            cursor: pointer;
         }
-
-        .service-card:hover {
-            transform: translateY(-10px) rotateX(5deg);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        
+        .contact-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            border-color: rgba(255, 107, 157, 0.6);
+            box-shadow: 0 20px 40px rgba(255, 107, 157, 0.2);
         }
-
-        /* Anime Character */
-        .anime-character {
-            position: fixed;
-            width: 80px;
-            height: 80px;
-            background: radial-gradient(circle, #ffb3ba, #ff6b6b);
-            border-radius: 50%;
-            z-index: 999;
-            transition: all 0.3s ease;
-            pointer-events: none;
+        
+        .contact-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #ff6b9d;
         }
-
-        .anime-character::before {
-            content: '^_^';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 16px;
-            color: white;
+        
+        .contact-title {
+            font-family: 'Orbitron', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: #ffffff;
         }
-
-        /* Speech Bubble */
-        .speech-bubble {
-            position: fixed;
-            background: white;
-            color: #333;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            z-index: 1000;
-            opacity: 0;
-            transition: all 0.3s ease;
-            pointer-events: none;
+        
+        .contact-info {
+            font-size: 1.1rem;
+            color: #e0e0e0;
+            word-break: break-all;
         }
-
-        .speech-bubble::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 20px;
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 10px solid white;
-        }
-
-        /* Mile Markers */
-        .mile-marker {
-            position: fixed;
-            right: 50px;
-            background: rgba(255, 107, 107, 0.2);
-            padding: 10px;
-            border-radius: 10px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 107, 107, 0.3);
-            z-index: 1000;
-        }
-
-        /* 3D Elements */
+        
+        /* Floating Elements */
         .floating-element {
             position: absolute;
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(45deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
-            border-radius: 20px;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
-            50% { transform: translateY(-20px) rotateX(180deg) rotateY(180deg); }
-        }
-
-        @keyframes textGlow {
-            0% { text-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
-            100% { text-shadow: 0 0 40px rgba(255, 217, 61, 0.8), 0 0 60px rgba(78, 205, 196, 0.6); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        /* Morphing Shapes */
-        .morphing-shape {
-            position: absolute;
-            width: 200px;
-            height: 200px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            width: 10px;
+            height: 10px;
+            background: linear-gradient(45deg, #ff6b9d, #a29bfe);
             border-radius: 50%;
-            animation: morph 8s ease-in-out infinite;
-            opacity: 0.3;
+            animation: float 6s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255, 107, 157, 0.5);
         }
-
-        @keyframes morph {
-            0%, 100% { border-radius: 50%; transform: rotate(0deg); }
-            25% { border-radius: 25% 75% 25% 75%; transform: rotate(90deg); }
-            50% { border-radius: 75% 25% 75% 25%; transform: rotate(180deg); }
-            75% { border-radius: 25% 75% 75% 25%; transform: rotate(270deg); }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
         }
-
-        /* Three.js Container */
-        #three-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: -2;
-        }
-
+        
         /* Responsive */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 2.5rem; }
-            .hero p { font-size: 1.2rem; }
-            .service-grid { grid-template-columns: 1fr; }
-            .audio-controls { top: 10px; right: 10px; }
-            .speedometer { width: 80px; height: 80px; }
+            nav {
+                padding: 15px 20px;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .hero-title {
+                font-size: 3rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            section {
+                padding: 60px 20px;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+            
+            .section-content {
+                padding: 25px;
+            }
+        }
+        
+        /* Scroll Indicator */
+        .scroll-indicator {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 50px;
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            border-radius: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 8px;
+            animation: bounce 2s infinite;
+        }
+        
+        .scroll-dot {
+            width: 4px;
+            height: 4px;
+            background: #ff6b9d;
+            border-radius: 50%;
+            animation: scrollDot 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        
+        @keyframes scrollDot {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(20px); }
         }
     </style>
 </head>
 <body>
     <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-text">Loading Isekai Express...</div>
+    <div id="loading-screen">
+        <canvas id="loading-canvas" width="300" height="300"></canvas>
+        <div class="loading-text">Express Isekai</div>
+        <div class="loading-subtitle">Transporting Dreams to Another World</div>
     </div>
-
-    <!-- Custom Cursor -->
-    <div class="custom-cursor" id="cursor"></div>
-
-    <!-- Audio Controls -->
-    <div class="audio-controls">
-        <button class="audio-btn" id="playBtn">🎵 Play</button>
-        <button class="audio-btn" id="pauseBtn">⏸️ Pause</button>
-        <span id="volumeControl">🔊</span>
-    </div>
-
-    <!-- Audio Visualizer -->
-    <div class="audio-visualizer" id="visualizer"></div>
-
-    <!-- Speedometer -->
-    <div class="speedometer">
-        <div class="speed-needle" id="speedNeedle"></div>
-        <div id="speedText">0</div>
-    </div>
-
-    <!-- Mile Marker -->
-    <div class="mile-marker" id="mileMarker">Mile 0</div>
-
-    <!-- Road Container -->
-    <div class="road-container" id="roadContainer"></div>
-
-    <!-- Three.js Container -->
-    <div id="three-container"></div>
-
-    <!-- Anime Character -->
-    <div class="anime-character" id="animeCharacter"></div>
-
-    <!-- Speech Bubble -->
-    <div class="speech-bubble" id="speechBubble">Welcome to Isekai Express!</div>
-
+    
     <!-- Main Content -->
-    <main>
+    <div id="main-content">
+        <!-- Three.js Background -->
+        <canvas id="bg-canvas"></canvas>
+        
+        <!-- Navigation -->
+        <nav>
+            <div class="nav-container">
+                <div class="logo">Express Isekai</div>
+                <div class="nav-links">
+                    <a href="#about">About</a>
+                    <a href="#guidelines">Guidelines</a>
+                    <a href="#contact">Contact</a>
+                </div>
+            </div>
+        </nav>
+        
         <!-- Hero Section -->
-        <section class="section hero" id="hero">
-            <div class="floating-element" style="top: 10%; left: 10%;"></div>
-            <div class="floating-element" style="top: 20%; right: 15%; animation-delay: -2s;"></div>
-            <div class="morphing-shape" style="top: 60%; left: 80%; animation-delay: -4s;"></div>
+        <section class="hero">
+            <h1 class="hero-title">Express Isekai</h1>
+            <p class="hero-subtitle">Virtual Trucking Company</p>
+            <p class="hero-tagline">Journey to Another World Through the Digital Highway</p>
+            <a href="#about" class="cta-button">Start Your Adventure</a>
             
-            <h1>ISEKAI EXPRESS VTC</h1>
-            <p>Your Gateway to Another World of Transportation</p>
-            <button class="cta-button" id="mainCTA">Start Your Journey</button>
-        </section>
-
-        <!-- Services Section -->
-        <section class="section services" id="services">
-            <h2>Our Transport Services</h2>
-            <div class="service-grid">
-                <div class="service-card">
-                    <h3>🚛 Freight Transport</h3>
-                    <p>Professional cargo delivery across dimensions with real-time tracking and secure handling.</p>
-                </div>
-                <div class="service-card">
-                    <h3>🚐 Passenger Services</h3>
-                    <p>Comfortable and safe passenger transport with experienced drivers and modern vehicles.</p>
-                </div>
-                <div class="service-card">
-                    <h3>📦 Express Delivery</h3>
-                    <p>Lightning-fast delivery services for urgent packages and time-sensitive cargo.</p>
-                </div>
-                <div class="service-card">
-                    <h3>🌟 Premium VIP</h3>
-                    <p>Luxury transport solutions with premium vehicles and personalized service.</p>
-                </div>
+            <div class="scroll-indicator">
+                <div class="scroll-dot"></div>
             </div>
         </section>
-
+        
         <!-- About Section -->
-        <section class="section" id="about">
-            <div style="max-width: 800px; text-align: center;">
-                <h2 style="font-size: 3rem; margin-bottom: 30px; background: linear-gradient(45deg, #ffd93d, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">About Isekai Express</h2>
-                <p style="font-size: 1.3rem; line-height: 1.8; opacity: 0.9;">
-                    Isekai Express VTC combines cutting-edge technology with reliable transportation services. 
-                    Our fleet of modern vehicles and experienced drivers ensure your journey is safe, 
-                    comfortable, and efficient. Whether you're shipping cargo or traveling yourself, 
-                    we're your trusted partner in transportation.
-                </p>
+        <section id="about">
+            <h2 class="section-title">About Us</h2>
+            <div class="section-content">
+                <p>Welcome to Express Isekai, where the boundaries between reality and fantasy blur on the digital highways of Europe. We are more than just a virtual trucking company – we are a gateway to another world, a community of dreamers and adventurers who find their isekai through the immersive landscapes of Euro Truck Simulator 2.</p>
+                
+                <p>Born from the passion of anime enthusiasts and trucking simulation lovers, Express Isekai represents the perfect fusion of two worlds. Here, every delivery is an adventure, every route is a journey to discover new realms, and every driver is a protagonist in their own story.</p>
+                
+                <p>Our company embodies the spirit of isekai – the Japanese concept of being transported to another world. Through the virtual roads of Europe, we create experiences that transcend the ordinary, building a community where anime culture meets the freedom of the open road.</p>
+                
+                <p>Join us as we navigate through digital landscapes, creating memories and friendships that extend far beyond the game itself. At Express Isekai, your journey to another world begins with a single key turn.</p>
             </div>
         </section>
-
+        
+        <!-- Guidelines Section -->
+        <section id="guidelines">
+            <h2 class="section-title">Guidelines for Joining</h2>
+            <div class="section-content">
+                <p>To become part of the Express Isekai family and embark on your isekai adventure, please follow these guidelines:</p>
+                
+                <ul>
+                    <li>Own a legitimate copy of Euro Truck Simulator 2 with current updates</li>
+                    <li>Maintain respect for all community members regardless of skill level or background</li>
+                    <li>Embrace the anime culture and isekai spirit that defines our community</li>
+                    <li>Participate actively in company events and convoy operations</li>
+                    <li>Follow proper trucking etiquette during multiplayer sessions</li>
+                    <li>Use appropriate anime-themed truck designs and company liveries when available</li>
+                    <li>Communicate primarily through our Discord server for coordination and community building</li>
+                    <li>Complete at least one delivery per month to maintain active membership status</li>
+                    <li>Report any technical issues or conflicts to management promptly</li>
+                    <li>Help foster a welcoming environment for new drivers entering our isekai world</li>
+                </ul>
+                
+                <p>Remember, at Express Isekai, we believe that every journey should be an adventure, and every driver should feel like the main character of their own story. Let's create amazing memories together on the digital highways!</p>
+            </div>
+        </section>
+        
         <!-- Contact Section -->
-        <section class="section" id="contact">
-            <div style="text-align: center;">
-                <h2 style="font-size: 3rem; margin-bottom: 30px; background: linear-gradient(45deg, #ff6b6b, #ffd93d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Contact Us</h2>
-                <p style="font-size: 1.2rem; margin-bottom: 20px;">Ready to start your transport journey?</p>
-                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);">
-                        <h4>📞 Phone</h4>
-                        <p>+1 (555) 123-4567</p>
+        <section id="contact">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="section-content">
+                <p>Ready to begin your isekai adventure? Connect with us through our official channels and join our growing community of anime-loving truckers!</p>
+                
+                <div class="contact-cards">
+                    <div class="contact-card" onclick="window.open('mailto:expressisekai@gmail.com')">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-title">Email</div>
+                        <div class="contact-info">expressisekai@gmail.com</div>
                     </div>
-                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);">
-                        <h4>📧 Email</h4>
-                        <p>info@isekaiexpress.com</p>
-                    </div>
-                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);">
-                        <h4>📍 Address</h4>
-                        <p>123 Transport Ave, City, State</p>
+                    
+                    <div class="contact-card" onclick="window.open('https://discord.gg/uE96rbK95j', '_blank')">
+                        <div class="contact-icon">🎮</div>
+                        <div class="contact-title">Discord Server</div>
+                        <div class="contact-info">discord.gg/uE96rbK95j</div>
                     </div>
                 </div>
             </div>
         </section>
-    </main>
-
+        
+        <!-- Floating Elements -->
+        <div class="floating-element" style="top: 20%; left: 10%; animation-delay: 0s;"></div>
+        <div class="floating-element" style="top: 60%; right: 15%; animation-delay: 2s;"></div>
+        <div class="floating-element" style="top: 40%; left: 80%; animation-delay: 4s;"></div>
+        <div class="floating-element" style="bottom: 30%; left: 25%; animation-delay: 1s;"></div>
+        <div class="floating-element" style="top: 80%; right: 30%; animation-delay: 3s;"></div>
+    </div>
+    
     <script>
-        // Initialize variables
-        let scene, camera, renderer, particles = [];
-        let audioContext, analyser, dataArray;
-        let scrollSpeed = 0;
-        let lastScrollY = 0;
-        let cursorTrails = [];
-        let isAudioPlaying = false;
-
-        // Initialize everything when page loads
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('loadingScreen').style.opacity = '0';
-                setTimeout(() => {
-                    document.getElementById('loadingScreen').style.display = 'none';
-                }, 1000);
-            }, 2000);
-
-            initThreeJS();
-            initAudio();
-            initParticles();
-            initRoadAnimation();
-            initCherryBlossoms();
-            initEventListeners();
-        });
-
-        // Three.js Initialization
+        // Loading Screen Animation
+        const loadingCanvas = document.getElementById('loading-canvas');
+        const loadingCtx = loadingCanvas.getContext('2d');
+        let loadingFrame = 0;
+        
+        function animateLoading() {
+            loadingCtx.clearRect(0, 0, 300, 300);
+            
+            // Create rotating rings
+            const centerX = 150;
+            const centerY = 150;
+            
+            for (let i = 0; i < 3; i++) {
+                const radius = 50 + i * 30;
+                const rotation = (loadingFrame * 0.02) + (i * Math.PI / 3);
+                
+                loadingCtx.beginPath();
+                loadingCtx.arc(centerX, centerY, radius, rotation, rotation + Math.PI);
+                loadingCtx.strokeStyle = `hsl(${320 + i * 30}, 80%, 60%)`;
+                loadingCtx.lineWidth = 4;
+                loadingCtx.stroke();
+            }
+            
+            // Create pulsing center
+            const pulseRadius = 20 + Math.sin(loadingFrame * 0.05) * 10;
+            loadingCtx.beginPath();
+            loadingCtx.arc(centerX, centerY, pulseRadius, 0, Math.PI * 2);
+            loadingCtx.fillStyle = `rgba(255, 107, 157, ${0.5 + Math.sin(loadingFrame * 0.1) * 0.3})`;
+            loadingCtx.fill();
+            
+            loadingFrame++;
+            requestAnimationFrame(animateLoading);
+        }
+        
+        animateLoading();
+        
+        // Three.js Background Scene
+        let scene, camera, renderer, particles;
+        
         function initThreeJS() {
             scene = new THREE.Scene();
             camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
             renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('three-container').appendChild(renderer.domElement);
-
-            // Create 3D particles
-            const geometry = new THREE.BufferGeometry();
-            const positions = [];
-            const colors = [];
-
-            for (let i = 0; i < 2000; i++) {
-                positions.push((Math.random() - 0.5) * 2000);
-                positions.push((Math.random() - 0.5) * 2000);
-                positions.push((Math.random() - 0.5) * 2000);
-
-                colors.push(Math.random());
-                colors.push(Math.random());
-                colors.push(Math.random());
-            }
-
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
-            const material = new THREE.PointsMaterial({ 
-                size: 2, 
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.8
-            });
-
-            const points = new THREE.Points(geometry, material);
-            scene.add(points);
-
-            camera.position.z = 500;
-
-            animate3D();
-        }
-
-        function animate3D() {
-            requestAnimationFrame(animate3D);
+            renderer.setPixelRatio(window.devicePixelRatio);
             
-            scene.rotation.x += 0.001;
-            scene.rotation.y += 0.002;
+            // Create particle system
+            const particleCount = 2000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
+            
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
+                
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.2 + 0.8, 0.8, 0.6);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
+                
+                sizes[i] = Math.random() * 3 + 1;
+            }
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 }
+                },
+                vertexShader: `
+                    attribute float size;
+                    attribute vec3 color;
+                    varying vec3 vColor;
+                    uniform float time;
+                    
+                    void main() {
+                        vColor = color;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time + position.x * 0.01) * 0.5);
+                        gl_Position = projectionMatrix * mvPosition;
+                    }
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        float distance = length(gl_PointCoord - vec2(0.5));
+                        float alpha = 1.0 - smoothstep(0.0, 0.5, distance);
+                        gl_FragColor = vec4(vColor, alpha);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                vertexColors: true,
+                transparent: true
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            camera.position.z = 100;
+            
+            animate();
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            particles.material.uniforms.time.value = time;
+            particles.rotation.y = time * 0.1;
+            particles.rotation.x = time * 0.05;
             
             renderer.render(scene, camera);
         }
-
-        // Audio System
-        function initAudio() {
-            // Create visualizer bars
-            const visualizer = document.getElementById('visualizer');
-            for (let i = 0; i < 50; i++) {
-                const bar = document.createElement('div');
-                bar.className = 'visualizer-bar';
-                bar.style.height = '5px';
-                visualizer.appendChild(bar);
-            }
-
-            // Audio context setup (simplified for demo)
-            document.getElementById('playBtn').addEventListener('click', () => {
-                isAudioPlaying = true;
-                animateVisualizer();
-            });
-
-            document.getElementById('pauseBtn').addEventListener('click', () => {
-                isAudioPlaying = false;
-            });
-        }
-
-        function animateVisualizer() {
-            if (!isAudioPlaying) return;
-
-            const bars = document.querySelectorAll('.visualizer-bar');
-            bars.forEach(bar => {
-                const height = Math.random() * 80 + 5;
-                bar.style.height = height + 'px';
-            });
-
-            setTimeout(animateVisualizer, 100);
-        }
-
-        // Particle System
-        function initParticles() {
-            for (let i = 0; i < 100; i++) {
-                createParticle();
+       // Window resize handler - moved inside initThreeJS to ensure camera exists
+        function handleResize() {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
             }
         }
-
-        function createParticle() {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.left = Math.random() * window.innerWidth + 'px';
-            particle.style.top = Math.random() * window.innerHeight + 'px';
+        
+        // Three.js Background Scene
+        let scene, camera, renderer, particles;
+        
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
             
-            const duration = Math.random() * 3 + 2;
-            particle.style.animation = `float ${duration}s ease-in-out infinite`;
-            particle.style.animationDelay = Math.random() * 2 + 's';
+            // Create particle system
+            const particleCount = 2000;
+            const positions = new Float32Array(particleCount * 3);
+            const colors = new Float32Array(particleCount * 3);
+            const sizes = new Float32Array(particleCount);
             
-            document.body.appendChild(particle);
-            
-            setTimeout(() => {
-                if (particle.parentNode) {
-                    particle.parentNode.removeChild(particle);
-                }
-                createParticle();
-            }, duration * 1000);
-        }
-
-        // Road Animation
-        function initRoadAnimation() {
-            const roadContainer = document.getElementById('roadContainer');
-            
-            setInterval(() => {
-                const line = document.createElement('div');
-                line.className = 'road-line';
-                line.style.animationDuration = (2 - scrollSpeed * 0.5) + 's';
-                roadContainer.appendChild(line);
+            for (let i = 0; i < particleCount; i++) {
+                positions[i * 3] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
+                positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
                 
-                setTimeout(() => {
-                    if (line.parentNode) {
-                        line.parentNode.removeChild(line);
-                    }
-                }, 2000);
-            }, 200);
-        }
-
-        // Cherry Blossom System
-        function initCherryBlossoms() {
-            setInterval(() => {
-                const blossom = document.createElement('div');
-                blossom.className = 'cherry-blossom';
-                blossom.style.left = Math.random() * window.innerWidth + 'px';
-                blossom.style.animationDuration = (Math.random() * 5 + 8) + 's';
-                blossom.style.animationDelay = Math.random() * 2 + 's';
-                document.body.appendChild(blossom);
+                const color = new THREE.Color();
+                color.setHSL(Math.random() * 0.2 + 0.8, 0.8, 0.6);
+                colors[i * 3] = color.r;
+                colors[i * 3 + 1] = color.g;
+                colors[i * 3 + 2] = color.b;
                 
-                setTimeout(() => {
-                    if (blossom.parentNode) {
-                        blossom.parentNode.removeChild(blossom);
+                sizes[i] = Math.random() * 3 + 1;
+            }
+            
+            const geometry = new THREE.BufferGeometry();
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('customColor', new THREE.BufferAttribute(colors, 3));
+            geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+            
+            const material = new THREE.ShaderMaterial({
+                uniforms: {
+                    time: { value: 0 }
+                },
+                vertexShader: `
+                    attribute float size;
+                    attribute vec3 customColor;
+                    varying vec3 vColor;
+                    uniform float time;
+                    
+                    void main() {
+                        vColor = customColor;
+                        vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+                        gl_PointSize = size * (300.0 / -mvPosition.z) * (1.0 + sin(time + position.x * 0.01) * 0.5);
+                        gl_Position = projectionMatrix * mvPosition;
                     }
-                }, 15000);
-            }, 1000);
-        }
-
-        // Event Listeners
-        function initEventListeners() {
-            // Custom cursor
-            const cursor = document.getElementById('cursor');
-            const animeCharacter = document.getElementById('animeCharacter');
-            const speechBubble = document.getElementById('speechBubble');
-
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-
-                // Anime character follows cursor with delay
-                setTimeout(() => {
-                    animeCharacter.style.left = (e.clientX - 40) + 'px';
-                    animeCharacter.style.top = (e.clientY - 80) + 'px';
-                }, 200);
-
-                // Create cursor trail
-                createCursorTrail(e.clientX, e.clientY);
+                `,
+                fragmentShader: `
+                    varying vec3 vColor;
+                    
+                    void main() {
+                        float distance = length(gl_PointCoord - vec2(0.5));
+                        float alpha = 1.0 - smoothstep(0.0, 0.5, distance);
+                        gl_FragColor = vec4(vColor, alpha);
+                    }
+                `,
+                blending: THREE.AdditiveBlending,
+                transparent: true
             });
-
-            // Scroll effects
-            let ticking = false;
             
-            window.addEventListener('scroll', () => {
-                if (!ticking) {
-                    requestAnimationFrame(() => {
-                        updateScrollEffects();
-                        ticking = false;
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            camera.position.z = 100;
+            
+            // Add resize listener after camera is created
+            window.addEventListener('resize', handleResize);
+            
+            animate();
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const time = Date.now() * 0.001;
+            if (particles && particles.material && particles.material.uniforms) {
+                particles.material.uniforms.time.value = time;
+                particles.rotation.y = time * 0.1;
+                particles.rotation.x = time * 0.05;
+            }
+            
+            if (renderer && scene && camera) {
+                renderer.render(scene, camera);
+            }
+        }
+        
+        // Loading screen completion
+        setTimeout(() => {
+            gsap.to('#loading-screen', {
+                opacity: 0,
+                duration: 1,
+                ease: 'power2.out',
+                onComplete: () => {
+                    document.getElementById('loading-screen').style.display = 'none';
+                    document.getElementById('main-content').style.visibility = 'visible';
+                    gsap.to('#main-content', {
+                        opacity: 1,
+                        duration: 1,
+                        ease: 'power2.out'
                     });
-                    ticking = true;
                 }
             });
-
-            // Interactive elements
-            document.querySelectorAll('.service-card, .cta-button').forEach(element => {
-                element.addEventListener('mouseenter', () => {
-                    showSpeechBubble("Looks interesting!");
-                    playInteractionSound();
-                });
-
-                element.addEventListener('mouseleave', () => {
-                    hideSpeechBubble();
-                });
+        }, 4000);
+        
+        // Initialize Three.js after loading
+        setTimeout(() => {
+            initThreeJS();
+        }, 3000);
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
             });
-
-            // CTA button click
-            document.getElementById('mainCTA').addEventListener('click', () => {
-                showSpeechBubble("Let's go on an adventure!");
-                triggerTransformationSequence();
+        });
+        
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    gsap.from(entry.target, {
+                        y: 50,
+                        opacity: 0,
+                        duration: 1,
+                        ease: 'power2.out'
+                    });
+                }
             });
-        }
-
-        function createCursorTrail(x, y) {
-            const trail = document.createElement('div');
-            trail.className = 'cursor-trail';
-            trail.style.left = x + 'px';
-            trail.style.top = y + 'px';
-            document.body.appendChild(trail);
-
-            setTimeout(() => {
-                trail.style.opacity = '0';
-                setTimeout(() => {
-                    if (trail.parentNode) {
-                        trail.parentNode.removeChild(trail);
-                    }
-                }, 300);
-            }, 100);
-        }
-
-        function updateScrollEffects() {
-            const currentScrollY = window.scrollY;
-            scrollSpeed = Math.abs(currentScrollY - lastScrollY) / 10;
-            lastScrollY = currentScrollY;
-
-            // Update speedometer
-            const speedNeedle = document.getElementById('speedNeedle');
-            const speedText = document.getElementById('speedText');
-            const angle = Math.min(scrollSpeed * 30, 180);
-            speedNeedle.style.transform = `rotate(${angle}deg)`;
-            speedText.textContent = Math.round(scrollSpeed * 10);
-
-            // Update mile marker
-            const mileMarker = document.getElementById('mileMarker');
-            const mile = Math.floor(currentScrollY / 100);
-            mileMarker.textContent = `Mile ${mile}`;
-            mileMarker.style.top = (100 + Math.sin(currentScrollY * 0.01) * 50) + 'px';
-
-            // Parallax effects
-            const sections = document.querySelectorAll('.section');
-            sections.forEach((section, index) => {
-                const rect = section.getBoundingClientRect();
-                const speed = (index + 1) * 0.5;
-                const yPos = -(currentScrollY * speed);
-                section.style.transform = `translateY(${yPos}px)`;
+        }, observerOptions);
+        
+        // Observe sections
+        setTimeout(() => {
+            document.querySelectorAll('section').forEach(section => {
+                observer.observe(section);
             });
-        }
-
-        function showSpeechBubble(text) {
-            const bubble = document.getElementById('speechBubble');
-            bubble.textContent = text;
-            bubble.style.opacity = '1';
+        }, 5000);
+        
+        // Dynamic floating elements
+        function createFloatingElement() {
+            const element = document.createElement('div');
+            element.className = 'floating-element';
+            element.style.position = 'fixed';
+            element.style.left = Math.random() * 100 + '%';
+            element.style.top = '100%';
+            element.style.animationDuration = (Math.random() * 4 + 6) + 's';
+            element.style.animationDelay = Math.random() * 2 + 's';
             
-            const character = document.getElementById('animeCharacter');
-            const charRect = character.getBoundingClientRect();
-            bubble.style.left = (charRect.left - 50) + 'px';
-            bubble.style.top = (charRect.top - 60) + 'px';
+            document.body.appendChild(element);
+            
+            gsap.to(element, {
+                y: -window.innerHeight - 100,
+                duration: Math.random() * 10 + 15,
+                ease: 'none',
+                onComplete: () => {
+                    element.remove();
+                }
+            });
         }
-
-        function hideSpeechBubble() {
-            document.getElementById('speechBubble').style.opacity = '0';
-        }
-
-        function playInteractionSound() {
-            // Simplified sound effect simulation
-            const soundEffect = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIH');
-       }
-
-       function triggerTransformationSequence() {
-           // Epic transformation animation
-           const hero = document.getElementById('hero');
-           hero.style.background = 'linear-gradient(135deg, #ff6b6b, #ffd93d, #4ecdc4, #95e1d3)';
-           hero.style.transition = 'all 2s ease';
-
-           // Create magical particles
-           for (let i = 0; i < 50; i++) {
-               setTimeout(() => {
-                   createMagicalParticle();
-               }, i * 50);
-           }
-
-           // Animate character
-           const character = document.getElementById('animeCharacter');
-           character.style.transform = 'scale(1.5) rotate(360deg)';
-           character.style.transition = 'all 1s ease';
-
-           setTimeout(() => {
-               character.style.transform = 'scale(1) rotate(0deg)';
-               showSpeechBubble("Transportation magic activated!");
-           }, 1000);
-       }
-
-       function createMagicalParticle() {
-           const particle = document.createElement('div');
-           particle.style.position = 'absolute';
-           particle.style.width = '8px';
-           particle.style.height = '8px';
-           particle.style.background = `linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4)`;
-           particle.style.borderRadius = '50%';
-           particle.style.pointerEvents = 'none';
-           particle.style.zIndex = '999';
-
-           const startX = Math.random() * window.innerWidth;
-           const startY = Math.random() * window.innerHeight;
-           particle.style.left = startX + 'px';
-           particle.style.top = startY + 'px';
-
-           document.body.appendChild(particle);
-
-           // Animate particle
-           let opacity = 1;
-           let scale = 1;
-           let x = startX;
-           let y = startY;
-           const vx = (Math.random() - 0.5) * 4;
-           const vy = (Math.random() - 0.5) * 4;
-
-           const animateParticle = () => {
-               opacity -= 0.02;
-               scale += 0.01;
-               x += vx;
-               y += vy;
-
-               particle.style.opacity = opacity;
-               particle.style.transform = `scale(${scale})`;
-               particle.style.left = x + 'px';
-               particle.style.top = y + 'px';
-
-               if (opacity > 0) {
-                   requestAnimationFrame(animateParticle);
-               } else {
-                   if (particle.parentNode) {
-                       particle.parentNode.removeChild(particle);
-                   }
-               }
-           };
-
-           animateParticle();
-       }
-
-       // Advanced interaction effects
-       function initAdvancedEffects() {
-           // Hover effect for service cards
-           document.querySelectorAll('.service-card').forEach(card => {
-               card.addEventListener('mouseenter', (e) => {
-                   const rect = e.target.getBoundingClientRect();
-                   const ripple = document.createElement('div');
-                   ripple.style.position = 'absolute';
-                   ripple.style.borderRadius = '50%';
-                   ripple.style.background = 'rgba(255, 255, 255, 0.3)';
-                   ripple.style.transform = 'scale(0)';
-                   ripple.style.animation = 'ripple 0.6s linear';
-                   ripple.style.left = (e.clientX - rect.left) + 'px';
-                   ripple.style.top = (e.clientY - rect.top) + 'px';
-                   
-                   e.target.appendChild(ripple);
-                   
-                   setTimeout(() => {
-                       if (ripple.parentNode) {
-                           ripple.parentNode.removeChild(ripple);
-                       }
-                   }, 600);
-               });
-           });
-
-           // Dynamic background color change based on scroll
-           window.addEventListener('scroll', () => {
-               const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
-               const hue = scrollPercent * 360;
-               document.body.style.background = `linear-gradient(45deg, hsl(${hue}, 70%, 20%), hsl(${hue + 60}, 70%, 25%), hsl(${hue + 120}, 70%, 30%))`;
-           });
-       }
-
-       // CSS for ripple effect
-       const style = document.createElement('style');
-       style.textContent = `
-           @keyframes ripple {
-               to {
-                   transform: scale(4);
-                   opacity: 0;
-               }
-           }
-       `;
-       document.head.appendChild(style);
-
-       // Window resize handler
-       window.addEventListener('resize', () => {
-           if (renderer) {
-               camera.aspect = window.innerWidth / window.innerHeight;
-               camera.updateProjectionMatrix();
-               renderer.setSize(window.innerWidth, window.innerHeight);
-           }
-       });
-
-       // Initialize advanced effects when ready
-       setTimeout(initAdvancedEffects, 1000);
-
-       // Performance optimization
-       let isScrolling = false;
-       window.addEventListener('scroll', () => {
-           if (!isScrolling) {
-               window.requestAnimationFrame(() => {
-                   // Optimize scroll-based animations
-                   isScrolling = false;
-               });
-               isScrolling = true;
-           }
-       });
-
-       // Easter egg: Konami code
-       let konamiCode = [];
-       const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
-       
-       document.addEventListener('keydown', (e) => {
-           konamiCode.push(e.keyCode);
-           if (konamiCode.length > konamiSequence.length) {
-               konamiCode.shift();
-           }
-           
-           if (konamiCode.join(',') === konamiSequence.join(',')) {
-               showSpeechBubble("Secret isekai portal activated! ✨");
-               triggerSecretAnimation();
-               konamiCode = [];
-           }
-       });
-
-       function triggerSecretAnimation() {
-           document.body.style.animation = 'rainbow 2s ease-in-out';
-           
-           // Create rainbow particles
-           for (let i = 0; i < 100; i++) {
-               setTimeout(() => {
-                   const particle = document.createElement('div');
-                   particle.style.position = 'fixed';
-                   particle.style.width = '6px';
-                   particle.style.height = '6px';
-                   particle.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
-                   particle.style.borderRadius = '50%';
-                   particle.style.left = Math.random() * window.innerWidth + 'px';
-                   particle.style.top = '-10px';
-                   particle.style.pointerEvents = 'none';
-                   particle.style.zIndex = '9999';
-                   
-                   document.body.appendChild(particle);
-                   
-                   particle.animate([
-                       { transform: 'translateY(0px)', opacity: 1 },
-                       { transform: `translateY(${window.innerHeight + 20}px)`, opacity: 0 }
-                   ], {
-                       duration: 3000,
-                       easing: 'ease-out'
-                   }).onfinish = () => {
-                       if (particle.parentNode) {
-                           particle.parentNode.removeChild(particle);
-                       }
-                   };
-               }, i * 20);
-           }
-       }
-
-       // Add rainbow animation
-       const rainbowStyle = document.createElement('style');
-       rainbowStyle.textContent = `
-           @keyframes rainbow {
-               0% { filter: hue-rotate(0deg); }
-               100% { filter: hue-rotate(360deg); }
-           }
-       `;
-       document.head.appendChild(rainbowStyle);
-
-   </script>
+        
+        // Create floating elements periodically
+        setInterval(createFloatingElement, 3000);
+        
+        // Mouse movement parallax effect
+        document.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX / window.innerWidth;
+            const mouseY = e.clientY / window.innerHeight;
+            
+            gsap.to('.floating-element', {
+                x: (mouseX - 0.5) * 20,
+                y: (mouseY - 0.5) * 20,
+                duration: 1,
+                ease: 'power2.out'
+            });
+        });
+    </script>
 </body>
 </html>
