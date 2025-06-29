@@ -3,883 +3,1029 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Isekai Express</title>
-    <link href="https://fonts.googleapis.com/css?family=Noto+Sans+JP:400,700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <title>Isekai Express VTC - Advanced Transport Solutions</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/theatre/0.5.1/theatre.min.js"></script>
     <style>
-        :root {
-            --neon-pink: #ec4899;
-            --electric-blue: #38bdf8;
-            --glass-bg: rgba(30, 34, 54, 0.7);
-            --glass-border: rgba(236,72,153,0.4);
-            --dark-bg: #181926;
-            --gradient-1: linear-gradient(90deg, #ec4899 0%, #38bdf8 100%);
-            --gradient-2: linear-gradient(90deg, #a78bfa 0%, #38bdf8 100%);
-            --gradient-3: linear-gradient(90deg, #f472b6 0%, #38bdf8 100%);
-            --gradient-4: linear-gradient(90deg, #f472b6 0%, #818cf8 100%);
-            --road-gradient: linear-gradient(180deg, #1a202c 0%, #2d3748 50%, #1a202c 100%);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
+
         body {
-            font-family: 'Noto Sans JP', 'Orbitron', sans-serif;
-            background: linear-gradient(135deg, #181926 0%, #232946 100%);
-            color: white;
+            font-family: 'Arial', sans-serif;
             overflow-x: hidden;
+            background: linear-gradient(45deg, #1a1a2e, #16213e, #0f3460);
+            color: white;
             cursor: none;
-            min-height: 100vh;
         }
-        .anime-bg {
+
+        /* Custom Cursor */
+        .custom-cursor {
             position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            z-index: 0;
+            width: 20px;
+            height: 20px;
+            background: radial-gradient(circle, #ff6b6b, #ffd93d);
+            border-radius: 50%;
             pointer-events: none;
-            background: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1500&q=80') center/cover no-repeat, linear-gradient(135deg, #232946cc 0%, #181926ee 100%);
-            opacity: 0.5;
-            animation: bgmove 30s linear infinite alternate;
+            z-index: 9999;
+            transition: transform 0.1s ease;
+            mix-blend-mode: difference;
         }
-        @keyframes bgmove {
-            0% { background-position: 50% 0, 0 0; }
-            100% { background-position: 50% 100px, 0 0; }
-        }
-        .sakura-petal {
-            position: absolute;
-            width: 24px; height: 24px;
+
+        .cursor-trail {
+            position: fixed;
+            width: 4px;
+            height: 4px;
+            background: #ff6b6b;
+            border-radius: 50%;
             pointer-events: none;
-            z-index: 2;
-            background: url('https://svgshare.com/i/12Vn.svg') no-repeat center/contain;
+            z-index: 9998;
             opacity: 0.7;
-            animation: petal-float 8s linear infinite;
         }
-        @keyframes petal-float {
-            0% { transform: translateY(-40px) rotate(0); opacity: 0; }
-            10% { opacity: 0.7; }
-            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(45deg, #1a1a2e, #16213e);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            transition: opacity 1s ease;
         }
-        .hero-glass {
-            margin: 0 auto; margin-top: 6vh;
-            max-width: 650px;
-            padding: 3rem 2.5rem 2.5rem 2.5rem;
-            border-radius: 2.5rem;
-            background: var(--glass-bg);
-            border: 2.5px solid var(--glass-border);
-            box-shadow: 0 8px 40px 0 #ec489955, 0 1.5px 12px 0 #38bdf855;
-            backdrop-filter: blur(18px);
-            position: relative;
-            z-index: 3;
+
+        .loading-text {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: pulse 2s infinite;
+        }
+
+        /* Audio Controls */
+        .audio-controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .audio-btn {
+            padding: 10px 15px;
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid #ff6b6b;
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .audio-btn:hover {
+            background: rgba(255, 107, 107, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* Audio Visualizer */
+        .audio-visualizer {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 200px;
+            height: 100px;
+            display: flex;
+            align-items: end;
+            gap: 2px;
+            z-index: 1000;
+        }
+
+        .visualizer-bar {
+            width: 4px;
+            background: linear-gradient(to top, #ff6b6b, #ffd93d);
+            border-radius: 2px;
+            transition: height 0.1s ease;
+        }
+
+        /* Speedometer */
+        .speedometer {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 120px;
+            height: 120px;
+            border: 3px solid #ff6b6b;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+
+        .speed-needle {
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            background: #ffd93d;
+            transform-origin: bottom center;
+            transition: transform 0.3s ease;
+        }
+
+        /* Road Elements */
+        .road-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
             overflow: hidden;
-            transition: box-shadow 0.3s;
+            z-index: -1;
         }
-        .hero-glass::before {
+
+        .road-line {
+            position: absolute;
+            width: 4px;
+            height: 100px;
+            background: white;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: roadScroll 2s linear infinite;
+        }
+
+        @keyframes roadScroll {
+            from { top: -100px; }
+            to { top: 100vh; }
+        }
+
+        /* Particle System */
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: #4ecdc4;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Cherry Blossom */
+        .cherry-blossom {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: radial-gradient(circle, #ffb3ba, #ff6b6b);
+            border-radius: 50% 0 50% 0;
+            animation: fall 10s linear infinite;
+            transform-origin: center;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(-100vh) rotate(0deg); }
+            100% { transform: translateY(100vh) rotate(360deg); }
+        }
+
+        /* Main Sections */
+        .section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 100px 50px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 217, 61, 0.1));
+            text-align: center;
+            perspective: 1000px;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textGlow 3s ease-in-out infinite alternate;
+            transform: translateZ(50px);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            transform: translateZ(30px);
+        }
+
+        .cta-button {
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform: translateZ(40px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button:hover {
+            transform: translateZ(60px) scale(1.1);
+            box-shadow: 0 20px 40px rgba(255, 107, 107, 0.3);
+        }
+
+        .cta-button::before {
             content: '';
             position: absolute;
-            left: 10%; top: 0; width: 80%; height: 100%;
-            background: radial-gradient(circle at 60% 30%, #ec489966 0%, transparent 80%);
-            z-index: 1;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* Services Section */
+        .services {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(255, 107, 107, 0.1));
+            flex-direction: column;
+        }
+
+        .services h2 {
+            font-size: 3rem;
+            margin-bottom: 50px;
+            text-align: center;
+            background: linear-gradient(45deg, #4ecdc4, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            transform-style: preserve-3d;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px) rotateX(5deg);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Anime Character */
+        .anime-character {
+            position: fixed;
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, #ffb3ba, #ff6b6b);
+            border-radius: 50%;
+            z-index: 999;
+            transition: all 0.3s ease;
             pointer-events: none;
         }
-        .hero-title {
-            font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
-            font-size: 3.2rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-align: center;
-            color: var(--electric-blue);
-            text-shadow: 0 2px 24px #38bdf8cc, 0 0 4px #ec4899cc;
-            margin-bottom: 0.6rem;
-            animation: neon-flicker 2.5s linear infinite alternate;
+
+        .anime-character::before {
+            content: '^_^';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+            color: white;
         }
-        @keyframes neon-flicker {
-            0%, 100% { opacity: 1; text-shadow: 0 2px 24px #38bdf8cc, 0 0 4px #ec4899cc; }
-            10% { opacity: 0.98; }
-            20% { opacity: 0.95; text-shadow: 0 2px 20px #ec4899cc, 0 0 7px #38bdf8cc; }
-            30% { opacity: 1; }
-            40% { opacity: 0.93; }
-            50% { opacity: 1; }
-            60% { opacity: 0.97; }
-            70% { opacity: 1; }
-            80% { opacity: 0.95; }
-            90% { opacity: 1; }
+
+        /* Speech Bubble */
+        .speech-bubble {
+            position: fixed;
+            background: white;
+            color: #333;
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            pointer-events: none;
         }
-        .hero-desc {
-            font-size: 1.2rem;
-            text-align: center;
-            color: #e0e6f7;
-            margin-bottom: 2.2rem;
-            letter-spacing: 0.03em;
+
+        .speech-bubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 20px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
         }
-        .hero-cta {
-            display: flex; justify-content: center; align-items: center;
-            margin-top: 1.2rem;
+
+        /* Mile Markers */
+        .mile-marker {
+            position: fixed;
+            right: 50px;
+            background: rgba(255, 107, 107, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            z-index: 1000;
         }
-        .hero-btn {
-            font-family: 'Orbitron', 'Noto Sans JP', sans-serif;
-            font-size: 1.1rem;
-            letter-spacing: 0.08em;
-            font-weight: 700;
-            padding: 1.1rem 2.5rem;
-            border-radius: 2rem;
-            border: none;
-            background: var(--gradient-1);
-            color: #fff;
-            box-shadow: 0 0 16px 4px #ec489988;
-            cursor: pointer;
-            transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-            outline: none;
-            position: relative;
-            z-index: 2;
-            overflow: hidden;
-            animation: btn-glow 2.5s infinite alternate;
+
+        /* 3D Elements */
+        .floating-element {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(45deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
+            border-radius: 20px;
+            animation: float 6s ease-in-out infinite;
         }
-        .hero-btn:hover {
-            background: var(--gradient-2);
-            transform: scale(1.06) rotate(-1deg);
-            box-shadow: 0 0 28px 8px #38bdf8cc, 0 0 0 2px #ec4899cc;
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            50% { transform: translateY(-20px) rotateX(180deg) rotateY(180deg); }
         }
-        @keyframes btn-glow {
-            0% { box-shadow: 0 0 16px 4px #ec489988; }
-            100% { box-shadow: 0 0 32px 8px #38bdf8cc, 0 0 0 2px #ec4899cc; }
+
+        @keyframes textGlow {
+            0% { text-shadow: 0 0 20px rgba(255, 107, 107, 0.5); }
+            100% { text-shadow: 0 0 40px rgba(255, 217, 61, 0.8), 0 0 60px rgba(78, 205, 196, 0.6); }
         }
-            /* Scroll Reveal */
-        .reveal {opacity:0; transform: translateY(40px) scale(0.95); transition: opacity 0.8s ease-out, transform 0.8s ease-out;}
-        .reveal.in-view {opacity:1; transform: translateY(0) scale(1);} 
-        /* Speed Lines Layer */
-        .speed-lines {position: fixed; top:0; left:0; width:100%; height:100%; z-index:1; pointer-events:none; background: repeating-linear-gradient(120deg, transparent 0 10px, rgba(56,189,248,.15) 10px 20px); animation: speedMove 3s linear infinite;} 
-        @keyframes speedMove {0% {background-position:0 0;} 100% {background-position:1000px 600px;}} 
-        /* Cursor Sparkle */
-        .sparkle {position: fixed; width:6px; height:6px; border-radius:50%; pointer-events:none; background: radial-gradient(circle, var(--electric-blue) 0%, transparent 70%); opacity:0.9; animation: sparkleFade 0.6s forwards;} 
-        @keyframes sparkleFade {to {transform: scale(1.8); opacity:0;}} 
-</style>
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Morphing Shapes */
+        .morphing-shape {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            animation: morph 8s ease-in-out infinite;
+            opacity: 0.3;
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 50%; transform: rotate(0deg); }
+            25% { border-radius: 25% 75% 25% 75%; transform: rotate(90deg); }
+            50% { border-radius: 75% 25% 75% 25%; transform: rotate(180deg); }
+            75% { border-radius: 25% 75% 75% 25%; transform: rotate(270deg); }
+        }
+
+        /* Three.js Container */
+        #three-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -2;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.2rem; }
+            .service-grid { grid-template-columns: 1fr; }
+            .audio-controls { top: 10px; right: 10px; }
+            .speedometer { width: 80px; height: 80px; }
+        }
+    </style>
 </head>
 <body>
-    <div class="anime-bg"></div>
-    <div class="speed-lines"></div>
-    <!-- Sakura petals (will be animated by JS) -->
-    <div id="sakura-petals"></div>
-<script>
-// Sakura Petal Animation
-function randomBetween(a, b) { return a + Math.random() * (b - a); }
-function createSakuraPetal() {
-    const petal = document.createElement('div');
-    petal.className = 'sakura-petal';
-    petal.style.left = randomBetween(0, 100) + 'vw';
-    petal.style.animationDuration = randomBetween(7, 14) + 's';
-    petal.style.opacity = randomBetween(0.5, 0.9);
-    petal.style.transform = `scale(${randomBetween(0.7, 1.2)}) rotate(${randomBetween(-20, 20)}deg)`;
-    document.getElementById('sakura-petals').appendChild(petal);
-    setTimeout(() => petal.remove(), 15000);
-}
-setInterval(createSakuraPetal, 600);
-for(let i=0;i<12;i++) setTimeout(createSakuraPetal, i*400);
-</script>
-    <div class="road-container"></div>
-    <div id="cursor"></div>
-    <div id="speechBubble" class="speech-bubble"></div>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-text">Loading Isekai Express...</div>
+    </div>
 
-    <!-- HERO SECTION -->
-    <section class="section hero-section">
-        <div class="hero-glass">
-            <h1 class="hero-title">Isekai Express</h1>
-            <div class="hero-desc">Unite Anime Lovers Across Virtual Europe</div>
-            <div class="hero-cta">
-                <button class="hero-btn">Begin Your Journey</button>
-            </div>
-        </div>
-    </section>
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="cursor"></div>
 
-    <!-- COMMUNITY FEATURES -->
-    <section class="section community-section">
-        <div class="container">
-            <h2 class="section-title">Why Join?</h2>
-            <div class="community-grid">
-                <div class="community-card">
-                    <div class="card-icon">🚛</div>
-                    <div class="card-title">Professional Driving</div>
-                    <div class="card-description">Experience realistic trucking with fellow anime enthusiasts. High standards, friendly and welcoming.</div>
-                </div>
-                <div class="community-card">
-                    <div class="card-icon">🎎</div>
-                    <div class="card-title">Anime Culture</div>
-                    <div class="card-description">Share your favorite series, discuss episodes, and join anime-themed convoys and events.</div>
-                </div>
-                <div class="community-card">
-                    <div class="card-icon">🎉</div>
-                    <div class="card-title">Community Events</div>
-                    <div class="card-description">Regular convoys, competitions, and social gatherings. Always something happening!</div>
-                </div>
-            </div>
-        </div>
-    </section>
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+        <button class="audio-btn" id="playBtn">🎵 Play</button>
+        <button class="audio-btn" id="pauseBtn">⏸️ Pause</button>
+        <span id="volumeControl">🔊</span>
+    </div>
 
-    <!-- FEATURED ROUTES -->
-    <section class="section routes-section">
-        <div class="container">
-            <h2 class="section-title">Featured Routes</h2>
-            <div class="routes-grid">
-                <div class="route-card">
-                    <div class="route-name">Tokyo Express</div>
-                    <div class="route-distance">Berlin → Warsaw (573 km)</div>
-                    <div class="route-description">Signature route connecting two capitals. Long-distance hauling, anime chats.</div>
-                </div>
-                <div class="route-card">
-                    <div class="route-name">Sakura Circuit</div>
-                    <div class="route-distance">Paris → Lyon → Marseille (863 km)</div>
-                    <div class="route-description">Spring convoys through France's countryside. Hanami season together!</div>
-                </div>
-                <div class="route-card">
-                    <div class="route-name">Nordic Adventure</div>
-                    <div class="route-distance">Stockholm → Oslo → Copenhagen (1,247 km)</div>
-                    <div class="route-description">Winter anime spirit: snow, mountains, vistas, and brave drivers.</div>
-                </div>
-                <div class="route-card">
-                    <div class="route-name">Mediterranean Dream</div>
-                    <div class="route-distance">Rome → Naples → Palermo (934 km)</div>
-                    <div class="route-description">Scenic beauty, coastal roads, and slice-of-life anime fans unite!</div>
-                </div>
-                <div class="route-card">
-                    <div class="route-name">Alpine Quest</div>
-                    <div class="route-distance">Munich → Zurich → Milan (512 km)</div>
-                    <div class="route-description">Mountain passes, breathtaking scenery, and adventure anime favorites.</div>
-                </div>
-                <div class="route-card">
-                    <div class="route-name">Eastern Expedition</div>
-                    <div class="route-distance">Prague → Budapest → Bucharest (1,156 km)</div>
-                    <div class="route-description">Hidden gems, isekai adventures, and fantasy worlds with convoy partners.</div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <!-- Floating Navigation -->
-    <nav class="floating-nav">
-        <div class="nav-dot active" data-section="hero" data-label="Home"></div>
-        <div class="nav-dot" data-section="about" data-label="About"></div>
-        <div class="nav-dot" data-section="routes" data-label="Routes"></div>
-        <div class="nav-dot" data-section="join" data-label="Join"></div>
-    </nav>
-    <!-- About Section -->
-    <section id="about" class="about section">
-        <div class="morphing-bg"></div>
-        <!-- ... -->
-        <div class="sakura-container" id="sakuraContainer"></div>
-        <div class="container">
-            <h2 class="section-title">Our Story</h2>
-            <div class="story-content">
-                <p>Welcome to <span class="story-highlight">Isekai Express</span>, where the worlds of trucking and anime collide in perfect harmony. Born from a shared passion for both the open road and captivating anime stories, our VTC has become a haven for drivers who appreciate the finer things in virtual life.</p>
-                
-                <p>Like protagonists in our favorite anime series, we embark on epic journeys across Europe, building friendships that transcend borders and creating memories that last a lifetime. Every route is an adventure, every delivery a chapter in our collective story.</p>
-                
-                <p>Join us as we transport goods and dreams across the digital highways of Euro Truck Simulator 2, where <span class="story-highlight">every mile driven is a mile toward bringing the anime community together</span>.</p>
-            </div>
+    <!-- Audio Visualizer -->
+    <div class="audio-visualizer" id="visualizer"></div>
+
+    <!-- Speedometer -->
+    <div class="speedometer">
+        <div class="speed-needle" id="speedNeedle"></div>
+        <div id="speedText">0</div>
+    </div>
+
+    <!-- Mile Marker -->
+    <div class="mile-marker" id="mileMarker">Mile 0</div>
+
+    <!-- Road Container -->
+    <div class="road-container" id="roadContainer"></div>
+
+    <!-- Three.js Container -->
+    <div id="three-container"></div>
+
+    <!-- Anime Character -->
+    <div class="anime-character" id="animeCharacter"></div>
+
+    <!-- Speech Bubble -->
+    <div class="speech-bubble" id="speechBubble">Welcome to Isekai Express!</div>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Hero Section -->
+        <section class="section hero" id="hero">
+            <div class="floating-element" style="top: 10%; left: 10%;"></div>
+            <div class="floating-element" style="top: 20%; right: 15%; animation-delay: -2s;"></div>
+            <div class="morphing-shape" style="top: 60%; left: 80%; animation-delay: -4s;"></div>
             
-            <div class="community-grid">
-                <div class="community-card">
-                    <div class="card-icon">🚛</div>
-                    <h3 class="card-title">Professional Driving</h3>
-                    <p class="card-description">Experience realistic trucking with fellow anime enthusiasts. We maintain high standards while keeping the atmosphere friendly and welcoming.</p>
+            <h1>ISEKAI EXPRESS VTC</h1>
+            <p>Your Gateway to Another World of Transportation</p>
+            <button class="cta-button" id="mainCTA">Start Your Journey</button>
+        </section>
+
+        <!-- Services Section -->
+        <section class="section services" id="services">
+            <h2>Our Transport Services</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h3>🚛 Freight Transport</h3>
+                    <p>Professional cargo delivery across dimensions with real-time tracking and secure handling.</p>
                 </div>
-                
-                <div class="community-card">
-                    <div class="card-icon">🎌</div>
-                    <h3 class="card-title">Anime Culture</h3>
-                    <p class="card-description">Share your favorite series, discuss latest episodes, and participate in anime-themed convoys and events throughout the year.</p>
+                <div class="service-card">
+                    <h3>🚐 Passenger Services</h3>
+                    <p>Comfortable and safe passenger transport with experienced drivers and modern vehicles.</p>
                 </div>
-                
-                <div class="community-card">
-                    <div class="card-icon">👥</div>
-                    <h3 class="card-title">Community Events</h3>
-                    <p class="card-description">Regular convoys, competitions, and social gatherings. From seasonal festivals to anime convention meetups, there's always something happening.</p>
+                <div class="service-card">
+                    <h3>📦 Express Delivery</h3>
+                    <p>Lightning-fast delivery services for urgent packages and time-sensitive cargo.</p>
+                </div>
+                <div class="service-card">
+                    <h3>🌟 Premium VIP</h3>
+                    <p>Luxury transport solutions with premium vehicles and personalized service.</p>
                 </div>
             </div>
-        </div>
-        <div class="section-transition"></div>
-    </section>
+        </section>
 
-    <!-- Routes Section -->
-    <section id="routes" class="routes section">
-        <div class="morphing-bg"></div>
-        <div class="route-network" id="routeNetwork"></div>
-        <div class="container">
-            <h2 class="section-title">Featured Routes</h2>
-            <div class="routes-grid">
-                <div class="route-card">
-                    <h3 class="route-name">Tokyo Express</h3>
-                    <div class="route-distance">Berlin → Warsaw (573 km)</div>
-                    <p class="route-description">Our signature route connecting two major European capitals. Experience the thrill of long-distance hauling while discussing your favorite anime series with fellow drivers.</p>
-                </div>
-                
-                <div class="route-card">
-                    <h3 class="route-name">Sakura Circuit</h3>
-                    <div class="route-distance">Paris → Lyon → Marseille (863 km)</div>
-                    <p class="route-description">A scenic journey through France's beautiful countryside. Perfect for spring convoys when we celebrate hanami season together.</p>
-                </div>
-                
-                <div class="route-card">
-                    <h3 class="route-name">Nordic Adventure</h3>
-                    <div class="route-distance">Stockholm → Oslo → Copenhagen (1,247 km)</div>
-                    <p class="route-description">Embrace the winter anime spirit on this challenging Nordic route. Snow, mountains, and stunning vistas await brave drivers.</p>
-                </div>
-                
-                <div class="route-card">
-                    <h3 class="route-name">Mediterranean Dream</h3>
-                    <div class="route-distance">Rome → Naples → Palermo (934 km)</div>
-                    <p class="route-description">Coastal roads and historic cities make this route perfect for slice-of-life anime fans who appreciate scenic beauty and cultural heritage.</p>
-                </div>
-                
-                <div class="route-card">
-                    <h3 class="route-name">Alpine Quest</h3>
-                    <div class="route-distance">Munich → Zurich → Milan (512 km)</div>
-                    <p class="route-description">Challenge yourself with mountain passes and breathtaking Alpine scenery. A favorite among fans of adventure anime series.</p>
-                </div>
-                
-                <div class="route-card">
-                    <h3 class="route-name">Eastern Expedition</h3>
-                    <div class="route-distance">Prague → Budapest → Bucharest (1,156 km)</div>
-                    <p class="route-description">Discover Eastern Europe's hidden gems while discussing isekai adventures and fantasy worlds with your convoy partners.</p>
+        <!-- About Section -->
+        <section class="section" id="about">
+            <div style="max-width: 800px; text-align: center;">
+                <h2 style="font-size: 3rem; margin-bottom: 30px; background: linear-gradient(45deg, #ffd93d, #4ecdc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">About Isekai Express</h2>
+                <p style="font-size: 1.3rem; line-height: 1.8; opacity: 0.9;">
+                    Isekai Express VTC combines cutting-edge technology with reliable transportation services. 
+                    Our fleet of modern vehicles and experienced drivers ensure your journey is safe, 
+                    comfortable, and efficient. Whether you're shipping cargo or traveling yourself, 
+                    we're your trusted partner in transportation.
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="section" id="contact">
+            <div style="text-align: center;">
+                <h2 style="font-size: 3rem; margin-bottom: 30px; background: linear-gradient(45deg, #ff6b6b, #ffd93d); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Contact Us</h2>
+                <p style="font-size: 1.2rem; margin-bottom: 20px;">Ready to start your transport journey?</p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);">
+                        <h4>📞 Phone</h4>
+                        <p>+1 (555) 123-4567</p>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);">
+                        <h4>📧 Email</h4>
+                        <p>info@isekaiexpress.com</p>
+                    </div>
+                    <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 15px; backdrop-filter: blur(10px);">
+                        <h4>📍 Address</h4>
+                        <p>123 Transport Ave, City, State</p>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="section-transition"></div>
-    </section>
-
-    <!-- Join Section -->
-    <section id="join" class="join section">
-        <div class="morphing-bg"></div>
-        <div class="matrix-rain" id="matrixRain"></div>
-        <div class="container">
-            <h2 class="section-title">Join Our Guild</h2>
-            <div class="story-content">
-                <p>Ready to begin your isekai adventure with us? Join a community where your love for anime and trucking comes together. Fill out the form below to start your application process.</p>
-            </div>
-            
-            <form class="join-form" id="joinForm">
-                <div class="form-group">
-                    <label class="form-label" for="truckersmpId">TruckersMP ID</label>
-                    <input type="text" class="form-input" id="truckersmpId" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="discordUsername">Discord Username</label>
-                    <input type="text" class="form-input" id="discordUsername" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="favoriteAnime">Favorite Anime</label>
-                    <input type="text" class="form-input" id="favoriteAnime" required>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="experience">ETS2 Experience</label>
-                    <select class="form-input" id="experience" required>
-                        <option value="">Select your experience level</option>
-                        <option value="beginner">New to trucking (0-100 hours)</option>
-                        <option value="intermediate">Experienced driver (100-500 hours)</option>
-                        <option value="veteran">Veteran trucker (500+ hours)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group">
-                    <label class="form-label" for="message">Why do you want to join Isekai Express?</label>
-                    <textarea class="form-input" id="message" rows="4" placeholder="Tell us about your passion for anime and trucking..."></textarea>
-                </div>
-                
-                <button type="submit" class="submit-btn">Submit Application</button>
-            </form>
-        </div>
-        <div class="section-transition"></div>
-    </section>
-
-    <!-- Scroll to Top Button -->
-    <button class="scroll-top" id="scrollTop">↑</button>
+        </section>
+    </main>
 
     <script>
         // Initialize variables
+        let scene, camera, renderer, particles = [];
+        let audioContext, analyser, dataArray;
         let scrollSpeed = 0;
         let lastScrollY = 0;
-        let animationFrame;
-        
-        // Speech bubble messages
-        const speechMessages = [
-            "Konnichiwa! 🌸",
-            "Ready for adventure?",
-            "Ganbatte! 💪",
-            "Sugoi desu ne! ✨",
-            "Let's go trucking! 🚛",
-            "Anime wa saikou! 🎌",
-            "Join our convoy! 🛣️",
-            "Kawaii cursor desu! 💕"
-        ];
+        let cursorTrails = [];
+        let isAudioPlaying = false;
 
-        // Loading screen
+        // Initialize everything when page loads
         window.addEventListener('load', () => {
             setTimeout(() => {
-                document.getElementById('loadingScreen').classList.add('hidden');
-                startAnimations();
-            }, 3000);
-        });
-
-        // Custom cursor functionality
-        const cursor = document.getElementById('cursor');
-        const speechBubble = document.getElementById('speechBubble');
-        
-        let speechTimeout;
-        
-        // Cursor logic – store last mouse position for scroll sync
-        let lastCursorX = window.innerWidth / 2;
-        let lastCursorY = window.innerHeight / 2;
-        function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
-        document.addEventListener('mousemove', (e) => {
-            // Clamp to viewport
-            let x = clamp(e.clientX, 0, window.innerWidth - 36);
-            let y = clamp(e.clientY, 0, window.innerHeight - 36);
-            cursor.style.left = (x - 20) + 'px';
-            cursor.style.top  = (y - 20) + 'px';
-            cursor.style.display = 'block';
-            lastCursorX = x;
-            lastCursorY = y;
-            // Speech bubble
-            let sx = clamp(e.clientX - 75, 0, window.innerWidth - 150);
-            let sy = clamp(e.clientY - 60, 0, window.innerHeight - 40);
-            speechBubble.style.left = sx + 'px';
-            speechBubble.style.top = sy + 'px';
-        });
-        // On scroll, reapply cursor position
-        document.addEventListener('scroll', () => {
-            cursor.style.left = (lastCursorX - 20) + 'px';
-            cursor.style.top  = (lastCursorY - 20) + 'px';
-            cursor.style.display = 'block';
-        });
-        // Hide cursor if mouse leaves window
-        document.addEventListener('mouseleave', () => {
-            cursor.style.display = 'none';
-        });
-
-        // Show speech bubble on hover over interactive elements
-        document.querySelectorAll('a, button, .community-card, .route-card').forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                const randomMessage = speechMessages[Math.floor(Math.random() * speechMessages.length)];
-                speechBubble.textContent = randomMessage;
-                speechBubble.classList.add('show');
-                
-                clearTimeout(speechTimeout);
-                speechTimeout = setTimeout(() => {
-                    speechBubble.classList.remove('show');
-                }, 2000);
-            });
-            
-            element.addEventListener('mouseleave', () => {
-                clearTimeout(speechTimeout);
-                speechTimeout = setTimeout(() => {
-                    speechBubble.classList.remove('show');
-                }, 300);
-            });
-        });
-
-        // Scroll tracking and dashboard updates
-        function updateScrollMetrics() {
-            const currentScrollY = window.scrollY;
-            const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-            
-            // Calculate scroll speed
-            scrollSpeed = Math.abs(currentScrollY - lastScrollY);
-            lastScrollY = currentScrollY;
-            
-            // Update speedometer
-            const displaySpeed = Math.min(Math.round(scrollSpeed * 2), 99);
-            document.getElementById('speedDisplay').textContent = displaySpeed;
-            
-            // Update progress bar
-            const progress = (currentScrollY / maxScroll) * 100;
-            document.getElementById('progressFill').style.width = progress + '%';
-            
-            // Update road animation speed
-            const roadSurface = document.querySelector('.road-surface');
-            const roadLines = document.querySelector('.road-lines');
-            
-            if (scrollSpeed > 0) {
-                roadSurface.style.animationDuration = Math.max(0.05, 0.2 - scrollSpeed * 0.01) + 's';
-                roadLines.style.animationDuration = Math.max(0.5, 2 - scrollSpeed * 0.1) + 's';
-            }
-        }
-
-        // Scroll event listener
-        window.addEventListener('scroll', () => {
-            updateScrollMetrics();
-            updateActiveSection();
-            toggleScrollTopButton();
-        });
-
-        // Floating navigation
-        function updateActiveSection() {
-            const sections = document.querySelectorAll('.section');
-            const navDots = document.querySelectorAll('.nav-dot');
-            
-            let currentSection = '';
-            const scrollPos = window.scrollY + window.innerHeight / 2;
-            
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                
-                if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                    currentSection = section.id;
-                }
-            });
-            
-            navDots.forEach(dot => {
-                dot.classList.remove('active');
-                if (dot.dataset.section === currentSection) {
-                    dot.classList.add('active');
-                }
-            });
-        }
-
-        // Navigation clicks
-        document.querySelectorAll('.nav-dot').forEach(dot => {
-            dot.addEventListener('click', () => {
-                const targetSection = document.getElementById(dot.dataset.section);
-                targetSection.scrollIntoView({ behavior: 'smooth' });
-                
-                // Trigger transformation effect
-                const transition = targetSection.querySelector('.section-transition');
-                transition.classList.add('active');
+                document.getElementById('loadingScreen').style.opacity = '0';
                 setTimeout(() => {
-                    transition.classList.remove('active');
+                    document.getElementById('loadingScreen').style.display = 'none';
                 }, 1000);
-            });
+            }, 2000);
+
+            initThreeJS();
+            initAudio();
+            initParticles();
+            initRoadAnimation();
+            initCherryBlossoms();
+            initEventListeners();
         });
 
-        // Scroll to top button
-        function toggleScrollTopButton() {
-            const scrollTop = document.getElementById('scrollTop');
-            if (window.scrollY > 300) {
-                scrollTop.classList.add('visible');
-            } else {
-                scrollTop.classList.remove('visible');
+        // Three.js Initialization
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('three-container').appendChild(renderer.domElement);
+
+            // Create 3D particles
+            const geometry = new THREE.BufferGeometry();
+            const positions = [];
+            const colors = [];
+
+            for (let i = 0; i < 2000; i++) {
+                positions.push((Math.random() - 0.5) * 2000);
+                positions.push((Math.random() - 0.5) * 2000);
+                positions.push((Math.random() - 0.5) * 2000);
+
+                colors.push(Math.random());
+                colors.push(Math.random());
+                colors.push(Math.random());
+            }
+
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+            const material = new THREE.PointsMaterial({ 
+                size: 2, 
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+
+            camera.position.z = 500;
+
+            animate3D();
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            
+            scene.rotation.x += 0.001;
+            scene.rotation.y += 0.002;
+            
+            renderer.render(scene, camera);
+        }
+
+        // Audio System
+        function initAudio() {
+            // Create visualizer bars
+            const visualizer = document.getElementById('visualizer');
+            for (let i = 0; i < 50; i++) {
+                const bar = document.createElement('div');
+                bar.className = 'visualizer-bar';
+                bar.style.height = '5px';
+                visualizer.appendChild(bar);
+            }
+
+            // Audio context setup (simplified for demo)
+            document.getElementById('playBtn').addEventListener('click', () => {
+                isAudioPlaying = true;
+                animateVisualizer();
+            });
+
+            document.getElementById('pauseBtn').addEventListener('click', () => {
+                isAudioPlaying = false;
+            });
+        }
+
+        function animateVisualizer() {
+            if (!isAudioPlaying) return;
+
+            const bars = document.querySelectorAll('.visualizer-bar');
+            bars.forEach(bar => {
+                const height = Math.random() * 80 + 5;
+                bar.style.height = height + 'px';
+            });
+
+            setTimeout(animateVisualizer, 100);
+        }
+
+        // Particle System
+        function initParticles() {
+            for (let i = 0; i < 100; i++) {
+                createParticle();
             }
         }
 
-        document.getElementById('scrollTop').addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        // Audio system (placeholder - you'll need to add your actual audio files)
-        let isPlaying = false;
-        const playButton = document.getElementById('playButton');
-        
-        playButton.addEventListener('click', () => {
-            isPlaying = !isPlaying;
-            playButton.textContent = isPlaying ? '⏸️' : '▶️';
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * window.innerWidth + 'px';
+            particle.style.top = Math.random() * window.innerHeight + 'px';
             
-            // Add your audio playback logic here
-            // For now, just animate the visualizer
-            const audioBars = document.querySelectorAll('.audio-bar');
-            audioBars.forEach(bar => {
-                if (isPlaying) {
-                    bar.style.animationPlayState = 'running';
-                } else {
-                    bar.style.animationPlayState = 'paused';
+            const duration = Math.random() * 3 + 2;
+            particle.style.animation = `float ${duration}s ease-in-out infinite`;
+            particle.style.animationDelay = Math.random() * 2 + 's';
+            
+            document.body.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
                 }
-            });
-        });
-
-        // Form submission
-        document.getElementById('joinForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            // Get form data
-            const formData = {
-                truckersmpId: document.getElementById('truckersmpId').value,
-                discordUsername: document.getElementById('discordUsername').value,
-                favoriteAnime: document.getElementById('favoriteAnime').value,
-                experience: document.getElementById('experience').value,
-                message: document.getElementById('message').value
-            };
-            
-            // Simulate form submission
-            alert('Application submitted! We\'ll contact you on Discord soon. Arigatou gozaimasu! 🌸');
-            
-            // Reset form
-            document.getElementById('joinForm').reset();
-        });
-
-        // Smooth scrolling for CTA button
-        document.querySelector('.cta-button').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('join').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        // Start animations after loading
-        function startAnimations() {
-            // Create sakura petals
-            createSakuraPetals();
-            
-            // Create speed lines
-            createSpeedLines();
-            
-            // Create network visualization
-            createNetworkVisualization();
-            
-            // Create matrix rain
-            createMatrixRain();
+                createParticle();
+            }, duration * 1000);
         }
 
-        // Initialize all core systems
-        function initializeSystems() {
-            // Initialize particle systems
-            function createSakuraPetals() {
-                const container = document.getElementById('sakuraContainer');
-                if (!container) return;
-                
-                const petalCount = 15;
-                
-                for (let i = 0; i < petalCount; i++) {
-                    const petal = document.createElement('div');
-                    petal.className = 'sakura-petal';
-                    petal.style.left = `${Math.random() * 100}%`;
-                    petal.style.animationDuration = `${5 + Math.random() * 10}s`;
-                    petal.style.animationDelay = `-${Math.random() * 5}s`;
-                    container.appendChild(petal);
-                }
-            }
+        // Road Animation
+        function initRoadAnimation() {
+            const roadContainer = document.getElementById('roadContainer');
             
-            function initializeParticleSystems() {
-                return {
-                    sakura: createSakuraPetals,
-                    matrix: createMatrixRain,
-                    network: createNetworkVisualization,
-                    speedLines: createSpeedLines
-                };
-            }
-
-            function createMatrixRain() {
-                const container = document.getElementById('matrixRain');
-                if (!container) return;
+            setInterval(() => {
+                const line = document.createElement('div');
+                line.className = 'road-line';
+                line.style.animationDuration = (2 - scrollSpeed * 0.5) + 's';
+                roadContainer.appendChild(line);
                 
-                const columns = Math.floor(window.innerWidth / 20);
-                
-                for (let i = 0; i < columns; i++) {
-                    const drop = document.createElement('div');
-                    drop.className = 'matrix-drop';
-                    drop.style.left = `${(i * 20)}px`;
-                    drop.style.animationDelay = `${Math.random() * 5}s`;
-                    container.appendChild(drop);
-                }
-            }
-
-            function createNetworkVisualization() {
-                const container = document.getElementById('routeNetwork');
-                if (!container) return;
-                
-                const nodeCount = 8;
-                const connectionCount = 15;
-                
-                // Create nodes
-                for (let i = 0; i < nodeCount; i++) {
-                    const node = document.createElement('div');
-                    node.className = 'network-node';
-                    node.style.left = `${10 + Math.random() * 80}%`;
-                    node.style.top = `${10 + Math.random() * 80}%`;
-                    container.appendChild(node);
-                }
-                
-                // Create connections
-                for (let i = 0; i < connectionCount; i++) {
-                    const connection = document.createElement('div');
-                    connection.className = 'network-connection';
-                    container.appendChild(connection);
-                }
-            }
-
-            function createSpeedLines() {
-                const container = document.querySelector('.hero');
-                if (!container) return;
-                
-                const lineCount = 20;
-                
-                for (let i = 0; i < lineCount; i++) {
-                    const line = document.createElement('div');
-                    line.className = 'speed-line';
-                    line.style.left = `${Math.random() * 100}%`;
-                    line.style.animationDuration = `${0.5 + Math.random() * 1.5}s`;
-                    container.appendChild(line);
-                }
-            }
-
-            // Error handling system
-            const errorSystem = {
-                handleError: (error, context = '') => {
-                    console.error(`Error in ${context}:`, error);
-                    // You could add error reporting to a service here
-                },
-                isSupported: (feature) => {
-                    try {
-                        return !!window[feature];
-                    } catch (e) {
-                        return false;
+                setTimeout(() => {
+                    if (line.parentNode) {
+                        line.parentNode.removeChild(line);
                     }
-                }
-            };
-            
-            try {
+                }, 2000);
+            }, 200);
+        }
 
-            // Initialize audio system
-            const audioSystem = {
-                init: () => {
-                    try {
-                        const AudioContext = window.AudioContext || window.webkitAudioContext;
-                        if (!AudioContext) {
-                            throw new Error('Web Audio API not supported');
-                        }
-                        return new AudioContext();
-                    } catch (error) {
-                        errorSystem.handleError(error, 'Audio System');
-                        return null;
+        // Cherry Blossom System
+        function initCherryBlossoms() {
+            setInterval(() => {
+                const blossom = document.createElement('div');
+                blossom.className = 'cherry-blossom';
+                blossom.style.left = Math.random() * window.innerWidth + 'px';
+                blossom.style.animationDuration = (Math.random() * 5 + 8) + 's';
+                blossom.style.animationDelay = Math.random() * 2 + 's';
+                document.body.appendChild(blossom);
+                
+                setTimeout(() => {
+                    if (blossom.parentNode) {
+                        blossom.parentNode.removeChild(blossom);
                     }
-                }
-            };
-
-            // Initialize performance monitoring
-            let lastFrameTime = performance.now();
-            const fpsMonitor = setInterval(() => {
-                const currentTime = performance.now();
-                const delta = currentTime - lastFrameTime;
-                if (delta > 50) { // Frame time > 50ms (< 20 FPS)
-                    console.warn('Performance warning: Frame time:', delta.toFixed(2), 'ms');
-                }
-                lastFrameTime = currentTime;
+                }, 15000);
             }, 1000);
+        }
 
-            // Initialize scroll manager
-            const scrollManager = {
-                init: () => {
-                    let scrollTimeout;
-                    const handleScroll = () => {
-                        clearTimeout(scrollTimeout);
-                        scrollTimeout = setTimeout(() => {
-                            updateScrollMetrics();
-                            updateActiveSection();
-                            toggleScrollTopButton();
-                        }, 10);
-                    };
-                    
-                    window.addEventListener('scroll', handleScroll, { passive: true });
-                    
-                    // Initial call
-                    handleScroll();
-                    
-                    // Return cleanup function
-                    return () => {
-                        window.removeEventListener('scroll', handleScroll);
-                        clearTimeout(scrollTimeout);
-                    };
+        // Event Listeners
+        function initEventListeners() {
+            // Custom cursor
+            const cursor = document.getElementById('cursor');
+            const animeCharacter = document.getElementById('animeCharacter');
+            const speechBubble = document.getElementById('speechBubble');
+
+            document.addEventListener('mousemove', (e) => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+
+                // Anime character follows cursor with delay
+                setTimeout(() => {
+                    animeCharacter.style.left = (e.clientX - 40) + 'px';
+                    animeCharacter.style.top = (e.clientY - 80) + 'px';
+                }, 200);
+
+                // Create cursor trail
+                createCursorTrail(e.clientX, e.clientY);
+            });
+
+            // Scroll effects
+            let ticking = false;
+            
+            window.addEventListener('scroll', () => {
+                if (!ticking) {
+                    requestAnimationFrame(() => {
+                        updateScrollEffects();
+                        ticking = false;
+                    });
+                    ticking = true;
                 }
-            };
+            });
 
-            // Initialize responsive layout manager
-            const layoutManager = {
-                init: () => {
-                    const updateLayout = () => {
-                        // Update layout logic here
-                    };
-                    
-                    window.addEventListener('resize', updateLayout);
-                    updateLayout();
-                    
-                    // Return cleanup function
-                    return () => {
-                        window.removeEventListener('resize', updateLayout);
-                    };
-                }
-            };
-
-                // Initialize interaction manager
-                const interactionManager = {
-                    init: () => {
-                        // Custom cursor system
-                        const cursor = document.getElementById('cursor');
-                        const speechBubble = document.getElementById('speechBubble');
-                        
-                        document.addEventListener('mousemove', (e) => {
-                            if (cursor && speechBubble) {
-                                requestAnimationFrame(() => {
-                                    cursor.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
-                                    speechBubble.style.transform = `translate(${e.clientX - 75}px, ${e.clientY - 60}px)`;
-                                });
-                            }
-                        });
-
-                        // Form validation and submission
-                        const joinForm = document.getElementById('joinForm');
-                        if (joinForm) {
-                            joinForm.addEventListener('submit', (e) => {
-                                e.preventDefault();
-                                // Add your form submission logic here
-                                console.log('Form submitted successfully');
-                            });
-                        }
-                    }
-                };
-
-                // Initialize all systems
-                return Promise.all([
-                    audioSystem.init(),
-                    scrollManager.init(),
-                    layoutManager.init(),
-                    interactionManager.init()
-                ]).then(() => {
-                    console.log('All systems initialized successfully');
-                    document.getElementById('loadingScreen')?.classList.add('hidden');
+            // Interactive elements
+            document.querySelectorAll('.service-card, .cta-button').forEach(element => {
+                element.addEventListener('mouseenter', () => {
+                    showSpeechBubble("Looks interesting!");
+                    playInteractionSound();
                 });
-            } catch (error) {
-                console.error('Error initializing systems:', error);
-                // Show user-friendly error message
-                const errorMessage = document.createElement('div');
-                errorMessage.className = 'error-message';
-                errorMessage.textContent = 'Something went wrong. Please refresh the page.';
-                document.body.appendChild(errorMessage);
-                return Promise.reject(error);
-            }
-        };
 
-        // Start initialization when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initializeSystems);
-        } else {
-            initializeSystems().catch(error => {
-                console.error('Failed to initialize:', error);
+                element.addEventListener('mouseleave', () => {
+                    hideSpeechBubble();
+                });
+            });
+
+            // CTA button click
+            document.getElementById('mainCTA').addEventListener('click', () => {
+                showSpeechBubble("Let's go on an adventure!");
+                triggerTransformationSequence();
             });
         }
 
-        // Export for debugging purposes
-        window.__isekaiExpress = {
-            version: '1.0.0',
-            initTime: '2025-06-19 11:33:33',
-            debug: {
-                reloadAnimations: () => initializeSystems(),
-                toggleDebugMode: () => document.body.classList.toggle('debug-mode')
-            }
-        };
-    </script>
-<script>
-// Scroll Reveal IntersectionObserver
-const revealEls = document.querySelectorAll('.section .container, .community-card, .route-card');
-revealEls.forEach(el => el.classList.add('reveal'));
-const observer = new IntersectionObserver((entries,obs)=>{
-  entries.forEach(entry=>{
-    if(entry.isIntersecting){ entry.target.classList.add('in-view'); obs.unobserve(entry.target);} });
-},{threshold:0.15});
-revealEls.forEach(el=>observer.observe(el));
-// Cursor Sparkles
-const cursorEl=document.getElementById('cursor');
-function spawnSparkle(x,y){
-  const sp=document.createElement('div');
-  sp.className='sparkle';
-  sp.style.left=(x-3)+'px';
-  sp.style.top=(y-3)+'px';
-  document.body.appendChild(sp);
-  sp.addEventListener('animationend',()=>sp.remove());
-}
-document.addEventListener('mousemove',(e)=>{spawnSparkle(e.clientX,e.clientY);});
-</script>
+        function createCursorTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            document.body.appendChild(trail);
+
+            setTimeout(() => {
+                trail.style.opacity = '0';
+                setTimeout(() => {
+                    if (trail.parentNode) {
+                        trail.parentNode.removeChild(trail);
+                    }
+                }, 300);
+            }, 100);
+        }
+
+        function updateScrollEffects() {
+            const currentScrollY = window.scrollY;
+            scrollSpeed = Math.abs(currentScrollY - lastScrollY) / 10;
+            lastScrollY = currentScrollY;
+
+            // Update speedometer
+            const speedNeedle = document.getElementById('speedNeedle');
+            const speedText = document.getElementById('speedText');
+            const angle = Math.min(scrollSpeed * 30, 180);
+            speedNeedle.style.transform = `rotate(${angle}deg)`;
+            speedText.textContent = Math.round(scrollSpeed * 10);
+
+            // Update mile marker
+            const mileMarker = document.getElementById('mileMarker');
+            const mile = Math.floor(currentScrollY / 100);
+            mileMarker.textContent = `Mile ${mile}`;
+            mileMarker.style.top = (100 + Math.sin(currentScrollY * 0.01) * 50) + 'px';
+
+            // Parallax effects
+            const sections = document.querySelectorAll('.section');
+            sections.forEach((section, index) => {
+                const rect = section.getBoundingClientRect();
+                const speed = (index + 1) * 0.5;
+                const yPos = -(currentScrollY * speed);
+                section.style.transform = `translateY(${yPos}px)`;
+            });
+        }
+
+        function showSpeechBubble(text) {
+            const bubble = document.getElementById('speechBubble');
+            bubble.textContent = text;
+            bubble.style.opacity = '1';
+            
+            const character = document.getElementById('animeCharacter');
+            const charRect = character.getBoundingClientRect();
+            bubble.style.left = (charRect.left - 50) + 'px';
+            bubble.style.top = (charRect.top - 60) + 'px';
+        }
+
+        function hideSpeechBubble() {
+            document.getElementById('speechBubble').style.opacity = '0';
+        }
+
+        function playInteractionSound() {
+            // Simplified sound effect simulation
+            const soundEffect = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1+LDciUFLIH');
+       }
+
+       function triggerTransformationSequence() {
+           // Epic transformation animation
+           const hero = document.getElementById('hero');
+           hero.style.background = 'linear-gradient(135deg, #ff6b6b, #ffd93d, #4ecdc4, #95e1d3)';
+           hero.style.transition = 'all 2s ease';
+
+           // Create magical particles
+           for (let i = 0; i < 50; i++) {
+               setTimeout(() => {
+                   createMagicalParticle();
+               }, i * 50);
+           }
+
+           // Animate character
+           const character = document.getElementById('animeCharacter');
+           character.style.transform = 'scale(1.5) rotate(360deg)';
+           character.style.transition = 'all 1s ease';
+
+           setTimeout(() => {
+               character.style.transform = 'scale(1) rotate(0deg)';
+               showSpeechBubble("Transportation magic activated!");
+           }, 1000);
+       }
+
+       function createMagicalParticle() {
+           const particle = document.createElement('div');
+           particle.style.position = 'absolute';
+           particle.style.width = '8px';
+           particle.style.height = '8px';
+           particle.style.background = `linear-gradient(45deg, #ff6b6b, #ffd93d, #4ecdc4)`;
+           particle.style.borderRadius = '50%';
+           particle.style.pointerEvents = 'none';
+           particle.style.zIndex = '999';
+
+           const startX = Math.random() * window.innerWidth;
+           const startY = Math.random() * window.innerHeight;
+           particle.style.left = startX + 'px';
+           particle.style.top = startY + 'px';
+
+           document.body.appendChild(particle);
+
+           // Animate particle
+           let opacity = 1;
+           let scale = 1;
+           let x = startX;
+           let y = startY;
+           const vx = (Math.random() - 0.5) * 4;
+           const vy = (Math.random() - 0.5) * 4;
+
+           const animateParticle = () => {
+               opacity -= 0.02;
+               scale += 0.01;
+               x += vx;
+               y += vy;
+
+               particle.style.opacity = opacity;
+               particle.style.transform = `scale(${scale})`;
+               particle.style.left = x + 'px';
+               particle.style.top = y + 'px';
+
+               if (opacity > 0) {
+                   requestAnimationFrame(animateParticle);
+               } else {
+                   if (particle.parentNode) {
+                       particle.parentNode.removeChild(particle);
+                   }
+               }
+           };
+
+           animateParticle();
+       }
+
+       // Advanced interaction effects
+       function initAdvancedEffects() {
+           // Hover effect for service cards
+           document.querySelectorAll('.service-card').forEach(card => {
+               card.addEventListener('mouseenter', (e) => {
+                   const rect = e.target.getBoundingClientRect();
+                   const ripple = document.createElement('div');
+                   ripple.style.position = 'absolute';
+                   ripple.style.borderRadius = '50%';
+                   ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+                   ripple.style.transform = 'scale(0)';
+                   ripple.style.animation = 'ripple 0.6s linear';
+                   ripple.style.left = (e.clientX - rect.left) + 'px';
+                   ripple.style.top = (e.clientY - rect.top) + 'px';
+                   
+                   e.target.appendChild(ripple);
+                   
+                   setTimeout(() => {
+                       if (ripple.parentNode) {
+                           ripple.parentNode.removeChild(ripple);
+                       }
+                   }, 600);
+               });
+           });
+
+           // Dynamic background color change based on scroll
+           window.addEventListener('scroll', () => {
+               const scrollPercent = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight);
+               const hue = scrollPercent * 360;
+               document.body.style.background = `linear-gradient(45deg, hsl(${hue}, 70%, 20%), hsl(${hue + 60}, 70%, 25%), hsl(${hue + 120}, 70%, 30%))`;
+           });
+       }
+
+       // CSS for ripple effect
+       const style = document.createElement('style');
+       style.textContent = `
+           @keyframes ripple {
+               to {
+                   transform: scale(4);
+                   opacity: 0;
+               }
+           }
+       `;
+       document.head.appendChild(style);
+
+       // Window resize handler
+       window.addEventListener('resize', () => {
+           if (renderer) {
+               camera.aspect = window.innerWidth / window.innerHeight;
+               camera.updateProjectionMatrix();
+               renderer.setSize(window.innerWidth, window.innerHeight);
+           }
+       });
+
+       // Initialize advanced effects when ready
+       setTimeout(initAdvancedEffects, 1000);
+
+       // Performance optimization
+       let isScrolling = false;
+       window.addEventListener('scroll', () => {
+           if (!isScrolling) {
+               window.requestAnimationFrame(() => {
+                   // Optimize scroll-based animations
+                   isScrolling = false;
+               });
+               isScrolling = true;
+           }
+       });
+
+       // Easter egg: Konami code
+       let konamiCode = [];
+       const konamiSequence = [38, 38, 40, 40, 37, 39, 37, 39, 66, 65];
+       
+       document.addEventListener('keydown', (e) => {
+           konamiCode.push(e.keyCode);
+           if (konamiCode.length > konamiSequence.length) {
+               konamiCode.shift();
+           }
+           
+           if (konamiCode.join(',') === konamiSequence.join(',')) {
+               showSpeechBubble("Secret isekai portal activated! ✨");
+               triggerSecretAnimation();
+               konamiCode = [];
+           }
+       });
+
+       function triggerSecretAnimation() {
+           document.body.style.animation = 'rainbow 2s ease-in-out';
+           
+           // Create rainbow particles
+           for (let i = 0; i < 100; i++) {
+               setTimeout(() => {
+                   const particle = document.createElement('div');
+                   particle.style.position = 'fixed';
+                   particle.style.width = '6px';
+                   particle.style.height = '6px';
+                   particle.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                   particle.style.borderRadius = '50%';
+                   particle.style.left = Math.random() * window.innerWidth + 'px';
+                   particle.style.top = '-10px';
+                   particle.style.pointerEvents = 'none';
+                   particle.style.zIndex = '9999';
+                   
+                   document.body.appendChild(particle);
+                   
+                   particle.animate([
+                       { transform: 'translateY(0px)', opacity: 1 },
+                       { transform: `translateY(${window.innerHeight + 20}px)`, opacity: 0 }
+                   ], {
+                       duration: 3000,
+                       easing: 'ease-out'
+                   }).onfinish = () => {
+                       if (particle.parentNode) {
+                           particle.parentNode.removeChild(particle);
+                       }
+                   };
+               }, i * 20);
+           }
+       }
+
+       // Add rainbow animation
+       const rainbowStyle = document.createElement('style');
+       rainbowStyle.textContent = `
+           @keyframes rainbow {
+               0% { filter: hue-rotate(0deg); }
+               100% { filter: hue-rotate(360deg); }
+           }
+       `;
+       document.head.appendChild(rainbowStyle);
+
+   </script>
 </body>
 </html>
