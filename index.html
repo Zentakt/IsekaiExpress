@@ -648,48 +648,61 @@
         let scene, camera, renderer, loadingScene, loadingCamera, loadingRenderer;
         let particles = [];
         let loadingParticles = [];
+        let loadingAnimationId = null;
         
         // Initialize loading screen
         function initLoadingScreen() {
-            const canvas = document.getElementById('loadingCanvas');
-            
-            loadingScene = new THREE.Scene();
-            loadingCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-            loadingRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
-            loadingRenderer.setSize(400, 400);
-            
-            // Create loading particles
-            const geometry = new THREE.SphereGeometry(0.1, 8, 8);
-            const materials = [
-                new THREE.MeshBasicMaterial({ color: 0xff6b9d }),
-                new THREE.MeshBasicMaterial({ color: 0x8a2be2 }),
-                new THREE.MeshBasicMaterial({ color: 0x00d4ff })
-            ];
-            
-            for (let i = 0; i < 50; i++) {
-                const material = materials[Math.floor(Math.random() * materials.length)];
-                const particle = new THREE.Mesh(geometry, material);
-                particle.position.set(
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10,
-                    (Math.random() - 0.5) * 10
-                );
-                particle.velocity = new THREE.Vector3(
-                    (Math.random() - 0.5) * 0.02,
-                    (Math.random() - 0.5) * 0.02,
-                    (Math.random() - 0.5) * 0.02
-                );
-                loadingParticles.push(particle);
-                loadingScene.add(particle);
+            // Check if THREE.js is available
+            if (typeof THREE === 'undefined') {
+                console.warn('THREE.js not loaded, skipping 3D animations');
+                return;
             }
             
-            loadingCamera.position.z = 5;
-            
-            animateLoading();
+            try {
+                const canvas = document.getElementById('loadingCanvas');
+                
+                loadingScene = new THREE.Scene();
+                loadingCamera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
+                loadingRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                loadingRenderer.setSize(400, 400);
+                
+                // Create loading particles
+                const geometry = new THREE.SphereGeometry(0.1, 8, 8);
+                const materials = [
+                    new THREE.MeshBasicMaterial({ color: 0xff6b9d }),
+                    new THREE.MeshBasicMaterial({ color: 0x8a2be2 }),
+                    new THREE.MeshBasicMaterial({ color: 0x00d4ff })
+                ];
+                
+                for (let i = 0; i < 50; i++) {
+                    const material = materials[Math.floor(Math.random() * materials.length)];
+                    const particle = new THREE.Mesh(geometry, material);
+                    particle.position.set(
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10,
+                        (Math.random() - 0.5) * 10
+                    );
+                    particle.velocity = new THREE.Vector3(
+                        (Math.random() - 0.5) * 0.02,
+                        (Math.random() - 0.5) * 0.02,
+                        (Math.random() - 0.5) * 0.02
+                    );
+                    loadingParticles.push(particle);
+                    loadingScene.add(particle);
+                }
+                
+                loadingCamera.position.z = 5;
+                
+                animateLoading();
+            } catch (error) {
+                console.error('Error initializing loading screen:', error);
+            }
         }
         
         function animateLoading() {
-            requestAnimationFrame(animateLoading);
+            if (!loadingScene || !loadingRenderer) return;
+            
+            loadingAnimationId = requestAnimationFrame(animateLoading);
             
             loadingParticles.forEach(particle => {
                 particle.position.add(particle.velocity);
@@ -706,48 +719,67 @@
             loadingRenderer.render(loadingScene, loadingCamera);
         }
         
+        function stopLoadingAnimation() {
+            if (loadingAnimationId) {
+                cancelAnimationFrame(loadingAnimationId);
+                loadingAnimationId = null;
+            }
+        }
+        
         // Initialize main background
         function initBackground() {
-            const canvas = document.getElementById('bgCanvas');
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            
-            // Create background particles
-            const geometry = new THREE.BufferGeometry();
-            const positions = [];
-            const colors = [];
-            
-            for (let i = 0; i < 2000; i++) {
-                positions.push((Math.random() - 0.5) * 2000);
-                positions.push((Math.random() - 0.5) * 2000);
-                positions.push((Math.random() - 0.5) * 2000);
-                
-                const color = new THREE.Color();
-                color.setHSL(Math.random() * 0.3 + 0.8, 0.7, 0.5);
-                colors.push(color.r, color.g, color.b);
+            // Check if THREE.js is available
+            if (typeof THREE === 'undefined') {
+                console.warn('THREE.js not loaded, skipping background animation');
+                return;
             }
             
-            geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-            geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-            
-            const material = new THREE.PointsMaterial({
-                size: 2,
-                vertexColors: true,
-                transparent: true,
-                opacity: 0.8
-            });
-            
-            const points = new THREE.Points(geometry, material);
-            scene.add(points);
-            
-            camera.position.z = 1000;
-            
-            animate();
+            try {
+                const canvas = document.getElementById('bgCanvas');
+                scene = new THREE.Scene();
+                camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+                renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                
+                // Create background particles
+                const geometry = new THREE.BufferGeometry();
+                const positions = [];
+                const colors = [];
+                
+                for (let i = 0; i < 2000; i++) {
+                    positions.push((Math.random() - 0.5) * 2000);
+                    positions.push((Math.random() - 0.5) * 2000);
+                    positions.push((Math.random() - 0.5) * 2000);
+                    
+                    const color = new THREE.Color();
+                    color.setHSL(Math.random() * 0.3 + 0.8, 0.7, 0.5);
+                    colors.push(color.r, color.g, color.b);
+                }
+                
+                geometry.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+                
+                const material = new THREE.PointsMaterial({
+                    size: 2,
+                    vertexColors: true,
+                    transparent: true,
+                    opacity: 0.8
+                });
+                
+                const points = new THREE.Points(geometry, material);
+                scene.add(points);
+                
+                camera.position.z = 1000;
+                
+                animate();
+            } catch (error) {
+                console.error('Error initializing background:', error);
+            }
         }
         
         function animate() {
+            if (!scene || !renderer) return;
+            
             requestAnimationFrame(animate);
             
             scene.rotation.x += 0.0005;
@@ -758,60 +790,72 @@
         
         // Initialize about section 3D
         function initAboutCanvas() {
-            const canvas = document.getElementById('aboutCanvas');
-            const aboutScene = new THREE.Scene();
-            const aboutCamera = new THREE.PerspectiveCamera(75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
-            const aboutRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
-            aboutRenderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
-            
-            // Create rotating torus
-            const torusGeometry = new THREE.TorusGeometry(3, 1, 16, 100);
-            const torusMaterial = new THREE.MeshBasicMaterial({ color: 0xff6b9d, wireframe: true });
-            const torus = new THREE.Mesh(torusGeometry, torusMaterial);
-            aboutScene.add(torus);
-            
-            // Create orbiting spheres
-            const sphereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-            const sphereMaterials = [
-                new THREE.MeshBasicMaterial({ color: 0x8a2be2 }),
-                new THREE.MeshBasicMaterial({ color: 0x00d4ff }),
-                new THREE.MeshBasicMaterial({ color: 0xff6b9d })
-            ];
-            
-            const spheres = [];
-            for (let i = 0; i < 3; i++) {
-                const sphere = new THREE.Mesh(sphereGeometry, sphereMaterials[i]);
-                spheres.push(sphere);
-                aboutScene.add(sphere);
+            // Check if THREE.js is available
+            if (typeof THREE === 'undefined') {
+                console.warn('THREE.js not loaded, skipping about canvas animation');
+                return;
             }
             
-            aboutCamera.position.z = 10;
-            
-            function animateAbout() {
-                requestAnimationFrame(animateAbout);
+            try {
+                const canvas = document.getElementById('aboutCanvas');
+                const aboutScene = new THREE.Scene();
+                const aboutCamera = new THREE.PerspectiveCamera(75, canvas.offsetWidth / canvas.offsetHeight, 0.1, 1000);
+                const aboutRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+                aboutRenderer.setSize(canvas.offsetWidth, canvas.offsetHeight);
                 
-                torus.rotation.x += 0.01;
-                torus.rotation.y += 0.01;
+                // Create rotating torus
+                const torusGeometry = new THREE.TorusGeometry(3, 1, 16, 100);
+                const torusMaterial = new THREE.MeshBasicMaterial({ color: 0xff6b9d, wireframe: true });
+                const torus = new THREE.Mesh(torusGeometry, torusMaterial);
+                aboutScene.add(torus);
                 
-                spheres.forEach((sphere, index) => {
-                    const angle = Date.now() * 0.001 + (index * Math.PI * 2) / 3;
-                    sphere.position.x = Math.cos(angle) * 6;
-                    sphere.position.y = Math.sin(angle) * 6;
-                    sphere.rotation.x += 0.02;
-                    sphere.rotation.y += 0.02;
-                });
+                // Create orbiting spheres
+                const sphereGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+                const sphereMaterials = [
+                    new THREE.MeshBasicMaterial({ color: 0x8a2be2 }),
+                    new THREE.MeshBasicMaterial({ color: 0x00d4ff }),
+                    new THREE.MeshBasicMaterial({ color: 0xff6b9d })
+                ];
                 
-                aboutRenderer.render(aboutScene, aboutCamera);
+                const spheres = [];
+                for (let i = 0; i < 3; i++) {
+                    const sphere = new THREE.Mesh(sphereGeometry, sphereMaterials[i]);
+                    spheres.push(sphere);
+                    aboutScene.add(sphere);
+                }
+                
+                aboutCamera.position.z = 10;
+                
+                function animateAbout() {
+                    requestAnimationFrame(animateAbout);
+                    
+                    torus.rotation.x += 0.01;
+                    torus.rotation.y += 0.01;
+                    
+                    spheres.forEach((sphere, index) => {
+                        const angle = Date.now() * 0.001 + (index * Math.PI * 2) / 3;
+                        sphere.position.x = Math.cos(angle) * 6;
+                        sphere.position.y = Math.sin(angle) * 6;
+                        sphere.rotation.x += 0.02;
+                        sphere.rotation.y += 0.02;
+                    });
+                    
+                    aboutRenderer.render(aboutScene, aboutCamera);
+                }
+                
+                animateAbout();
+            } catch (error) {
+                console.error('Error initializing about canvas:', error);
             }
-            
-            animateAbout();
         }
         
         // Loading sequence
         function startLoadingSequence() {
             initLoadingScreen();
             
+            // Always hide loading screen after 3 seconds, regardless of whether animations loaded
             setTimeout(() => {
+                stopLoadingAnimation();
                 const loadingScreen = document.getElementById('loadingScreen');
                 loadingScreen.style.transition = 'opacity 1s ease-out';
                 loadingScreen.style.opacity = '0';
@@ -832,21 +876,41 @@
        joinBtn.addEventListener('click', (e) => {
            e.preventDefault();
            modal.style.display = 'block';
-           gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
-           gsap.fromTo('.modal-content', { scale: 0.8, y: 50 }, { scale: 1, y: 0, duration: 0.3, ease: 'back.out(1.7)' });
+           
+           // Use GSAP if available, otherwise use simple CSS transitions
+           if (typeof gsap !== 'undefined') {
+               gsap.fromTo(modal, { opacity: 0 }, { opacity: 1, duration: 0.3 });
+               gsap.fromTo('.modal-content', { scale: 0.8, y: 50 }, { scale: 1, y: 0, duration: 0.3, ease: 'back.out(1.7)' });
+           } else {
+               modal.style.opacity = '1';
+           }
        });
        
        closeBtn.addEventListener('click', () => {
-           gsap.to(modal, { opacity: 0, duration: 0.3, onComplete: () => {
-               modal.style.display = 'none';
-           }});
+           if (typeof gsap !== 'undefined') {
+               gsap.to(modal, { opacity: 0, duration: 0.3, onComplete: () => {
+                   modal.style.display = 'none';
+               }});
+           } else {
+               modal.style.opacity = '0';
+               setTimeout(() => {
+                   modal.style.display = 'none';
+               }, 300);
+           }
        });
        
        window.addEventListener('click', (e) => {
            if (e.target === modal) {
-               gsap.to(modal, { opacity: 0, duration: 0.3, onComplete: () => {
-                   modal.style.display = 'none';
-               }});
+               if (typeof gsap !== 'undefined') {
+                   gsap.to(modal, { opacity: 0, duration: 0.3, onComplete: () => {
+                       modal.style.display = 'none';
+                   }});
+               } else {
+                   modal.style.opacity = '0';
+                   setTimeout(() => {
+                       modal.style.display = 'none';
+                   }, 300);
+               }
            }
        });
        
@@ -867,22 +931,30 @@
        // Feature box hover effects
        document.querySelectorAll('.feature-box').forEach(box => {
            box.addEventListener('mouseenter', () => {
-               gsap.to(box, { scale: 1.05, duration: 0.3, ease: 'power2.out' });
+               if (typeof gsap !== 'undefined') {
+                   gsap.to(box, { scale: 1.05, duration: 0.3, ease: 'power2.out' });
+               }
            });
            
            box.addEventListener('mouseleave', () => {
-               gsap.to(box, { scale: 1, duration: 0.3, ease: 'power2.out' });
+               if (typeof gsap !== 'undefined') {
+                   gsap.to(box, { scale: 1, duration: 0.3, ease: 'power2.out' });
+               }
            });
        });
        
        // Contact card hover effects
        document.querySelectorAll('.contact-card').forEach(card => {
            card.addEventListener('mouseenter', () => {
-               gsap.to(card, { y: -10, duration: 0.3, ease: 'power2.out' });
+               if (typeof gsap !== 'undefined') {
+                   gsap.to(card, { y: -10, duration: 0.3, ease: 'power2.out' });
+               }
            });
            
            card.addEventListener('mouseleave', () => {
-               gsap.to(card, { y: 0, duration: 0.3, ease: 'power2.out' });
+               if (typeof gsap !== 'undefined') {
+                   gsap.to(card, { y: 0, duration: 0.3, ease: 'power2.out' });
+               }
            });
        });
        
@@ -900,10 +972,19 @@
                    // Animate section content
                    if (entry.target.classList.contains('section')) {
                        const children = entry.target.querySelectorAll('.feature-box, .contact-card, .about-text');
-                       gsap.fromTo(children, 
-                           { opacity: 0, y: 50 }, 
-                           { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out' }
-                       );
+                       
+                       // Use GSAP if available, otherwise just show elements
+                       if (typeof gsap !== 'undefined') {
+                           gsap.fromTo(children, 
+                               { opacity: 0, y: 50 }, 
+                               { opacity: 1, y: 0, duration: 0.8, stagger: 0.1, ease: 'power2.out' }
+                           );
+                       } else {
+                           children.forEach(child => {
+                               child.style.opacity = '1';
+                               child.style.transform = 'translateY(0)';
+                           });
+                       }
                    }
                }
            });
@@ -974,15 +1055,27 @@
            
            document.body.appendChild(sparkle);
            
-           gsap.to(sparkle, {
-               opacity: 0,
-               scale: 0,
-               duration: 2,
-               ease: 'power2.out',
-               onComplete: () => {
-                   document.body.removeChild(sparkle);
-               }
-           });
+           // Use GSAP if available, otherwise use CSS transitions
+           if (typeof gsap !== 'undefined') {
+               gsap.to(sparkle, {
+                   opacity: 0,
+                   scale: 0,
+                   duration: 2,
+                   ease: 'power2.out',
+                   onComplete: () => {
+                       document.body.removeChild(sparkle);
+                   }
+               });
+           } else {
+               sparkle.style.transition = 'opacity 2s, transform 2s';
+               sparkle.style.opacity = '0';
+               sparkle.style.transform = 'scale(0)';
+               setTimeout(() => {
+                   if (document.body.contains(sparkle)) {
+                       document.body.removeChild(sparkle);
+                   }
+               }, 2000);
+           }
        }
        
        // Create sparkles occasionally
